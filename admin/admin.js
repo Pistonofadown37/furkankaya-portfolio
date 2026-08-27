@@ -1,87 +1,25 @@
-document.addEventListener("DOMContentLoaded", () => {
-
-    initializeNavigation();
-    initializeLogout();
-
-    initializePortfolioForm();
-    initializePortfolioImage();
-
-    initializeSiteSettings();
-    initializeContactSettings();
-
-    initializePortfolioActions();
-
-    checkSession();
-    loadPortfolios();
-
-});
-
-
 /* =========================================
-   NAVIGATION
+   FURKAN KAYA PORTFOLIO
+   ADMIN PANEL JAVASCRIPT
 ========================================= */
 
-function initializeNavigation() {
+/* =========================================
+   SUPABASE KONTROLÜ
+========================================= */
 
-    const buttons =
-        document.querySelectorAll(".admin-nav-button");
+const SUPABASE_URL =
+    "https://fwlanmbmintingmruzty.supabase.co";
 
-    const sections =
-        document.querySelectorAll(".admin-section");
-
-
-    buttons.forEach((button) => {
-
-        button.addEventListener("click", () => {
-
-            const targetId =
-                button.dataset.target;
+const SUPABASE_ANON_KEY =
+    "sb_publishable__hwI8XK5QfD0VIMkc-j-Lw_k-_XG8Ie";
 
 
-            const targetSection =
-                document.getElementById(targetId);
-
-
-            if (!targetSection) {
-
-                console.error(
-                    "Bölüm bulunamadı:",
-                    targetId
-                );
-
-                return;
-
-            }
-
-
-            buttons.forEach((item) => {
-
-                item.classList.remove("active");
-
-            });
-
-
-            sections.forEach((section) => {
-
-                section.classList.remove("active");
-
-            });
-
-
-            button.classList.add("active");
-
-            targetSection.classList.add("active");
-
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-
-        });
-
-    });
-
+if (
+    !window.supabase
+) {
+    console.error(
+        "Supabase kütüphanesi yüklenemedi."
+    );
 }
 
 
@@ -89,39 +27,108 @@ function initializeNavigation() {
    SUPABASE CLIENT
 ========================================= */
 
-function getSupabaseClient() {
+if (
+    !window.supabaseClient
+) {
 
-    if (window.supabaseClient) {
-
-        return window.supabaseClient;
-
-    }
-
-    return null;
+    window.supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY,
+            {
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: false
+                }
+            }
+        );
 
 }
 
 
+const supabaseClient =
+    window.supabaseClient;
+
+
 /* =========================================
-   SESSION
+   SABİTLER
 ========================================= */
 
-async function checkSession() {
-
-    const client =
-        getSupabaseClient();
+const PORTFOLIO_TABLE =
+    "portfolios";
 
 
-    if (!client) {
+const PORTFOLIO_BUCKET =
+    "portfolio-images";
 
-        console.warn(
-            "Supabase client bulunamadı."
-        );
 
-        return;
+/* =========================================
+   GLOBAL DEĞİŞKENLER
+========================================= */
+
+let selectedPortfolioImage =
+    null;
+
+
+let currentPortfolioImageUrl =
+    "";
+
+
+let currentEditingPortfolioId =
+    null;
+
+
+/* =========================================
+   DOM HAZIR
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+
+        /*
+           Önce oturum kontrol edilir.
+
+           Kullanıcı giriş yapmamışsa
+           aşağıdaki fonksiyon login.html'ye
+           yönlendireceği için diğer işlemler
+           çalıştırılmaz.
+        */
+
+        const sessionValid =
+            await checkAdminSession();
+
+
+        if (
+            !sessionValid
+        ) {
+            return;
+        }
+
+
+        initializeAdminNavigation();
+
+        initializeLogout();
+
+        initializePortfolioForm();
+
+        initializePortfolioImageUpload();
+
+        initializePortfolioActions();
+
+
+        await loadPortfolios();
 
     }
+);
 
+
+/* =========================================
+   ADMIN SESSION KONTROL
+========================================= */
+
+async function checkAdminSession() {
 
     try {
 
@@ -129,31 +136,55 @@ async function checkSession() {
             data,
             error
         } =
-            await client.auth.getSession();
+            await supabaseClient
+                .auth
+                .getSession();
 
 
-        if (error) {
+        if (
+            error
+        ) {
 
-            console.error(error);
+            console.error(
+                "Oturum kontrol hatası:",
+                error
+            );
 
-            return;
+
+            redirectToLogin();
+
+            return false;
 
         }
 
 
-        if (!data.session) {
+        if (
+            !data ||
+            !data.session
+        ) {
 
-            window.location.href =
-                "login.html";
+            redirectToLogin();
+
+            return false;
 
         }
 
-    } catch (error) {
+
+        return true;
+
+    } catch (
+        error
+    ) {
 
         console.error(
-            "Oturum kontrol hatası:",
+            "Oturum kontrolünde hata:",
             error
         );
+
+
+        redirectToLogin();
+
+        return false;
 
     }
 
@@ -161,51 +192,121 @@ async function checkSession() {
 
 
 /* =========================================
-   LOGOUT
+   LOGIN SAYFASINA YÖNLENDİR
 ========================================= */
 
-function initializeLogout() {
+function redirectToLogin() {
 
-    const button =
-        document.getElementById("logoutButton");
+    window.location.replace(
+        "login.html"
+    );
 
-
-    if (!button) {
-        return;
-    }
+}
 
 
-    button.addEventListener(
-        "click",
-        async () => {
+/* =========================================
+   ADMIN NAVIGATION
+========================================= */
 
-            const client =
-                getSupabaseClient();
+function initializeAdminNavigation() {
 
-
-            button.disabled = true;
-
-            button.textContent =
-                "Çıkış yapılıyor...";
+    const navButtons =
+        document.querySelectorAll(
+            ".admin-nav-button"
+        );
 
 
-            try {
+    const sections =
+        document.querySelectorAll(
+            ".admin-section"
+        );
 
-                if (client) {
 
-                    await client.auth.signOut();
+    navButtons.forEach(
+        function (
+            button
+        ) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const targetId =
+                        button.dataset.target;
+
+
+                    if (
+                        !targetId
+                    ) {
+                        return;
+                    }
+
+
+                    const targetSection =
+                        document.getElementById(
+                            targetId
+                        );
+
+
+                    if (
+                        !targetSection
+                    ) {
+
+                        console.warn(
+                            "Bölüm bulunamadı:",
+                            targetId
+                        );
+
+                        return;
+
+                    }
+
+
+                    navButtons.forEach(
+                        function (
+                            item
+                        ) {
+
+                            item.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
+
+
+                    sections.forEach(
+                        function (
+                            section
+                        ) {
+
+                            section.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+
+                    targetSection.classList.add(
+                        "active"
+                    );
+
+
+                    window.scrollTo(
+                        {
+                            top: 0,
+                            behavior: "smooth"
+                        }
+                    );
 
                 }
-
-            } catch (error) {
-
-                console.error(error);
-
-            }
-
-
-            window.location.href =
-                "login.html";
+            );
 
         }
     );
@@ -214,59 +315,53 @@ function initializeLogout() {
 
 
 /* =========================================
-   PORTFOLIO LOAD
+   PORTFÖYLERİ YÜKLE
 ========================================= */
 
 async function loadPortfolios() {
 
-    const client =
-        getSupabaseClient();
+    const portfolioList =
+        document.getElementById(
+            "portfolioList"
+        );
 
-    const list =
-        document.getElementById("portfolioList");
 
-    const empty =
+    const portfolioEmptyState =
         document.getElementById(
             "portfolioEmptyState"
         );
 
 
-    if (!list) {
-        return;
-    }
-
-
-    if (!client) {
-
-        list.innerHTML =
-            `
-            <div class="admin-empty-state">
-                Supabase bağlantısı bulunamadı.
-            </div>
-            `;
+    if (
+        !portfolioList
+    ) {
 
         return;
 
     }
+
+
+    portfolioList.innerHTML =
+        `
+        <div class="admin-loading">
+            Portföyler yükleniyor...
+        </div>
+        `;
 
 
     try {
-
-        list.innerHTML =
-            `
-            <div class="admin-loading">
-                Portföyler yükleniyor...
-            </div>
-            `;
-
 
         const {
             data,
             error
         } =
-            await client
-                .from("portfolios")
-                .select("*")
+            await supabaseClient
+                .from(
+                    PORTFOLIO_TABLE
+                )
+                .select(
+                    "*"
+                )
                 .order(
                     "created_at",
                     {
@@ -275,43 +370,70 @@ async function loadPortfolios() {
                 );
 
 
-        if (error) {
+        if (
+            error
+        ) {
+
             throw error;
+
         }
 
 
         const portfolios =
-            Array.isArray(data)
+            Array.isArray(
+                data
+            )
                 ? data
                 : [];
 
 
-        renderPortfolios(portfolios);
+        renderPortfolios(
+            portfolios
+        );
 
-        updateDashboard(portfolios);
+
+        updateDashboard(
+            portfolios
+        );
 
 
-        if (empty) {
+        if (
+            portfolioEmptyState
+        ) {
 
-            empty.style.display =
+            portfolioEmptyState.style.display =
                 portfolios.length === 0
                     ? "block"
                     : "none";
 
         }
 
-    } catch (error) {
+    } catch (
+        error
+    ) {
 
-        console.error(error);
+        console.error(
+            "Portföy yükleme hatası:",
+            error
+        );
 
-        list.innerHTML =
+
+        portfolioList.innerHTML =
             `
             <div class="admin-empty-state">
                 Portföyler yüklenirken hata oluştu.
-                <br>
-                <small>${escapeHtml(error.message)}</small>
             </div>
             `;
+
+
+        showMessage(
+            "Portföyler yüklenirken hata oluştu: " +
+            (
+                error.message ||
+                "Bilinmeyen hata"
+            ),
+            "error"
+        );
 
     }
 
@@ -319,346 +441,166 @@ async function loadPortfolios() {
 
 
 /* =========================================
-   PORTFOLIO RENDER
+   PORTFÖYLERİ GÖSTER
 ========================================= */
 
-function renderPortfolios(portfolios) {
+function renderPortfolios(
+    portfolios
+) {
 
-    const list =
-        document.getElementById("portfolioList");
+    const portfolioList =
+        document.getElementById(
+            "portfolioList"
+        );
 
 
-    if (!list) {
+    if (
+        !portfolioList
+    ) {
+
         return;
+
     }
 
 
-    list.innerHTML = "";
+    portfolioList.innerHTML =
+        "";
 
 
-    portfolios.forEach((portfolio) => {
+    if (
+        !portfolios ||
+        portfolios.length === 0
+    ) {
 
-        const item =
-            document.createElement("article");
+        return;
 
-        item.className =
-            "portfolio-admin-item";
-
-
-        const imageUrl =
-            portfolio.image_url || "";
+    }
 
 
-        const status =
-            portfolio.status === "active"
-                ? "Aktif"
-                : "Pasif";
+    portfolios.forEach(
+        function (
+            portfolio
+        ) {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
 
 
-        item.innerHTML =
-            `
-            <div class="portfolio-admin-image">
+            item.className =
+                "portfolio-admin-item";
 
-                ${
-                    imageUrl
-                        ? `
-                        <img
-                            src="${escapeAttribute(imageUrl)}"
-                            alt="${escapeAttribute(portfolio.title || "")}"
+
+            const imageUrl =
+                getPortfolioImageUrl(
+                    portfolio
+                );
+
+
+            const imageHtml =
+                imageUrl
+                    ? `
+                    <img
+                        src="${escapeAttribute(imageUrl)}"
+                        alt="${escapeAttribute(
+                            portfolio.title ||
+                            "Portföy görseli"
+                        )}"
+                    >
+                    `
+                    : `
+                    <div class="portfolio-admin-no-image">
+                        GÖRSEL YOK
+                    </div>
+                    `;
+
+
+            const status =
+                portfolio.status ||
+                "active";
+
+
+            const statusText =
+                status === "active"
+                    ? "Aktif"
+                    : "Pasif";
+
+
+            item.innerHTML =
+                `
+                <div class="portfolio-admin-image">
+
+                    ${imageHtml}
+
+                </div>
+
+
+                <div class="portfolio-admin-content">
+
+                    <div class="portfolio-admin-meta">
+
+                        <span
+                            class="portfolio-status ${escapeAttribute(status)}"
                         >
-                        `
-                        : `
-                        <div class="portfolio-admin-no-image">
-                            GÖRSEL YOK
-                        </div>
-                        `
-                }
+                            ${statusText}
+                        </span>
 
-            </div>
+                    </div>
 
 
-            <div class="portfolio-admin-content">
+                    <h3>
+                        ${escapeHtml(
+                            portfolio.title ||
+                            "İsimsiz Çalışma"
+                        )}
+                    </h3>
 
-                <span
-                    class="portfolio-status ${portfolio.status || "inactive"}"
-                >
-                    ${status}
-                </span>
 
+                    <p class="portfolio-admin-category">
+                        ${escapeHtml(
+                            portfolio.category ||
+                            ""
+                        )}
+                    </p>
 
-                <h3>
-                    ${escapeHtml(portfolio.title || "İsimsiz Çalışma")}
-                </h3>
 
+                    <p class="portfolio-admin-description">
+                        ${escapeHtml(
+                            portfolio.description ||
+                            ""
+                        )}
+                    </p>
 
-                <p class="portfolio-admin-category">
-                    ${escapeHtml(portfolio.category || "")}
-                </p>
+                </div>
 
 
-                <p class="portfolio-admin-description">
-                    ${escapeHtml(portfolio.description || "")}
-                </p>
+                <div class="portfolio-admin-actions">
 
-            </div>
+                    <button
+                        type="button"
+                        class="admin-secondary-button edit-portfolio"
+                        data-id="${escapeAttribute(portfolio.id)}"
+                    >
+                        Düzenle
+                    </button>
 
 
-            <div class="portfolio-admin-actions">
+                    <button
+                        type="button"
+                        class="admin-danger-button delete-portfolio"
+                        data-id="${escapeAttribute(portfolio.id)}"
+                    >
+                        Sil
+                    </button>
 
-                <button
-                    type="button"
-                    class="admin-secondary-button edit-portfolio"
-                    data-id="${portfolio.id}"
-                >
-                    Düzenle
-                </button>
+                </div>
+                `;
 
 
-                <button
-                    type="button"
-                    class="admin-danger-button delete-portfolio"
-                    data-id="${portfolio.id}"
-                >
-                    Sil
-                </button>
-
-            </div>
-            `;
-
-
-        list.appendChild(item);
-
-    });
-
-}
-
-
-/* =========================================
-   DASHBOARD
-========================================= */
-
-function updateDashboard(portfolios) {
-
-    const total =
-        document.getElementById("totalPortfolio");
-
-    const active =
-        document.getElementById("activePortfolio");
-
-
-    if (total) {
-
-        total.value =
-            portfolios.length;
-
-    }
-
-
-    if (active) {
-
-        active.value =
-            portfolios.filter(
-                (item) =>
-                    item.status === "active"
-            ).length;
-
-    }
-
-}
-
-
-/* =========================================
-   NEW PORTFOLIO BUTTON
-========================================= */
-
-function initializePortfolioForm() {
-
-    const newButton =
-        document.getElementById(
-            "newPortfolioButton"
-        );
-
-    const cancelButton =
-        document.getElementById(
-            "cancelPortfolioButton"
-        );
-
-    const form =
-        document.getElementById(
-            "portfolioForm"
-        );
-
-
-    if (newButton) {
-
-        newButton.addEventListener(
-            "click",
-            openNewPortfolioForm
-        );
-
-    }
-
-
-    if (cancelButton) {
-
-        cancelButton.addEventListener(
-            "click",
-            closePortfolioForm
-        );
-
-    }
-
-
-    if (form) {
-
-        form.addEventListener(
-            "submit",
-            savePortfolio
-        );
-
-    }
-
-}
-
-
-function openNewPortfolioForm() {
-
-    const card =
-        document.getElementById(
-            "portfolioFormCard"
-        );
-
-    const form =
-        document.getElementById(
-            "portfolioForm"
-        );
-
-    const title =
-        document.getElementById(
-            "portfolioFormTitle"
-        );
-
-
-    if (form) {
-
-        form.reset();
-
-    }
-
-
-    if (title) {
-
-        title.textContent =
-            "Yeni Portföy Çalışması";
-
-    }
-
-
-    resetImagePreview();
-
-
-    if (card) {
-
-        card.style.display =
-            "block";
-
-        card.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-
-    }
-
-}
-
-
-function closePortfolioForm() {
-
-    const card =
-        document.getElementById(
-            "portfolioFormCard"
-        );
-
-
-    if (card) {
-
-        card.style.display =
-            "none";
-
-    }
-
-}
-
-
-/* =========================================
-   IMAGE PREVIEW
-========================================= */
-
-function initializePortfolioImage() {
-
-    const input =
-        document.getElementById(
-            "portfolioImageInput"
-        );
-
-
-    if (!input) {
-        return;
-    }
-
-
-    input.addEventListener(
-        "change",
-        () => {
-
-            const file =
-                input.files[0];
-
-
-            if (!file) {
-                return;
-            }
-
-
-            const preview =
-                document.getElementById(
-                    "portfolioImagePreview"
-                );
-
-            const content =
-                document.getElementById(
-                    "imageUploadContent"
-                );
-
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                (event) => {
-
-                    if (preview) {
-
-                        preview.src =
-                            event.target.result;
-
-                        preview.classList.add("show");
-
-                    }
-
-
-                    if (content) {
-
-                        content.style.display =
-                            "none";
-
-                    }
-
-                };
-
-
-            reader.readAsDataURL(file);
+            portfolioList.appendChild(
+                item
+            );
 
         }
     );
@@ -666,32 +608,103 @@ function initializePortfolioImage() {
 }
 
 
-function resetImagePreview() {
+/* =========================================
+   PORTFÖY GÖRSEL URL
+========================================= */
 
-    const preview =
-        document.getElementById(
-            "portfolioImagePreview"
-        );
+function getPortfolioImageUrl(
+    portfolio
+) {
 
-    const content =
-        document.getElementById(
-            "imageUploadContent"
-        );
+    const keys =
+        [
+            "image_url",
+            "image",
+            "imageUrl",
+            "thumbnail_url",
+            "thumbnail"
+        ];
 
 
-    if (preview) {
+    for (
+        const key of keys
+    ) {
 
-        preview.src = "";
+        if (
+            portfolio[key] &&
+            String(
+                portfolio[key]
+            ).trim() !== ""
+        ) {
 
-        preview.classList.remove("show");
+            return portfolio[key];
+
+        }
 
     }
 
 
-    if (content) {
+    return "";
 
-        content.style.display =
-            "flex";
+}
+
+
+/* =========================================
+   DASHBOARD SAYILARI
+========================================= */
+
+function updateDashboard(
+    portfolios
+) {
+
+    const totalPortfolio =
+        document.getElementById(
+            "totalPortfolio"
+        );
+
+
+    const activePortfolio =
+        document.getElementById(
+            "activePortfolio"
+        );
+
+
+    const total =
+        portfolios.length;
+
+
+    const active =
+        portfolios.filter(
+            function (
+                portfolio
+            ) {
+
+                return (
+                    portfolio.status === "active" ||
+                    portfolio.status === true ||
+                    portfolio.status === "aktif"
+                );
+
+            }
+        ).length;
+
+
+    if (
+        totalPortfolio
+    ) {
+
+        totalPortfolio.value =
+            total;
+
+    }
+
+
+    if (
+        activePortfolio
+    ) {
+
+        activePortfolio.value =
+            active;
 
     }
 
@@ -699,186 +712,652 @@ function resetImagePreview() {
 
 
 /* =========================================
-   SAVE PORTFOLIO
+   PORTFÖY FORM
 ========================================= */
 
-async function savePortfolio(event) {
+function initializePortfolioForm() {
 
-    event.preventDefault();
-
-
-    const client =
-        getSupabaseClient();
-
-
-    if (!client) {
-
-        showAdminMessage(
-            "Supabase bağlantısı bulunamadı.",
-            "error"
+    const newPortfolioButton =
+        document.getElementById(
+            "newPortfolioButton"
         );
 
-        return;
+
+    const cancelPortfolioButton =
+        document.getElementById(
+            "cancelPortfolioButton"
+        );
+
+
+    const portfolioForm =
+        document.getElementById(
+            "portfolioForm"
+        );
+
+
+    if (
+        newPortfolioButton
+    ) {
+
+        newPortfolioButton.addEventListener(
+            "click",
+            openNewPortfolioForm
+        );
 
     }
 
 
-    const title =
-        document.getElementById(
-            "portfolioTitle"
-        ).value.trim();
+    if (
+        cancelPortfolioButton
+    ) {
 
-
-    if (!title) {
-
-        showAdminMessage(
-            "Portföy başlığı zorunludur.",
-            "error"
+        cancelPortfolioButton.addEventListener(
+            "click",
+            closePortfolioForm
         );
-
-        return;
 
     }
 
 
-    const category =
+    if (
+        portfolioForm
+    ) {
+
+        portfolioForm.addEventListener(
+            "submit",
+            async function (
+                event
+            ) {
+
+                event.preventDefault();
+
+                await savePortfolio();
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   YENİ PORTFÖY FORMU
+========================================= */
+
+function openNewPortfolioForm() {
+
+    const portfolioForm =
         document.getElementById(
-            "portfolioCategory"
-        ).value.trim();
+            "portfolioForm"
+        );
 
 
-    const description =
+    const portfolioFormCard =
         document.getElementById(
-            "portfolioDescription"
-        ).value.trim();
+            "portfolioFormCard"
+        );
 
 
-    const date =
+    const portfolioFormTitle =
         document.getElementById(
-            "portfolioDate"
-        ).value;
+            "portfolioFormTitle"
+        );
 
 
-    const status =
+    if (
+        portfolioForm
+    ) {
+
+        portfolioForm.reset();
+
+    }
+
+
+    currentEditingPortfolioId =
+        null;
+
+
+    currentPortfolioImageUrl =
+        "";
+
+
+    selectedPortfolioImage =
+        null;
+
+
+    resetPortfolioImagePreview();
+
+
+    if (
+        portfolioFormTitle
+    ) {
+
+        portfolioFormTitle.textContent =
+            "Yeni Portföy Çalışması";
+
+    }
+
+
+    if (
+        portfolioFormCard
+    ) {
+
+        portfolioFormCard.style.display =
+            "block";
+
+
+        portfolioFormCard.scrollIntoView(
+            {
+                behavior: "smooth",
+                block: "start"
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   PORTFÖY FORMUNU KAPAT
+========================================= */
+
+function closePortfolioForm() {
+
+    const portfolioFormCard =
         document.getElementById(
-            "portfolioStatus"
-        ).value;
+            "portfolioFormCard"
+        );
 
 
-    const imageInput =
+    if (
+        portfolioFormCard
+    ) {
+
+        portfolioFormCard.style.display =
+            "none";
+
+    }
+
+
+    currentEditingPortfolioId =
+        null;
+
+
+    currentPortfolioImageUrl =
+        "";
+
+
+    selectedPortfolioImage =
+        null;
+
+}
+
+
+/* =========================================
+   GÖRSEL YÜKLEME
+========================================= */
+
+function initializePortfolioImageUpload() {
+
+    const portfolioImageInput =
         document.getElementById(
             "portfolioImageInput"
         );
 
 
-    const editId =
+    if (
+        !portfolioImageInput
+    ) {
+
+        return;
+
+    }
+
+
+    portfolioImageInput.addEventListener(
+        "change",
+        function (
+            event
+        ) {
+
+            const file =
+                event.target.files[0];
+
+
+            if (
+                !file
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                showMessage(
+                    "Lütfen geçerli bir görsel seç.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            selectedPortfolioImage =
+                file;
+
+
+            showPortfolioImagePreview(
+                file
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   GÖRSEL ÖNİZLEME
+========================================= */
+
+function showPortfolioImagePreview(
+    file
+) {
+
+    const preview =
         document.getElementById(
-            "portfolioEditId"
-        ).value;
+            "portfolioImagePreview"
+        );
 
 
-    let imageUrl = "";
+    const uploadContent =
+        document.getElementById(
+            "imageUploadContent"
+        );
+
+
+    if (
+        !preview
+    ) {
+
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        function (
+            event
+        ) {
+
+            preview.src =
+                event.target.result;
+
+
+            preview.classList.add(
+                "show"
+            );
+
+
+            if (
+                uploadContent
+            ) {
+
+                uploadContent.style.display =
+                    "none";
+
+            }
+
+        };
+
+
+    reader.readAsDataURL(
+        file
+    );
+
+}
+
+
+/* =========================================
+   ÖNİZLEMEYİ SIFIRLA
+========================================= */
+
+function resetPortfolioImagePreview() {
+
+    const preview =
+        document.getElementById(
+            "portfolioImagePreview"
+        );
+
+
+    const uploadContent =
+        document.getElementById(
+            "imageUploadContent"
+        );
+
+
+    const input =
+        document.getElementById(
+            "portfolioImageInput"
+        );
+
+
+    if (
+        preview
+    ) {
+
+        preview.src =
+            "";
+
+
+        preview.classList.remove(
+            "show"
+        );
+
+    }
+
+
+    if (
+        uploadContent
+    ) {
+
+        uploadContent.style.display =
+            "flex";
+
+    }
+
+
+    if (
+        input
+    ) {
+
+        input.value =
+            "";
+
+    }
+
+}
+
+
+/* =========================================
+   STORAGE'A GÖRSEL YÜKLE
+========================================= */
+
+async function uploadPortfolioImage(
+    file
+) {
+
+    if (
+        !file
+    ) {
+
+        return currentPortfolioImageUrl;
+
+    }
+
+
+    const extension =
+        file.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+    const fileName =
+        `portfolio-${Date.now()}-${Math.random()
+            .toString(36)
+            .substring(2, 10)}.${extension}`;
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .storage
+            .from(
+                PORTFOLIO_BUCKET
+            )
+            .upload(
+                fileName,
+                file,
+                {
+                    cacheControl: "3600",
+                    upsert: false
+                }
+            );
+
+
+    if (
+        error
+    ) {
+
+        throw error;
+
+    }
+
+
+    const {
+        data
+    } =
+        supabaseClient
+            .storage
+            .from(
+                PORTFOLIO_BUCKET
+            )
+            .getPublicUrl(
+                fileName
+            );
+
+
+    if (
+        !data ||
+        !data.publicUrl
+    ) {
+
+        throw new Error(
+            "Görsel URL'si oluşturulamadı."
+        );
+
+    }
+
+
+    return data.publicUrl;
+
+}
+
+
+/* =========================================
+   PORTFÖY KAYDET
+========================================= */
+
+async function savePortfolio() {
+
+    const titleInput =
+        document.getElementById(
+            "portfolioTitle"
+        );
+
+
+    const categoryInput =
+        document.getElementById(
+            "portfolioCategory"
+        );
+
+
+    const descriptionInput =
+        document.getElementById(
+            "portfolioDescription"
+        );
+
+
+    const dateInput =
+        document.getElementById(
+            "portfolioDate"
+        );
+
+
+    const statusInput =
+        document.getElementById(
+            "portfolioStatus"
+        );
+
+
+    const form =
+        document.getElementById(
+            "portfolioForm"
+        );
+
+
+    const submitButton =
+        form
+            ? form.querySelector(
+                'button[type="submit"]'
+            )
+            : null;
+
+
+    const title =
+        titleInput
+            ? titleInput.value.trim()
+            : "";
+
+
+    if (
+        !title
+    ) {
+
+        showMessage(
+            "Proje başlığı zorunludur.",
+            "error"
+        );
+
+        return;
+
+    }
 
 
     try {
 
         if (
-            imageInput &&
-            imageInput.files.length > 0
+            submitButton
         ) {
 
-            const file =
-                imageInput.files[0];
+            submitButton.disabled =
+                true;
 
-
-            const extension =
-                file.name.split(".").pop();
-
-
-            const fileName =
-                `${Date.now()}-${Math.random().toString(36).slice(2)}.${extension}`;
-
-
-            const {
-                error: uploadError
-            } =
-                await client
-                    .storage
-                    .from("portfolio-images")
-                    .upload(
-                        fileName,
-                        file
-                    );
-
-
-            if (uploadError) {
-                throw uploadError;
-            }
-
-
-            const {
-                data: publicData
-            } =
-                client
-                    .storage
-                    .from("portfolio-images")
-                    .getPublicUrl(fileName);
-
-
-            imageUrl =
-                publicData.publicUrl;
+            submitButton.textContent =
+                "Kaydediliyor...";
 
         }
 
 
-        const portfolioData = {
+        let imageUrl =
+            currentPortfolioImageUrl;
 
-            title,
 
-            category,
+        if (
+            selectedPortfolioImage
+        ) {
 
-            description,
+            imageUrl =
+                await uploadPortfolioImage(
+                    selectedPortfolioImage
+                );
 
-            date: date || null,
+        }
 
-            status,
 
-            image_url:
-                imageUrl || null
+        const portfolioData =
+            {
+                title: title,
 
-        };
+                category:
+                    categoryInput
+                        ? categoryInput.value.trim()
+                        : "",
+
+                description:
+                    descriptionInput
+                        ? descriptionInput.value.trim()
+                        : "",
+
+                date:
+                    dateInput
+                        ? dateInput.value
+                        : null,
+
+                status:
+                    statusInput
+                        ? statusInput.value
+                        : "active",
+
+                image_url:
+                    imageUrl || null
+            };
 
 
         let result;
 
 
-        if (editId) {
+        if (
+            currentEditingPortfolioId
+        ) {
 
             result =
-                await client
-                    .from("portfolios")
-                    .update(portfolioData)
-                    .eq("id", editId);
+                await supabaseClient
+                    .from(
+                        PORTFOLIO_TABLE
+                    )
+                    .update(
+                        portfolioData
+                    )
+                    .eq(
+                        "id",
+                        currentEditingPortfolioId
+                    );
 
         } else {
 
             result =
-                await client
-                    .from("portfolios")
-                    .insert([portfolioData]);
+                await supabaseClient
+                    .from(
+                        PORTFOLIO_TABLE
+                    )
+                    .insert(
+                        [
+                            portfolioData
+                        ]
+                    );
 
         }
 
 
-        if (result.error) {
+        if (
+            result.error
+        ) {
+
             throw result.error;
+
         }
 
 
-        showAdminMessage(
-            editId
-                ? "Portföy güncellendi."
-                : "Yeni portföy eklendi.",
+        showMessage(
+            currentEditingPortfolioId
+                ? "Portföy çalışması güncellendi."
+                : "Yeni portföy çalışması eklendi.",
             "success"
         );
 
@@ -887,16 +1366,39 @@ async function savePortfolio(event) {
 
         await loadPortfolios();
 
+    } catch (
+        error
+    ) {
 
-    } catch (error) {
+        console.error(
+            "Portföy kaydetme hatası:",
+            error
+        );
 
-        console.error(error);
 
-        showAdminMessage(
-            error.message ||
-            "Kaydetme sırasında hata oluştu.",
+        showMessage(
+            "Kaydetme hatası: " +
+            (
+                error.message ||
+                "Bilinmeyen hata"
+            ),
             "error"
         );
+
+    } finally {
+
+        if (
+            submitButton
+        ) {
+
+            submitButton.disabled =
+                false;
+
+
+            submitButton.textContent =
+                "Kaydet";
+
+        }
 
     }
 
@@ -904,30 +1406,37 @@ async function savePortfolio(event) {
 
 
 /* =========================================
-   EDIT / DELETE
+   PORTFÖY ACTIONS
 ========================================= */
 
 function initializePortfolioActions() {
 
-    const list =
+    const portfolioList =
         document.getElementById(
             "portfolioList"
         );
 
 
-    if (!list) {
+    if (
+        !portfolioList
+    ) {
+
         return;
+
     }
 
 
-    list.addEventListener(
+    portfolioList.addEventListener(
         "click",
-        async (event) => {
+        async function (
+            event
+        ) {
 
             const editButton =
                 event.target.closest(
                     ".edit-portfolio"
                 );
+
 
             const deleteButton =
                 event.target.closest(
@@ -935,16 +1444,22 @@ function initializePortfolioActions() {
                 );
 
 
-            if (editButton) {
+            if (
+                editButton
+            ) {
 
                 await editPortfolio(
                     editButton.dataset.id
                 );
 
+                return;
+
             }
 
 
-            if (deleteButton) {
+            if (
+                deleteButton
+            ) {
 
                 await deletePortfolio(
                     deleteButton.dataset.id
@@ -958,14 +1473,20 @@ function initializePortfolioActions() {
 }
 
 
-async function editPortfolio(id) {
+/* =========================================
+   PORTFÖY DÜZENLE
+========================================= */
 
-    const client =
-        getSupabaseClient();
+async function editPortfolio(
+    portfolioId
+) {
 
+    if (
+        !portfolioId
+    ) {
 
-    if (!client) {
         return;
+
     }
 
 
@@ -975,74 +1496,166 @@ async function editPortfolio(id) {
             data,
             error
         } =
-            await client
-                .from("portfolios")
-                .select("*")
-                .eq("id", id)
+            await supabaseClient
+                .from(
+                    PORTFOLIO_TABLE
+                )
+                .select(
+                    "*"
+                )
+                .eq(
+                    "id",
+                    portfolioId
+                )
                 .single();
 
 
-        if (error) {
+        if (
+            error
+        ) {
+
             throw error;
+
         }
 
 
-        document.getElementById(
-            "portfolioEditId"
-        ).value = data.id;
+        currentEditingPortfolioId =
+            data.id;
 
 
-        document.getElementById(
-            "portfolioTitle"
-        ).value = data.title || "";
+        currentPortfolioImageUrl =
+            getPortfolioImageUrl(
+                data
+            );
 
 
-        document.getElementById(
-            "portfolioCategory"
-        ).value = data.category || "";
+        selectedPortfolioImage =
+            null;
 
 
-        document.getElementById(
-            "portfolioDescription"
-        ).value = data.description || "";
+        const fields =
+            {
+                portfolioTitle:
+                    data.title || "",
+
+                portfolioCategory:
+                    data.category || "",
+
+                portfolioDescription:
+                    data.description || "",
+
+                portfolioDate:
+                    data.date || "",
+
+                portfolioStatus:
+                    data.status || "active"
+            };
 
 
-        document.getElementById(
-            "portfolioDate"
-        ).value = data.date || "";
+        Object.entries(
+            fields
+        ).forEach(
+            function (
+                [id, value]
+            ) {
+
+                const element =
+                    document.getElementById(
+                        id
+                    );
 
 
-        document.getElementById(
-            "portfolioStatus"
-        ).value =
-            data.status || "active";
+                if (
+                    element
+                ) {
+
+                    element.value =
+                        value;
+
+                }
+
+            }
+        );
 
 
-        document.getElementById(
-            "portfolioFormTitle"
-        ).textContent =
-            "Portföy Çalışmasını Düzenle";
+        if (
+            currentPortfolioImageUrl
+        ) {
+
+            const preview =
+                document.getElementById(
+                    "portfolioImagePreview"
+                );
 
 
-        const card =
+            if (
+                preview
+            ) {
+
+                preview.src =
+                    currentPortfolioImageUrl;
+
+
+                preview.classList.add(
+                    "show"
+                );
+
+            }
+
+        }
+
+
+        const title =
+            document.getElementById(
+                "portfolioFormTitle"
+            );
+
+
+        if (
+            title
+        ) {
+
+            title.textContent =
+                "Portföy Çalışmasını Düzenle";
+
+        }
+
+
+        const formCard =
             document.getElementById(
                 "portfolioFormCard"
             );
 
 
-        card.style.display =
-            "block";
+        if (
+            formCard
+        ) {
+
+            formCard.style.display =
+                "block";
 
 
-        card.scrollIntoView({
-            behavior: "smooth"
-        });
+            formCard.scrollIntoView(
+                {
+                    behavior: "smooth",
+                    block: "start"
+                }
+            );
+
+        }
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "Düzenleme hatası:",
+            error
+        );
 
 
-    } catch (error) {
-
-        showAdminMessage(
-            error.message,
+        showMessage(
+            "Portföy açılırken hata oluştu.",
             "error"
         );
 
@@ -1051,7 +1664,22 @@ async function editPortfolio(id) {
 }
 
 
-async function deletePortfolio(id) {
+/* =========================================
+   PORTFÖY SİL
+========================================= */
+
+async function deletePortfolio(
+    portfolioId
+) {
+
+    if (
+        !portfolioId
+    ) {
+
+        return;
+
+    }
+
 
     const confirmed =
         confirm(
@@ -1059,17 +1687,12 @@ async function deletePortfolio(id) {
         );
 
 
-    if (!confirmed) {
+    if (
+        !confirmed
+    ) {
+
         return;
-    }
 
-
-    const client =
-        getSupabaseClient();
-
-
-    if (!client) {
-        return;
     }
 
 
@@ -1078,29 +1701,46 @@ async function deletePortfolio(id) {
         const {
             error
         } =
-            await client
-                .from("portfolios")
+            await supabaseClient
+                .from(
+                    PORTFOLIO_TABLE
+                )
                 .delete()
-                .eq("id", id);
+                .eq(
+                    "id",
+                    portfolioId
+                );
 
 
-        if (error) {
+        if (
+            error
+        ) {
+
             throw error;
+
         }
 
 
-        showAdminMessage(
-            "Portföy silindi.",
+        showMessage(
+            "Portföy çalışması silindi.",
             "success"
         );
 
 
         await loadPortfolios();
 
+    } catch (
+        error
+    ) {
 
-    } catch (error) {
+        console.error(
+            "Silme hatası:",
+            error
+        );
 
-        showAdminMessage(
+
+        showMessage(
+            "Silme hatası: " +
             error.message,
             "error"
         );
@@ -1111,71 +1751,270 @@ async function deletePortfolio(id) {
 
 
 /* =========================================
-   SITE SETTINGS
+   ÇIKIŞ YAP
 ========================================= */
 
-function initializeSiteSettings() {
+function initializeLogout() {
 
-    const form =
+    const logoutButton =
         document.getElementById(
-            "siteSettingsForm"
+            "logoutButton"
         );
 
 
-    if (!form) {
+    if (
+        !logoutButton
+    ) {
+
         return;
+
     }
 
 
-    loadSiteSettings();
+    logoutButton.addEventListener(
+        "click",
+        async function () {
+
+            const originalText =
+                logoutButton.textContent;
 
 
-    form.addEventListener(
-        "submit",
-        (event) => {
+            try {
 
-            event.preventDefault();
-
-
-            const settings = {
-
-                siteTitle:
-                    document.getElementById(
-                        "siteTitle"
-                    ).value,
-
-                heroTitle:
-                    document.getElementById(
-                        "heroTitle"
-                    ).value,
-
-                heroText:
-                    document.getElementById(
-                        "heroText"
-                    ).value,
-
-                instagramLink:
-                    document.getElementById(
-                        "instagramLink"
-                    ).value,
-
-                emailAddress:
-                    document.getElementById(
-                        "emailAddress"
-                    ).value
-
-            };
+                logoutButton.disabled =
+                    true;
 
 
-            localStorage.setItem(
-                "furkanKayaSiteSettings",
-                JSON.stringify(settings)
+                logoutButton.textContent =
+                    "Çıkış yapılıyor...";
+
+
+                /*
+                   ÖNEMLİ:
+
+                   Eski kodda signOut sonucu
+                   kontrol edilmeden login sayfasına
+                   gidiliyordu.
+
+                   Burada önce Supabase oturumunu
+                   gerçekten kapatıyoruz.
+                */
+
+                const {
+                    error
+                } =
+                    await supabaseClient
+                        .auth
+                        .signOut(
+                            {
+                                scope: "global"
+                            }
+                        );
+
+
+                if (
+                    error
+                ) {
+
+                    throw error;
+
+                }
+
+
+                /*
+                   Supabase auth tokenlarını
+                   tarayıcıdan da temizle.
+                */
+
+                clearSupabaseAuthStorage();
+
+
+                /*
+                   Oturumun gerçekten silindiğini
+                   kontrol et.
+                */
+
+                const {
+                    data:
+                        sessionData,
+                    error:
+                        sessionError
+                } =
+                    await supabaseClient
+                        .auth
+                        .getSession();
+
+
+                if (
+                    sessionError
+                ) {
+
+                    console.warn(
+                        "Çıkış sonrası session kontrol hatası:",
+                        sessionError
+                    );
+
+                }
+
+
+                if (
+                    sessionData &&
+                    sessionData.session
+                ) {
+
+                    throw new Error(
+                        "Oturum kapatılamadı."
+                    );
+
+                }
+
+
+                /*
+                   replace kullanıyoruz.
+                   Böylece tarayıcı geri tuşuyla
+                   tekrar admin'e dönülmesi engellenir.
+                */
+
+                window.location.replace(
+                    "login.html?logout=1&t=" +
+                    Date.now()
+                );
+
+            } catch (
+                error
+            ) {
+
+                console.error(
+                    "Çıkış hatası:",
+                    error
+                );
+
+
+                showMessage(
+                    "Çıkış yapılamadı: " +
+                    (
+                        error.message ||
+                        "Bilinmeyen hata"
+                    ),
+                    "error"
+                );
+
+
+                logoutButton.disabled =
+                    false;
+
+
+                logoutButton.textContent =
+                    originalText;
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   SUPABASE AUTH STORAGE TEMİZLE
+========================================= */
+
+function clearSupabaseAuthStorage() {
+
+    const keysToRemove =
+        [];
+
+
+    for (
+        let i = 0;
+        i < localStorage.length;
+        i++
+    ) {
+
+        const key =
+            localStorage.key(
+                i
             );
 
 
-            showAdminMessage(
-                "Site ayarları kaydedildi.",
-                "success"
+        if (
+            key &&
+            (
+                key.includes(
+                    "sb-"
+                ) &&
+                key.includes(
+                    "auth-token"
+                )
+            )
+        ) {
+
+            keysToRemove.push(
+                key
+            );
+
+        }
+
+    }
+
+
+    keysToRemove.forEach(
+        function (
+            key
+        ) {
+
+            localStorage.removeItem(
+                key
+            );
+
+        }
+    );
+
+
+    const sessionKeysToRemove =
+        [];
+
+
+    for (
+        let i = 0;
+        i < sessionStorage.length;
+        i++
+    ) {
+
+        const key =
+            sessionStorage.key(
+                i
+            );
+
+
+        if (
+            key &&
+            (
+                key.includes(
+                    "sb-"
+                ) &&
+                key.includes(
+                    "auth-token"
+                )
+            )
+        ) {
+
+            sessionKeysToRemove.push(
+                key
+            );
+
+        }
+
+    );
+
+
+    sessionKeysToRemove.forEach(
+        function (
+            key
+        ) {
+
+            sessionStorage.removeItem(
+                key
             );
 
         }
@@ -1184,237 +2023,79 @@ function initializeSiteSettings() {
 }
 
 
-function loadSiteSettings() {
-
-    try {
-
-        const data =
-            localStorage.getItem(
-                "furkanKayaSiteSettings"
-            );
-
-
-        if (!data) {
-            return;
-        }
-
-
-        const settings =
-            JSON.parse(data);
-
-
-        setInputValue(
-            "siteTitle",
-            settings.siteTitle
-        );
-
-        setInputValue(
-            "heroTitle",
-            settings.heroTitle
-        );
-
-        setInputValue(
-            "heroText",
-            settings.heroText
-        );
-
-        setInputValue(
-            "instagramLink",
-            settings.instagramLink
-        );
-
-        setInputValue(
-            "emailAddress",
-            settings.emailAddress
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
-}
-
-
 /* =========================================
-   CONTACT SETTINGS
+   MESAJ GÖSTER
 ========================================= */
 
-function initializeContactSettings() {
-
-    const form =
-        document.getElementById(
-            "contactForm"
-        );
-
-
-    if (!form) {
-        return;
-    }
-
-
-    loadContactSettings();
-
-
-    form.addEventListener(
-        "submit",
-        (event) => {
-
-            event.preventDefault();
-
-
-            const contact = {
-
-                email:
-                    document.getElementById(
-                        "contactEmail"
-                    ).value,
-
-                phone:
-                    document.getElementById(
-                        "contactPhone"
-                    ).value,
-
-                address:
-                    document.getElementById(
-                        "contactAddress"
-                    ).value
-
-            };
-
-
-            localStorage.setItem(
-                "furkanKayaContact",
-                JSON.stringify(contact)
-            );
-
-
-            showAdminMessage(
-                "İletişim bilgileri kaydedildi.",
-                "success"
-            );
-
-        }
-    );
-
-}
-
-
-function loadContactSettings() {
-
-    try {
-
-        const data =
-            localStorage.getItem(
-                "furkanKayaContact"
-            );
-
-
-        if (!data) {
-            return;
-        }
-
-
-        const contact =
-            JSON.parse(data);
-
-
-        setInputValue(
-            "contactEmail",
-            contact.email
-        );
-
-        setInputValue(
-            "contactPhone",
-            contact.phone
-        );
-
-        setInputValue(
-            "contactAddress",
-            contact.address
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
-}
-
-
-/* =========================================
-   HELPER
-========================================= */
-
-function setInputValue(id, value) {
-
-    const element =
-        document.getElementById(id);
-
-
-    if (element) {
-
-        element.value =
-            value || "";
-
-    }
-
-}
-
-
-function showAdminMessage(
+function showMessage(
     message,
     type = "success"
 ) {
 
-    const box =
+    const adminMessage =
         document.getElementById(
             "adminMessage"
         );
 
 
-    if (!box) {
+    if (
+        !adminMessage
+    ) {
+
         return;
+
     }
 
 
-    box.textContent =
+    adminMessage.textContent =
         message;
 
 
-    box.className =
-        `admin-message show ${type}`;
+    adminMessage.className =
+        "admin-message show " +
+        type;
 
 
     clearTimeout(
-        window.adminMessageTimer
+        window.adminMessageTimeout
     );
 
 
-    window.adminMessageTimer =
+    window.adminMessageTimeout =
         setTimeout(
-            () => {
+            function () {
 
-                box.className =
+                adminMessage.className =
                     "admin-message";
 
             },
-            4000
+            5000
         );
 
 }
 
 
-function escapeHtml(value) {
+/* =========================================
+   HTML ESCAPE
+========================================= */
+
+function escapeHtml(
+    value
+) {
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     div.textContent =
-        value || "";
+        value === null ||
+        value === undefined
+            ? ""
+            : String(
+                value
+            );
 
 
     return div.innerHTML;
@@ -1422,10 +2103,24 @@ function escapeHtml(value) {
 }
 
 
-function escapeAttribute(value) {
+/* =========================================
+   ATTRIBUTE ESCAPE
+========================================= */
 
-    return escapeHtml(value)
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+function escapeAttribute(
+    value
+) {
+
+    return escapeHtml(
+        value
+    )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
