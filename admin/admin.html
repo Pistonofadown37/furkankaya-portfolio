@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,26 +9,27 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
+
     <title>Yönetim Paneli | Furkan Kaya</title>
 
     <link
         rel="stylesheet"
-        type="text/css"
-        href="./admin.css?v=20260828-1"
+        href="admin.css"
     >
+
 </head>
+
 
 <body class="admin-page">
 
 
-    <!-- =====================================
-         ADMIN HEADER
-    ====================================== -->
-
     <header class="admin-header">
 
         <div class="admin-header-container">
-
 
             <a
                 href="../index.html"
@@ -39,7 +40,6 @@
 
 
             <div class="admin-header-actions">
-
 
                 <a
                     href="../index.html"
@@ -58,7 +58,6 @@
                     Çıkış Yap
                 </button>
 
-
             </div>
 
         </div>
@@ -66,17 +65,8 @@
     </header>
 
 
-
-    <!-- =====================================
-         MAIN
-    ====================================== -->
-
     <main class="admin-main">
 
-
-        <!-- =================================
-             PAGE HEADING
-        ================================== -->
 
         <div class="admin-page-heading">
 
@@ -91,13 +81,9 @@
         </div>
 
 
-
-        <!-- =================================
-             NAVIGATION
-        ================================== -->
+        <!-- NAVIGATION -->
 
         <nav class="admin-navigation">
-
 
             <button
                 type="button"
@@ -134,43 +120,28 @@
                 ✉ İletişim
             </button>
 
-
         </nav>
 
 
-
-        <!-- =================================
-             DASHBOARD
-        ================================== -->
+        <!-- GENEL BAKIŞ -->
 
         <section
             id="dashboardSection"
             class="admin-section active"
         >
 
-
             <div class="admin-card">
 
+                <h2 class="admin-card-title">
+                    Hoş Geldin
+                </h2>
 
-                <div class="admin-card-header">
-
-                    <div>
-
-                        <h2 class="admin-card-title">
-                            Hoş Geldin
-                        </h2>
-
-                        <p class="admin-card-description">
-                            Portföyünü ve site içeriklerini buradan yönetebilirsin.
-                        </p>
-
-                    </div>
-
-                </div>
+                <p class="admin-card-description">
+                    Portföyünü ve site içeriklerini buradan yönetebilirsin.
+                </p>
 
 
                 <div class="admin-form-grid">
-
 
                     <div class="admin-form-group">
 
@@ -203,53 +174,37 @@
 
                     </div>
 
-
                 </div>
 
             </div>
-
 
 
             <div class="admin-card">
 
-                <div class="admin-card-header">
+                <h2 class="admin-card-title">
+                    Portföyünü buradan yönetebilirsin
+                </h2>
 
-                    <div>
-
-                        <h2 class="admin-card-title">
-                            Portföyünü buradan yönetebilirsin
-                        </h2>
-
-                        <p class="admin-card-description">
-                            Yeni çalışmalar ekleyebilir, görselleri
-                            bilgisayarından yükleyebilir, mevcut projeleri
-                            düzenleyebilir ve sitedeki içerikleri
-                            güncelleyebilirsin.
-                        </p>
-
-                    </div>
-
-                </div>
+                <p class="admin-card-description">
+                    Yeni çalışmalar ekleyebilir, görselleri
+                    bilgisayarından yükleyebilir, mevcut projeleri
+                    düzenleyebilir ve sitedeki içerikleri
+                    güncelleyebilirsin.
+                </p>
 
             </div>
-
 
         </section>
 
 
-
-        <!-- =================================
-             PORTFOLIO
-        ================================== -->
+        <!-- PORTFÖY -->
 
         <section
             id="portfolioSection"
             class="admin-section"
         >
 
-
             <div class="admin-card">
-
 
                 <div class="admin-card-header">
 
@@ -274,9 +229,7 @@
                         + Yeni Çalışma
                     </button>
 
-
                 </div>
-
 
 
                 <div
@@ -287,28 +240,21 @@
                 </div>
 
 
-
                 <div
                     id="portfolioList"
                     class="portfolio-admin-list"
-                >
-                </div>
-
+                ></div>
 
             </div>
 
 
-
-            <!-- =================================
-                 PORTFOLIO FORM
-            ================================== -->
+            <!-- PORTFÖY FORMU -->
 
             <div
                 id="portfolioFormCard"
                 class="admin-card"
                 style="display: none;"
             >
-
 
                 <div class="admin-card-header">
 
@@ -322,7 +268,7 @@
                         </h2>
 
                         <p class="admin-card-description">
-                            Portföy çalışmasının bilgilerini gir.
+                            Portföy bilgilerini doldurun.
                         </p>
 
                     </div>
@@ -330,15 +276,12 @@
                 </div>
 
 
-
                 <form id="portfolioForm">
-
 
                     <input
                         type="hidden"
                         id="portfolioEditId"
                     >
-
 
 
                     <div class="admin-form-grid">
@@ -347,18 +290,16 @@
                         <div class="admin-form-group">
 
                             <label for="portfolioTitle">
-                                Proje Başlığı
+                                Çalışma Başlığı
                             </label>
 
                             <input
                                 type="text"
                                 id="portfolioTitle"
-                                placeholder="Örnek: Marka Kimliği Tasarımı"
                                 required
                             >
 
                         </div>
-
 
 
                         <div class="admin-form-group">
@@ -370,11 +311,9 @@
                             <input
                                 type="text"
                                 id="portfolioCategory"
-                                placeholder="Örnek: Grafik Tasarım"
                             >
 
                         </div>
-
 
 
                         <div class="admin-form-group full-width">
@@ -385,17 +324,15 @@
 
                             <textarea
                                 id="portfolioDescription"
-                                placeholder="Proje hakkında kısa bir açıklama yaz..."
                             ></textarea>
 
                         </div>
 
 
-
                         <div class="admin-form-group">
 
                             <label for="portfolioDate">
-                                Proje Tarihi
+                                Tarih
                             </label>
 
                             <input
@@ -404,7 +341,6 @@
                             >
 
                         </div>
-
 
 
                         <div class="admin-form-group">
@@ -428,14 +364,10 @@
                         </div>
 
 
-
-                        <!-- PORTFOLIO IMAGE -->
-
                         <div class="admin-form-group full-width">
 
-
-                            <label>
-                                Proje Görseli
+                            <label for="portfolioImageInput">
+                                Portföy Görseli
                             </label>
 
 
@@ -444,22 +376,21 @@
                                 class="image-upload-area"
                             >
 
-
                                 <div
                                     id="imageUploadContent"
                                     class="image-upload-content"
                                 >
 
                                     <span class="image-upload-icon">
-                                        🖼
+                                        ◈
                                     </span>
 
-                                    <span class="image-upload-title">
+                                    <strong>
                                         Görsel yüklemek için tıkla
-                                    </span>
+                                    </strong>
 
-                                    <span class="image-upload-text">
-                                        JPG, PNG veya WEBP
+                                    <span>
+                                        PNG, JPG veya WEBP
                                     </span>
 
                                 </div>
@@ -468,12 +399,10 @@
                                 <img
                                     id="portfolioImagePreview"
                                     class="image-preview"
-                                    alt="Portföy görsel önizleme"
+                                    alt="Portföy görseli"
                                 >
 
-
                             </label>
-
 
 
                             <input
@@ -483,16 +412,12 @@
                                 accept="image/png,image/jpeg,image/webp"
                             >
 
-
                         </div>
-
 
                     </div>
 
 
-
                     <div class="admin-form-actions">
-
 
                         <button
                             type="submit"
@@ -510,117 +435,37 @@
                             İptal
                         </button>
 
-
                     </div>
-
 
                 </form>
 
-
             </div>
-
 
         </section>
 
 
-
-        <!-- =================================
-             SITE SETTINGS
-        ================================== -->
+        <!-- SITE AYARLARI -->
 
         <section
             id="settingsSection"
             class="admin-section"
         >
 
-
             <div class="admin-card">
 
+                <h2 class="admin-card-title">
+                    Site Ayarları
+                </h2>
 
-                <div class="admin-card-header">
-
-                    <div>
-
-                        <h2 class="admin-card-title">
-                            Site Ayarları
-                        </h2>
-
-                        <p class="admin-card-description">
-                            Ana sayfadaki metinleri, logoyu ve bağlantıları buradan düzenle.
-                        </p>
-
-                    </div>
-
-                </div>
-
+                <p class="admin-card-description">
+                    Ana sayfadaki metinleri ve bağlantıları buradan düzenle.
+                </p>
 
 
                 <form id="siteSettingsForm">
 
-
                     <div class="admin-form-grid">
 
-
-                        <!-- LOGO -->
-
-                        <div class="admin-form-group full-width">
-
-
-                            <label>
-                                Site Logosu
-                            </label>
-
-
-                            <label
-                                for="siteLogoInput"
-                                class="image-upload-area"
-                            >
-
-
-                                <div
-                                    id="logoUploadContent"
-                                    class="image-upload-content"
-                                >
-
-                                    <span class="image-upload-icon">
-                                        ◈
-                                    </span>
-
-                                    <span class="image-upload-title">
-                                        Logo yüklemek için tıkla
-                                    </span>
-
-                                    <span class="image-upload-text">
-                                        PNG, JPG veya WEBP
-                                    </span>
-
-                                </div>
-
-
-                                <img
-                                    id="siteLogoPreview"
-                                    class="image-preview"
-                                    alt="Logo önizleme"
-                                >
-
-
-                            </label>
-
-
-
-                            <input
-                                type="file"
-                                id="siteLogoInput"
-                                class="image-upload-input"
-                                accept="image/png,image/jpeg,image/webp"
-                            >
-
-
-                        </div>
-
-
-
-                        <!-- SITE TITLE -->
 
                         <div class="admin-form-group full-width">
 
@@ -637,9 +482,6 @@
                         </div>
 
 
-
-                        <!-- HERO TITLE -->
-
                         <div class="admin-form-group full-width">
 
                             <label for="heroTitle">
@@ -649,14 +491,10 @@
                             <input
                                 type="text"
                                 id="heroTitle"
-                                placeholder="Furkan Kaya ile yaratıcı tasarımlar"
                             >
 
                         </div>
 
-
-
-                        <!-- HERO TEXT -->
 
                         <div class="admin-form-group full-width">
 
@@ -666,14 +504,10 @@
 
                             <textarea
                                 id="heroText"
-                                placeholder="Kendinizi ve hizmetlerinizi tanıtın..."
                             ></textarea>
 
                         </div>
 
-
-
-                        <!-- INSTAGRAM -->
 
                         <div class="admin-form-group">
 
@@ -684,14 +518,10 @@
                             <input
                                 type="url"
                                 id="instagramLink"
-                                placeholder="https://instagram.com/kullaniciadi"
                             >
 
                         </div>
 
-
-
-                        <!-- EMAIL -->
 
                         <div class="admin-form-group">
 
@@ -702,14 +532,11 @@
                             <input
                                 type="email"
                                 id="emailAddress"
-                                placeholder="ornek@email.com"
                             >
 
                         </div>
 
-
                     </div>
-
 
 
                     <div class="admin-form-actions">
@@ -723,50 +550,32 @@
 
                     </div>
 
-
                 </form>
 
-
             </div>
-
 
         </section>
 
 
-
-        <!-- =================================
-             CONTACT
-        ================================== -->
+        <!-- İLETİŞİM -->
 
         <section
             id="contactSection"
             class="admin-section"
         >
 
-
             <div class="admin-card">
 
+                <h2 class="admin-card-title">
+                    İletişim Bilgileri
+                </h2>
 
-                <div class="admin-card-header">
-
-                    <div>
-
-                        <h2 class="admin-card-title">
-                            İletişim Bilgileri
-                        </h2>
-
-                        <p class="admin-card-description">
-                            Sitede görüntülenecek iletişim bilgilerini düzenle.
-                        </p>
-
-                    </div>
-
-                </div>
-
+                <p class="admin-card-description">
+                    Sitede görüntülenecek iletişim bilgilerini düzenle.
+                </p>
 
 
                 <form id="contactForm">
-
 
                     <div class="admin-form-grid">
 
@@ -780,11 +589,9 @@
                             <input
                                 type="email"
                                 id="contactEmail"
-                                placeholder="ornek@email.com"
                             >
 
                         </div>
-
 
 
                         <div class="admin-form-group">
@@ -796,11 +603,9 @@
                             <input
                                 type="tel"
                                 id="contactPhone"
-                                placeholder="+90 5XX XXX XX XX"
                             >
 
                         </div>
-
 
 
                         <div class="admin-form-group full-width">
@@ -812,14 +617,11 @@
                             <input
                                 type="text"
                                 id="contactAddress"
-                                placeholder="Örnek: İzmir, Türkiye"
                             >
 
                         </div>
 
-
                     </div>
-
 
 
                     <div class="admin-form-actions">
@@ -833,54 +635,27 @@
 
                     </div>
 
-
                 </form>
-
 
             </div>
 
-
         </section>
-
-
-
-        <!-- =================================
-             MESSAGE
-        ================================== -->
-
-        <div
-            id="adminMessage"
-            class="admin-message"
-        ></div>
 
 
     </main>
 
 
+    <div
+        id="adminMessage"
+        class="admin-message"
+    ></div>
 
-    <!-- =====================================
-         SUPABASE
-    ====================================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
-
-    <!-- =====================================
-         ADMIN JAVASCRIPT
-    ====================================== -->
+    <script src="../supabase.js"></script>
 
     <script src="admin.js"></script>
 
-
-
-    <!-- =====================================
-         SITE SETTINGS JAVASCRIPT
-    ====================================== -->
-
-    <script src="settings.js"></script>
-
-
 </body>
-
 </html>
