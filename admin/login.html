@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="tr">
 
 <head>
@@ -10,19 +11,12 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <meta
-        name="description"
-        content="Furkan Kaya Portföy Yönetim Paneli"
-    >
+    <title>
+        Yönetim Paneli Giriş | Furkan Kaya
+    </title>
 
-    <meta
-        name="robots"
-        content="noindex, nofollow"
-    >
 
-    <title>Admin Girişi | Furkan Kaya</title>
-
-    <!-- ADMIN CSS -->
+    <!-- CSS -->
 
     <link
         rel="stylesheet"
@@ -32,184 +26,162 @@
 </head>
 
 
-<body class="login-page">
+<body class="admin-page">
 
 
     <!-- =====================================
-         LOGIN CONTAINER
+         LOGIN PAGE
     ====================================== -->
 
-    <main class="login-container">
+    <main class="login-page">
 
 
-        <section
-            class="login-card"
-            aria-labelledby="loginTitle"
-        >
+        <div class="login-container">
 
 
             <!-- LOGO -->
 
             <a
                 href="../index.html"
-                class="admin-logo"
+                class="admin-logo login-logo"
             >
                 FURKAN<span>KAYA</span>
             </a>
 
 
-            <!-- BAŞLIK -->
+            <!-- LOGIN CARD -->
 
-            <div class="login-heading">
-
-                <h1 id="loginTitle">
-                    Yönetim Paneli
-                </h1>
-
-                <p>
-                    Devam etmek için giriş yapın.
-                </p>
-
-            </div>
+            <section class="login-card">
 
 
-            <!-- =================================
-                 GİRİŞ FORMU
-            ================================== -->
+                <div class="login-header">
 
-            <form
-                id="loginForm"
-                class="login-form"
-                novalidate
-            >
+                    <span class="login-eyebrow">
+                        YÖNETİM PANELİ
+                    </span>
 
 
-                <!-- E-POSTA -->
+                    <h1>
+                        Hoş Geldin
+                    </h1>
 
-                <div class="form-group">
 
-                    <label for="email">
-                        E-posta
-                    </label>
-
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="E-posta adresiniz"
-                        autocomplete="email"
-                        required
-                    >
+                    <p>
+                        Yönetim paneline erişmek için
+                        giriş yap.
+                    </p>
 
                 </div>
 
 
-                <!-- ŞİFRE -->
+                <!-- FORM -->
 
-                <div class="form-group">
+                <form
+                    id="loginForm"
+                    novalidate
+                >
 
-                    <label for="password">
-                        Şifre
-                    </label>
+
+                    <!-- EMAIL -->
+
+                    <div class="admin-form-group">
+
+                        <label
+                            for="loginEmail"
+                        >
+                            E-posta Adresi
+                        </label>
 
 
-                    <div class="password-wrapper">
+                        <input
+                            type="email"
+                            id="loginEmail"
+                            placeholder="ornek@email.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="admin-form-group">
+
+                        <label
+                            for="loginPassword"
+                        >
+                            Şifre
+                        </label>
+
 
                         <input
                             type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Şifreniz"
+                            id="loginPassword"
+                            placeholder="Şifrenizi girin"
                             autocomplete="current-password"
                             required
                         >
 
-
-                        <button
-                            type="button"
-                            class="password-toggle"
-                            id="passwordToggle"
-                            aria-label="Şifreyi göster"
-                            tabindex="0"
-                        >
-                            👁
-                        </button>
-
                     </div>
 
-                </div>
+
+                    <!-- SUBMIT -->
+
+                    <button
+                        type="submit"
+                        id="loginButton"
+                        class="admin-primary-button login-submit-button"
+                    >
+                        Giriş Yap
+                    </button>
 
 
-                <!-- MESAJ -->
+                </form>
+
+
+                <!-- MESSAGE -->
 
                 <div
-                    class="form-message"
-                    id="formMessage"
-                    role="alert"
-                    aria-live="polite"
+                    id="loginMessage"
+                    class="admin-message"
                 ></div>
 
 
-                <!-- GİRİŞ BUTONU -->
-
-                <button
-                    type="submit"
-                    class="login-button"
-                    id="loginButton"
-                >
-
-                    <span class="button-text">
-                        Giriş Yap
-                    </span>
+            </section>
 
 
-                    <span
-                        class="button-loading"
-                        aria-hidden="true"
-                    >
-                        Giriş yapılıyor...
-                    </span>
-
-                </button>
-
-
-            </form>
-
-
-            <!-- SITEYE DÖN -->
-
-            <a
-                href="../index.html"
-                class="back-site"
-            >
-                ← Siteye Dön
-            </a>
-
-
-        </section>
+        </div>
 
 
     </main>
 
 
     <!-- =====================================
-         JAVASCRIPT
+         SUPABASE LIBRARY
     ====================================== -->
 
-
-    <!-- 1. SUPABASE KÜTÜPHANESİ -->
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
-    <!-- 2. SUPABASE BAĞLANTISI -->
-
-    <script src="../supabase.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
 
 
-    <!-- 3. SADECE LOGIN JAVASCRIPT -->
+    <!-- =====================================
+         SUPABASE CONNECTION
+    ====================================== -->
 
-    <script src="login.js"></script>
+    <script
+        src="supabase.js"
+    ></script>
+
+
+    <!-- =====================================
+         LOGIN JAVASCRIPT
+    ====================================== -->
+
+    <script
+        src="login.js"
+    ></script>
 
 
 </body>
