@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -8,25 +10,13 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <meta
-        http-equiv="Cache-Control"
-        content="no-cache, no-store, must-revalidate"
-    >
-
-    <meta
-        http-equiv="Pragma"
-        content="no-cache"
-    >
-
-    <meta
-        http-equiv="Expires"
-        content="0"
-    >
-
     <title>Yönetim Paneli | Furkan Kaya</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="admin.css">
+    <!-- ADMIN CSS -->
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
 
 </head>
 
@@ -42,6 +32,7 @@
 
         <div class="admin-header-container">
 
+
             <a
                 href="../index.html"
                 class="admin-logo"
@@ -51,6 +42,7 @@
 
 
             <div class="admin-header-actions">
+
 
                 <a
                     href="../index.html"
@@ -68,6 +60,7 @@
                 >
                     Çıkış Yap
                 </button>
+
 
             </div>
 
@@ -90,7 +83,9 @@
 
         <div class="admin-page-heading">
 
-            <h1>Yönetim Paneli</h1>
+            <h1>
+                Yönetim Paneli
+            </h1>
 
             <p>
                 Portföyünü ve site içeriklerini buradan yönetebilirsin.
@@ -105,6 +100,7 @@
         ================================== -->
 
         <nav class="admin-navigation">
+
 
             <button
                 type="button"
@@ -141,6 +137,7 @@
                 ✉ İletişim
             </button>
 
+
         </nav>
 
 
@@ -157,6 +154,7 @@
 
             <div class="admin-card">
 
+
                 <div class="admin-card-header">
 
                     <div>
@@ -166,7 +164,7 @@
                         </h2>
 
                         <p class="admin-card-description">
-                            Portföyünü buradan yönetebilirsin.
+                            Portföyünü ve site içeriklerini buradan yönetebilirsin.
                         </p>
 
                     </div>
@@ -179,7 +177,7 @@
 
                     <div class="admin-form-group">
 
-                        <label>
+                        <label for="totalPortfolio">
                             Toplam Portföy
                         </label>
 
@@ -195,7 +193,7 @@
 
                     <div class="admin-form-group">
 
-                        <label>
+                        <label for="activePortfolio">
                             Aktif Portföy
                         </label>
 
@@ -214,6 +212,7 @@
             </div>
 
 
+
             <div class="admin-card">
 
                 <div class="admin-card-header">
@@ -221,7 +220,7 @@
                     <div>
 
                         <h2 class="admin-card-title">
-                            Portföyünü buradan yönetebilirsin.
+                            Portföyünü buradan yönetebilirsin
                         </h2>
 
                         <p class="admin-card-description">
@@ -254,6 +253,7 @@
 
             <div class="admin-card">
 
+
                 <div class="admin-card-header">
 
                     <div>
@@ -277,7 +277,9 @@
                         + Yeni Çalışma
                     </button>
 
+
                 </div>
+
 
 
                 <div
@@ -286,6 +288,7 @@
                 >
                     Henüz portföy çalışması bulunmuyor.
                 </div>
+
 
 
                 <div
@@ -299,7 +302,9 @@
 
 
 
-            <!-- PORTFOLIO FORM -->
+            <!-- =================================
+                 PORTFOLIO FORM
+            ================================== -->
 
             <div
                 id="portfolioFormCard"
@@ -328,6 +333,7 @@
                 </div>
 
 
+
                 <form id="portfolioForm">
 
 
@@ -335,6 +341,7 @@
                         type="hidden"
                         id="portfolioEditId"
                     >
+
 
 
                     <div class="admin-form-grid">
@@ -356,6 +363,7 @@
                         </div>
 
 
+
                         <div class="admin-form-group">
 
                             <label for="portfolioCategory">
@@ -369,6 +377,7 @@
                             >
 
                         </div>
+
 
 
                         <div class="admin-form-group full-width">
@@ -385,6 +394,7 @@
                         </div>
 
 
+
                         <div class="admin-form-group">
 
                             <label for="portfolioDate">
@@ -397,6 +407,7 @@
                             >
 
                         </div>
+
 
 
                         <div class="admin-form-group">
@@ -420,7 +431,11 @@
                         </div>
 
 
+
+                        <!-- PORTFOLIO IMAGE -->
+
                         <div class="admin-form-group full-width">
+
 
                             <label>
                                 Proje Görseli
@@ -456,11 +471,12 @@
                                 <img
                                     id="portfolioImagePreview"
                                     class="image-preview"
-                                    alt="Görsel önizleme"
+                                    alt="Portföy görsel önizleme"
                                 >
 
 
                             </label>
+
 
 
                             <input
@@ -480,6 +496,7 @@
 
                     <div class="admin-form-actions">
 
+
                         <button
                             type="submit"
                             class="admin-primary-button"
@@ -495,6 +512,7 @@
                         >
                             İptal
                         </button>
+
 
                     </div>
 
@@ -531,7 +549,7 @@
                         </h2>
 
                         <p class="admin-card-description">
-                            Ana sayfadaki metinleri buradan düzenle.
+                            Ana sayfadaki metinleri, logoyu ve bağlantıları buradan düzenle.
                         </p>
 
                     </div>
@@ -539,11 +557,73 @@
                 </div>
 
 
+
                 <form id="siteSettingsForm">
 
 
                     <div class="admin-form-grid">
 
+
+                        <!-- LOGO -->
+
+                        <div class="admin-form-group full-width">
+
+
+                            <label>
+                                Site Logosu
+                            </label>
+
+
+                            <label
+                                for="siteLogoInput"
+                                class="image-upload-area"
+                            >
+
+
+                                <div
+                                    id="logoUploadContent"
+                                    class="image-upload-content"
+                                >
+
+                                    <span class="image-upload-icon">
+                                        ◈
+                                    </span>
+
+                                    <span class="image-upload-title">
+                                        Logo yüklemek için tıkla
+                                    </span>
+
+                                    <span class="image-upload-text">
+                                        PNG, JPG veya WEBP
+                                    </span>
+
+                                </div>
+
+
+                                <img
+                                    id="siteLogoPreview"
+                                    class="image-preview"
+                                    alt="Logo önizleme"
+                                >
+
+
+                            </label>
+
+
+
+                            <input
+                                type="file"
+                                id="siteLogoInput"
+                                class="image-upload-input"
+                                accept="image/png,image/jpeg,image/webp"
+                            >
+
+
+                        </div>
+
+
+
+                        <!-- SITE TITLE -->
 
                         <div class="admin-form-group full-width">
 
@@ -560,6 +640,9 @@
                         </div>
 
 
+
+                        <!-- HERO TITLE -->
+
                         <div class="admin-form-group full-width">
 
                             <label for="heroTitle">
@@ -569,11 +652,14 @@
                             <input
                                 type="text"
                                 id="heroTitle"
-                                placeholder="Merhaba, ben Furkan Kaya"
+                                placeholder="Furkan Kaya ile yaratıcı tasarımlar"
                             >
 
                         </div>
 
+
+
+                        <!-- HERO TEXT -->
 
                         <div class="admin-form-group full-width">
 
@@ -583,11 +669,14 @@
 
                             <textarea
                                 id="heroText"
-                                placeholder="Kendinizi tanıtın..."
+                                placeholder="Kendinizi ve hizmetlerinizi tanıtın..."
                             ></textarea>
 
                         </div>
 
+
+
+                        <!-- INSTAGRAM -->
 
                         <div class="admin-form-group">
 
@@ -598,11 +687,14 @@
                             <input
                                 type="url"
                                 id="instagramLink"
-                                placeholder="https://instagram.com/..."
+                                placeholder="https://instagram.com/kullaniciadi"
                             >
 
                         </div>
 
+
+
+                        <!-- EMAIL -->
 
                         <div class="admin-form-group">
 
@@ -620,6 +712,7 @@
 
 
                     </div>
+
 
 
                     <div class="admin-form-actions">
@@ -656,6 +749,7 @@
 
             <div class="admin-card">
 
+
                 <div class="admin-card-header">
 
                     <div>
@@ -673,6 +767,7 @@
                 </div>
 
 
+
                 <form id="contactForm">
 
 
@@ -688,9 +783,11 @@
                             <input
                                 type="email"
                                 id="contactEmail"
+                                placeholder="ornek@email.com"
                             >
 
                         </div>
+
 
 
                         <div class="admin-form-group">
@@ -702,9 +799,11 @@
                             <input
                                 type="tel"
                                 id="contactPhone"
+                                placeholder="+90 5XX XXX XX XX"
                             >
 
                         </div>
+
 
 
                         <div class="admin-form-group full-width">
@@ -716,6 +815,7 @@
                             <input
                                 type="text"
                                 id="contactAddress"
+                                placeholder="Örnek: İzmir, Türkiye"
                             >
 
                         </div>
@@ -724,13 +824,14 @@
                     </div>
 
 
+
                     <div class="admin-form-actions">
 
                         <button
                             type="submit"
                             class="admin-primary-button"
                         >
-                            Kaydet
+                            İletişim Bilgilerini Kaydet
                         </button>
 
                     </div>
@@ -761,1006 +862,28 @@
 
 
     <!-- =====================================
-         JAVASCRIPT
+         SUPABASE
     ====================================== -->
 
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        document.addEventListener("DOMContentLoaded", function () {
 
-            const navButtons = document.querySelectorAll(".admin-nav-button");
-            const sections = document.querySelectorAll(".admin-section");
 
-            const portfolioList = document.getElementById("portfolioList");
-            const portfolioEmptyState = document.getElementById("portfolioEmptyState");
+    <!-- =====================================
+         ADMIN JAVASCRIPT
+    ====================================== -->
 
-            const portfolioFormCard = document.getElementById("portfolioFormCard");
-            const portfolioForm = document.getElementById("portfolioForm");
+    <script src="admin.js"></script>
 
-            const newPortfolioButton = document.getElementById("newPortfolioButton");
-            const cancelPortfolioButton = document.getElementById("cancelPortfolioButton");
 
-            const portfolioEditId = document.getElementById("portfolioEditId");
-            const portfolioTitle = document.getElementById("portfolioTitle");
-            const portfolioCategory = document.getElementById("portfolioCategory");
-            const portfolioDescription = document.getElementById("portfolioDescription");
-            const portfolioDate = document.getElementById("portfolioDate");
-            const portfolioStatus = document.getElementById("portfolioStatus");
 
-            const portfolioImageInput = document.getElementById("portfolioImageInput");
-            const portfolioImagePreview = document.getElementById("portfolioImagePreview");
-            const imageUploadContent = document.getElementById("imageUploadContent");
+    <!-- =====================================
+         SITE SETTINGS JAVASCRIPT
+    ====================================== -->
 
-            const totalPortfolio = document.getElementById("totalPortfolio");
-            const activePortfolio = document.getElementById("activePortfolio");
-
-            const logoutButton = document.getElementById("logoutButton");
-
-            const adminMessage = document.getElementById("adminMessage");
-
-
-            let currentImage = "";
-
-
-            /* ================================
-               NAVIGATION
-            ================================= */
-
-            navButtons.forEach(function (button) {
-
-                button.addEventListener("click", function () {
-
-                    const targetId = button.dataset.target;
-
-                    navButtons.forEach(function (item) {
-                        item.classList.remove("active");
-                    });
-
-                    sections.forEach(function (section) {
-                        section.classList.remove("active");
-                    });
-
-                    button.classList.add("active");
-
-                    const targetSection = document.getElementById(targetId);
-
-                    if (targetSection) {
-                        targetSection.classList.add("active");
-                    }
-
-                });
-
-            });
-
-
-
-            /* ================================
-               LOCAL STORAGE
-            ================================= */
-
-            function getPortfolios() {
-
-                try {
-
-                    const data = localStorage.getItem("furkanKayaPortfolios");
-
-                    if (!data) {
-                        return [];
-                    }
-
-                    const parsed = JSON.parse(data);
-
-                    return Array.isArray(parsed) ? parsed : [];
-
-                } catch (error) {
-
-                    console.error(error);
-
-                    return [];
-
-                }
-
-            }
-
-
-            function savePortfolios(portfolios) {
-
-                localStorage.setItem(
-                    "furkanKayaPortfolios",
-                    JSON.stringify(portfolios)
-                );
-
-            }
-
-
-
-            /* ================================
-               MESSAGE
-            ================================= */
-
-            function showMessage(message, type) {
-
-                if (!adminMessage) {
-                    return;
-                }
-
-                adminMessage.textContent = message;
-
-                adminMessage.className =
-                    "admin-message show " + type;
-
-                setTimeout(function () {
-
-                    adminMessage.className =
-                        "admin-message";
-
-                }, 3000);
-
-            }
-
-
-
-            /* ================================
-               DASHBOARD COUNTS
-            ================================= */
-
-            function updateDashboard() {
-
-                const portfolios = getPortfolios();
-
-                const activeCount = portfolios.filter(function (item) {
-
-                    return item.status === "active";
-
-                }).length;
-
-
-                if (totalPortfolio) {
-                    totalPortfolio.value = portfolios.length;
-                }
-
-
-                if (activePortfolio) {
-                    activePortfolio.value = activeCount;
-                }
-
-            }
-
-
-
-            /* ================================
-               RENDER PORTFOLIO
-            ================================= */
-
-            function renderPortfolios() {
-
-                if (!portfolioList || !portfolioEmptyState) {
-                    return;
-                }
-
-                const portfolios = getPortfolios();
-
-                portfolioList.innerHTML = "";
-
-
-                if (portfolios.length === 0) {
-
-                    portfolioEmptyState.style.display = "block";
-
-                    updateDashboard();
-
-                    return;
-
-                }
-
-
-                portfolioEmptyState.style.display = "none";
-
-
-                portfolios.forEach(function (item) {
-
-                    const element = document.createElement("div");
-
-                    element.className = "portfolio-admin-item";
-
-
-                    const imageHtml = item.image
-                        ? '<img src="' + item.image + '" alt="">'
-                        : "";
-
-
-                    element.innerHTML = `
-
-                        <div class="portfolio-admin-image">
-
-                            ${imageHtml}
-
-                        </div>
-
-
-                        <div class="portfolio-admin-content">
-
-                            <h3>
-                                ${escapeHtml(item.title || "")}
-                            </h3>
-
-                            <p>
-                                ${escapeHtml(item.category || "")}
-                            </p>
-
-                            <p>
-                                ${escapeHtml(item.description || "")}
-                            </p>
-
-                        </div>
-
-
-                        <div class="portfolio-admin-actions">
-
-                            <button
-                                type="button"
-                                class="admin-secondary-button edit-portfolio"
-                                data-id="${item.id}"
-                            >
-                                Düzenle
-                            </button>
-
-
-                            <button
-                                type="button"
-                                class="admin-danger-button delete-portfolio"
-                                data-id="${item.id}"
-                            >
-                                Sil
-                            </button>
-
-                        </div>
-
-                    `;
-
-
-                    portfolioList.appendChild(element);
-
-                });
-
-
-                updateDashboard();
-
-            }
-
-
-
-            /* ================================
-               ESCAPE HTML
-            ================================= */
-
-            function escapeHtml(text) {
-
-                const div = document.createElement("div");
-
-                div.textContent = text;
-
-                return div.innerHTML;
-
-            }
-
-
-
-            /* ================================
-               NEW PORTFOLIO
-            ================================= */
-
-            if (newPortfolioButton) {
-
-                newPortfolioButton.addEventListener("click", function () {
-
-                    if (portfolioForm) {
-                        portfolioForm.reset();
-                    }
-
-                    if (portfolioEditId) {
-                        portfolioEditId.value = "";
-                    }
-
-                    currentImage = "";
-
-                    if (portfolioImagePreview) {
-                        portfolioImagePreview.src = "";
-                        portfolioImagePreview.classList.remove("show");
-                    }
-
-                    if (imageUploadContent) {
-                        imageUploadContent.style.display = "block";
-                    }
-
-                    const titleElement =
-                        document.getElementById("portfolioFormTitle");
-
-                    if (titleElement) {
-                        titleElement.textContent =
-                            "Yeni Portföy Çalışması";
-                    }
-
-                    if (portfolioFormCard) {
-                        portfolioFormCard.style.display = "block";
-
-                        portfolioFormCard.scrollIntoView({
-                            behavior: "smooth",
-                            block: "start"
-                        });
-                    }
-
-                });
-
-            }
-
-
-
-            /* ================================
-               CANCEL PORTFOLIO
-            ================================= */
-
-            if (cancelPortfolioButton) {
-
-                cancelPortfolioButton.addEventListener("click", function () {
-
-                    if (portfolioFormCard) {
-                        portfolioFormCard.style.display = "none";
-                    }
-
-                });
-
-            }
-
-
-
-            /* ================================
-               IMAGE UPLOAD
-            ================================= */
-
-            if (portfolioImageInput) {
-
-                portfolioImageInput.addEventListener(
-                    "change",
-                    function (event) {
-
-                        const file =
-                            event.target.files[0];
-
-                        if (!file) {
-                            return;
-                        }
-
-                        const reader =
-                            new FileReader();
-
-
-                        reader.onload = function (e) {
-
-                            currentImage = e.target.result;
-
-                            if (portfolioImagePreview) {
-
-                                portfolioImagePreview.src =
-                                    currentImage;
-
-                                portfolioImagePreview.classList.add(
-                                    "show"
-                                );
-
-                            }
-
-
-                            if (imageUploadContent) {
-                                imageUploadContent.style.display =
-                                    "none";
-                            }
-
-                        };
-
-
-                        reader.readAsDataURL(file);
-
-                    }
-                );
-
-            }
-
-
-
-            /* ================================
-               SAVE PORTFOLIO
-            ================================= */
-
-            if (portfolioForm) {
-
-                portfolioForm.addEventListener(
-                    "submit",
-                    function (event) {
-
-                        event.preventDefault();
-
-
-                        const portfolios =
-                            getPortfolios();
-
-
-                        const editId =
-                            portfolioEditId
-                                ? portfolioEditId.value
-                                : "";
-
-
-                        const portfolioData = {
-
-                            id: editId ||
-                                Date.now().toString(),
-
-                            title:
-                                portfolioTitle
-                                    ? portfolioTitle.value.trim()
-                                    : "",
-
-                            category:
-                                portfolioCategory
-                                    ? portfolioCategory.value.trim()
-                                    : "",
-
-                            description:
-                                portfolioDescription
-                                    ? portfolioDescription.value.trim()
-                                    : "",
-
-                            date:
-                                portfolioDate
-                                    ? portfolioDate.value
-                                    : "",
-
-                            status:
-                                portfolioStatus
-                                    ? portfolioStatus.value
-                                    : "active",
-
-                            image:
-                                currentImage
-
-                        };
-
-
-                        if (editId) {
-
-                            const index =
-                                portfolios.findIndex(
-                                    function (item) {
-
-                                        return item.id === editId;
-
-                                    }
-                                );
-
-
-                            if (index !== -1) {
-
-                                if (
-                                    !currentImage &&
-                                    portfolios[index].image
-                                ) {
-
-                                    portfolioData.image =
-                                        portfolios[index].image;
-
-                                }
-
-
-                                portfolios[index] =
-                                    portfolioData;
-
-                            }
-
-                        } else {
-
-                            portfolios.push(portfolioData);
-
-                        }
-
-
-                        savePortfolios(portfolios);
-
-
-                        renderPortfolios();
-
-
-                        if (portfolioFormCard) {
-                            portfolioFormCard.style.display = "none";
-                        }
-
-
-                        showMessage(
-                            editId
-                                ? "Portföy çalışması güncellendi."
-                                : "Yeni portföy çalışması eklendi.",
-                            "success"
-                        );
-
-                    }
-                );
-
-            }
-
-
-
-            /* ================================
-               EDIT / DELETE
-            ================================= */
-
-            if (portfolioList) {
-
-                portfolioList.addEventListener(
-                    "click",
-                    function (event) {
-
-                        const editButton =
-                            event.target.closest(
-                                ".edit-portfolio"
-                            );
-
-
-                        const deleteButton =
-                            event.target.closest(
-                                ".delete-portfolio"
-                            );
-
-
-                        if (editButton) {
-
-                            const id =
-                                editButton.dataset.id;
-
-
-                            const portfolios =
-                                getPortfolios();
-
-
-                            const item =
-                                portfolios.find(
-                                    function (portfolio) {
-
-                                        return portfolio.id === id;
-
-                                    }
-                                );
-
-
-                            if (!item) {
-                                return;
-                            }
-
-
-                            if (portfolioEditId) {
-                                portfolioEditId.value = item.id;
-                            }
-
-
-                            if (portfolioTitle) {
-                                portfolioTitle.value =
-                                    item.title || "";
-                            }
-
-
-                            if (portfolioCategory) {
-                                portfolioCategory.value =
-                                    item.category || "";
-                            }
-
-
-                            if (portfolioDescription) {
-                                portfolioDescription.value =
-                                    item.description || "";
-                            }
-
-
-                            if (portfolioDate) {
-                                portfolioDate.value =
-                                    item.date || "";
-                            }
-
-
-                            if (portfolioStatus) {
-                                portfolioStatus.value =
-                                    item.status || "active";
-                            }
-
-
-                            currentImage =
-                                item.image || "";
-
-
-                            if (
-                                currentImage &&
-                                portfolioImagePreview
-                            ) {
-
-                                portfolioImagePreview.src =
-                                    currentImage;
-
-                                portfolioImagePreview.classList.add(
-                                    "show"
-                                );
-
-
-                                if (imageUploadContent) {
-                                    imageUploadContent.style.display =
-                                        "none";
-                                }
-
-                            }
-
-
-                            const titleElement =
-                                document.getElementById(
-                                    "portfolioFormTitle"
-                                );
-
-
-                            if (titleElement) {
-
-                                titleElement.textContent =
-                                    "Portföy Çalışmasını Düzenle";
-
-                            }
-
-
-                            if (portfolioFormCard) {
-
-                                portfolioFormCard.style.display =
-                                    "block";
-
-
-                                portfolioFormCard.scrollIntoView({
-                                    behavior: "smooth",
-                                    block: "start"
-                                });
-
-                            }
-
-                        }
-
-
-                        if (deleteButton) {
-
-                            const id =
-                                deleteButton.dataset.id;
-
-
-                            const confirmed =
-                                confirm(
-                                    "Bu portföy çalışmasını silmek istediğine emin misin?"
-                                );
-
-
-                            if (!confirmed) {
-                                return;
-                            }
-
-
-                            const portfolios =
-                                getPortfolios()
-                                    .filter(
-                                        function (item) {
-
-                                            return item.id !== id;
-
-                                        }
-                                    );
-
-
-                            savePortfolios(portfolios);
-
-
-                            renderPortfolios();
-
-
-                            showMessage(
-                                "Portföy çalışması silindi.",
-                                "success"
-                            );
-
-                        }
-
-                    }
-                );
-
-            }
-
-
-
-            /* ================================
-               SITE SETTINGS
-            ================================= */
-
-            const siteSettingsForm =
-                document.getElementById(
-                    "siteSettingsForm"
-                );
-
-
-            function loadSiteSettings() {
-
-                try {
-
-                    const saved =
-                        localStorage.getItem(
-                            "furkanKayaSiteSettings"
-                        );
-
-
-                    const settings =
-                        saved
-                            ? JSON.parse(saved)
-                            : {};
-
-
-                    const siteTitle =
-                        document.getElementById("siteTitle");
-
-                    const heroTitle =
-                        document.getElementById("heroTitle");
-
-                    const heroText =
-                        document.getElementById("heroText");
-
-                    const instagramLink =
-                        document.getElementById("instagramLink");
-
-                    const emailAddress =
-                        document.getElementById("emailAddress");
-
-
-                    if (siteTitle) {
-                        siteTitle.value =
-                            settings.siteTitle ||
-                            "Furkan Kaya";
-                    }
-
-
-                    if (heroTitle) {
-                        heroTitle.value =
-                            settings.heroTitle || "";
-                    }
-
-
-                    if (heroText) {
-                        heroText.value =
-                            settings.heroText || "";
-                    }
-
-
-                    if (instagramLink) {
-                        instagramLink.value =
-                            settings.instagramLink || "";
-                    }
-
-
-                    if (emailAddress) {
-                        emailAddress.value =
-                            settings.emailAddress || "";
-                    }
-
-                } catch (error) {
-
-                    console.error(error);
-
-                }
-
-            }
-
-
-            if (siteSettingsForm) {
-
-                siteSettingsForm.addEventListener(
-                    "submit",
-                    function (event) {
-
-                        event.preventDefault();
-
-
-                        const settings = {
-
-                            siteTitle:
-                                document
-                                    .getElementById("siteTitle")
-                                    .value,
-
-                            heroTitle:
-                                document
-                                    .getElementById("heroTitle")
-                                    .value,
-
-                            heroText:
-                                document
-                                    .getElementById("heroText")
-                                    .value,
-
-                            instagramLink:
-                                document
-                                    .getElementById("instagramLink")
-                                    .value,
-
-                            emailAddress:
-                                document
-                                    .getElementById("emailAddress")
-                                    .value
-
-                        };
-
-
-                        localStorage.setItem(
-                            "furkanKayaSiteSettings",
-                            JSON.stringify(settings)
-                        );
-
-
-                        showMessage(
-                            "Site ayarları kaydedildi.",
-                            "success"
-                        );
-
-                    }
-                );
-
-            }
-
-
-
-            /* ================================
-               CONTACT
-            ================================= */
-
-            const contactForm =
-                document.getElementById("contactForm");
-
-
-            function loadContactSettings() {
-
-                try {
-
-                    const saved =
-                        localStorage.getItem(
-                            "furkanKayaContact"
-                        );
-
-
-                    if (!saved) {
-                        return;
-                    }
-
-
-                    const contact =
-                        JSON.parse(saved);
-
-
-                    const contactEmail =
-                        document.getElementById("contactEmail");
-
-                    const contactPhone =
-                        document.getElementById("contactPhone");
-
-                    const contactAddress =
-                        document.getElementById("contactAddress");
-
-
-                    if (contactEmail) {
-                        contactEmail.value =
-                            contact.email || "";
-                    }
-
-
-                    if (contactPhone) {
-                        contactPhone.value =
-                            contact.phone || "";
-                    }
-
-
-                    if (contactAddress) {
-                        contactAddress.value =
-                            contact.address || "";
-                    }
-
-                } catch (error) {
-
-                    console.error(error);
-
-                }
-
-            }
-
-
-            if (contactForm) {
-
-                contactForm.addEventListener(
-                    "submit",
-                    function (event) {
-
-                        event.preventDefault();
-
-
-                        const contact = {
-
-                            email:
-                                document
-                                    .getElementById("contactEmail")
-                                    .value,
-
-                            phone:
-                                document
-                                    .getElementById("contactPhone")
-                                    .value,
-
-                            address:
-                                document
-                                    .getElementById("contactAddress")
-                                    .value
-
-                        };
-
-
-                        localStorage.setItem(
-                            "furkanKayaContact",
-                            JSON.stringify(contact)
-                        );
-
-
-                        showMessage(
-                            "İletişim bilgileri kaydedildi.",
-                            "success"
-                        );
-
-                    }
-                );
-
-            }
-
-
-
-            /* ================================
-               LOGOUT
-            ================================= */
-
-            if (logoutButton) {
-
-                logoutButton.addEventListener(
-                    "click",
-                    function () {
-
-                        localStorage.removeItem(
-                            "furkanKayaAdminLoggedIn"
-                        );
-
-
-                        window.location.href =
-                            "login.html";
-
-                    }
-                );
-
-            }
-
-
-
-            /* ================================
-               INITIALIZE
-            ================================= */
-
-            renderPortfolios();
-
-            loadSiteSettings();
-
-            loadContactSettings();
-
-        });
-
-    </script>
+    <script src="settings.js"></script>
 
 
 </body>
+
 </html>
