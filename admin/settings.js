@@ -1,34 +1,144 @@
 /* =========================================
-   FURKAN KAYA ADMIN
-   SITE SETTINGS
+   SETTINGS
 ========================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    async function () {
 
-        initializeSettingsPage();
+        await checkAuthentication();
+
+        initializeSettings();
 
     }
 );
 
 
 /* =========================================
-   BAŞLAT
+   SUPABASE
 ========================================= */
 
-async function initializeSettingsPage() {
+function getSupabaseClient() {
 
-    const settingsForm =
-        document.getElementById(
-            "settingsForm"
-        );
-
-
-    if (!settingsForm) {
+    if (
+        typeof supabaseClient ===
+        "undefined"
+    ) {
 
         console.error(
-            "settingsForm bulunamadı."
+            "Supabase bağlantısı bulunamadı."
+        );
+
+        return null;
+
+    }
+
+
+    return supabaseClient;
+
+}
+
+
+/* =========================================
+   AUTH CHECK
+========================================= */
+
+async function checkAuthentication() {
+
+    const client =
+        getSupabaseClient();
+
+
+    if (!client) {
+
+        return;
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await client.auth.getSession();
+
+
+    if (error) {
+
+        console.error(
+            "Oturum kontrol hatası:",
+            error
+        );
+
+    }
+
+
+    if (
+        !data.session
+    ) {
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}
+
+
+/* =========================================
+   INITIALIZE
+========================================= */
+
+async function initializeSettings() {
+
+    initializeLogoUpload();
+
+    initializeSettingsForm();
+
+    initializeLogout();
+
+    await loadSettings();
+
+}
+
+
+/* =========================================
+   LOAD SETTINGS
+========================================= */
+
+async function loadSettings() {
+
+    const client =
+        getSupabaseClient();
+
+
+    if (!client) {
+
+        return;
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await client
+            .from("site_settings")
+            .select("*");
+
+
+    if (error) {
+
+        console.error(
+            "Ayarlar yüklenirken hata:",
+            error
+        );
+
+        showSettingsMessage(
+            "Ayarlar yüklenemedi: " +
+            error.message,
+            "error"
         );
 
         return;
@@ -37,144 +147,111 @@ async function initializeSettingsPage() {
 
 
     if (
-        typeof supabaseClient ===
-        "undefined"
+        !data ||
+        data.length === 0
     ) {
-
-        showSettingsStatus(
-            "Supabase bağlantısı bulunamadı.",
-            "error"
-        );
 
         return;
 
     }
 
 
-    await loadSettings();
+    const settings = {};
 
 
-    initializeLogoUpload();
+    data.forEach(
+        function (item) {
+
+            const key =
+                item.key ||
+                item.setting_key;
 
 
-    settingsForm.addEventListener(
-        "submit",
-        saveSettings
+            const value =
+                item.value ||
+                item.setting_value;
+
+
+            if (key) {
+
+                settings[key] =
+                    value;
+
+            }
+
+        }
+    );
+
+
+    fillSettingsForm(
+        settings
     );
 
 }
 
 
 /* =========================================
-   AYARLARI YÜKLE
+   FILL FORM
 ========================================= */
 
-async function loadSettings() {
+function fillSettingsForm(
+    settings
+) {
 
-    showSettingsStatus(
-        "Ayarlar yükleniyor...",
-        "loading"
+    setInputValue(
+        "siteName",
+        settings.site_name
     );
 
 
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-                .from(
-                    "site_settings"
-                )
-                .select(
-                    "setting_key, setting_value"
-                );
+    setInputValue(
+        "siteSubtitle",
+        settings.site_subtitle
+    );
 
 
-        if (error) {
-
-            throw error;
-
-        }
-
-
-        const settings =
-            convertSettingsToObject(
-                data || []
-            );
+    setInputValue(
+        "heroTitle",
+        settings.hero_title
+    );
 
 
-        setInputValue(
-            "siteName",
-            settings.site_name
-        );
+    setInputValue(
+        "heroDescription",
+        settings.hero_description
+    );
 
 
-        setInputValue(
-            "logoUrl",
+    setInputValue(
+        "aboutText",
+        settings.about_text
+    );
+
+
+    setInputValue(
+        "email",
+        settings.email
+    );
+
+
+    setInputValue(
+        "whatsapp",
+        settings.whatsapp
+    );
+
+
+    setInputValue(
+        "instagram",
+        settings.instagram
+    );
+
+
+    if (
+        settings.logo_url
+    ) {
+
+        setLogoPreview(
             settings.logo_url
-        );
-
-
-        setInputValue(
-            "heroSmallText",
-            settings.hero_small_text
-        );
-
-
-        setInputValue(
-            "heroTitle",
-            settings.hero_title
-        );
-
-
-        setInputValue(
-            "heroDescription",
-            settings.hero_description
-        );
-
-
-        setInputValue(
-            "contactEmail",
-            settings.contact_email
-        );
-
-
-        setInputValue(
-            "contactWhatsapp",
-            settings.contact_whatsapp
-        );
-
-
-        setInputValue(
-            "contactInstagram",
-            settings.contact_instagram
-        );
-
-
-        updateLogoPreview(
-            settings.logo_url
-        );
-
-
-        clearSettingsStatus();
-
-
-    } catch (error) {
-
-        console.error(
-            "Ayarlar yüklenirken hata:",
-            error
-        );
-
-
-        showSettingsStatus(
-            "Ayarlar yüklenemedi: " +
-            getErrorMessage(
-                error
-            ),
-            "error"
         );
 
     }
@@ -183,49 +260,23 @@ async function loadSettings() {
 
 
 /* =========================================
-   AYAR DİZİSİNİ OBJECT YAP
-========================================= */
-
-function convertSettingsToObject(
-    settingsArray
-) {
-
-    const settings = {};
-
-
-    settingsArray.forEach(
-        function (item) {
-
-            settings[
-                item.setting_key
-            ] =
-                item.setting_value;
-
-        }
-    );
-
-
-    return settings;
-
-}
-
-
-/* =========================================
-   INPUT DEĞERİ YAZ
+   INPUT VALUE
 ========================================= */
 
 function setInputValue(
-    elementId,
+    id,
     value
 ) {
 
     const element =
         document.getElementById(
-            elementId
+            id
         );
 
 
-    if (!element) {
+    if (
+        !element
+    ) {
 
         return;
 
@@ -250,127 +301,248 @@ function initializeLogoUpload() {
         );
 
 
-    if (!logoFile) {
+    const removeLogoButton =
+        document.getElementById(
+            "removeLogoButton"
+        );
+
+
+    if (
+        logoFile
+    ) {
+
+        logoFile.addEventListener(
+            "change",
+            function () {
+
+                const file =
+                    logoFile.files[0];
+
+
+                if (!file) {
+
+                    return;
+
+                }
+
+
+                if (
+                    !file.type.startsWith(
+                        "image/"
+                    )
+                ) {
+
+                    showSettingsMessage(
+                        "Lütfen geçerli bir görsel seçin.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                const imageUrl =
+                    URL.createObjectURL(
+                        file
+                    );
+
+
+                setLogoPreview(
+                    imageUrl
+                );
+
+
+                const selectedLogoName =
+                    document.getElementById(
+                        "selectedLogoName"
+                    );
+
+
+                if (
+                    selectedLogoName
+                ) {
+
+                    selectedLogoName.textContent =
+                        file.name;
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if (
+        removeLogoButton
+    ) {
+
+        removeLogoButton.addEventListener(
+            "click",
+            function () {
+
+                removeLogoPreview();
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   SET LOGO PREVIEW
+========================================= */
+
+function setLogoPreview(
+    imageUrl
+) {
+
+    const previewImage =
+        document.getElementById(
+            "logoPreviewImage"
+        );
+
+
+    const placeholder =
+        document.getElementById(
+            "logoPlaceholder"
+        );
+
+
+    if (
+        previewImage
+    ) {
+
+        previewImage.src =
+            imageUrl;
+
+
+        previewImage.style.display =
+            "block";
+
+    }
+
+
+    if (
+        placeholder
+    ) {
+
+        placeholder.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =========================================
+   REMOVE LOGO
+========================================= */
+
+function removeLogoPreview() {
+
+    const previewImage =
+        document.getElementById(
+            "logoPreviewImage"
+        );
+
+
+    const placeholder =
+        document.getElementById(
+            "logoPlaceholder"
+        );
+
+
+    const logoFile =
+        document.getElementById(
+            "logoFile"
+        );
+
+
+    const selectedLogoName =
+        document.getElementById(
+            "selectedLogoName"
+        );
+
+
+    if (
+        previewImage
+    ) {
+
+        previewImage.src =
+            "";
+
+        previewImage.style.display =
+            "none";
+
+    }
+
+
+    if (
+        placeholder
+    ) {
+
+        placeholder.style.display =
+            "block";
+
+    }
+
+
+    if (
+        logoFile
+    ) {
+
+        logoFile.value =
+            "";
+
+    }
+
+
+    if (
+        selectedLogoName
+    ) {
+
+        selectedLogoName.textContent =
+            "Logo kaldırılacak.";
+
+    }
+
+}
+
+
+/* =========================================
+   SETTINGS FORM
+========================================= */
+
+function initializeSettingsForm() {
+
+    const settingsForm =
+        document.getElementById(
+            "settingsForm"
+        );
+
+
+    if (
+        !settingsForm
+    ) {
 
         return;
 
     }
 
 
-    logoFile.addEventListener(
-        "change",
-        async function () {
+    settingsForm.addEventListener(
+        "submit",
+        async function (
+            event
+        ) {
 
-            const file =
-                logoFile.files[0];
+            event.preventDefault();
 
-
-            if (!file) {
-
-                return;
-
-            }
-
-
-            if (
-                !file.type.startsWith(
-                    "image/"
-                )
-            ) {
-
-                showSettingsStatus(
-                    "Lütfen geçerli bir görsel dosyası seçin.",
-                    "error"
-                );
-
-                logoFile.value = "";
-
-                return;
-
-            }
-
-
-            if (
-                file.size >
-                10 * 1024 * 1024
-            ) {
-
-                showSettingsStatus(
-                    "Logo dosyası en fazla 10 MB olabilir.",
-                    "error"
-                );
-
-                logoFile.value = "";
-
-                return;
-
-            }
-
-
-            const localPreview =
-                URL.createObjectURL(
-                    file
-                );
-
-
-            updateLogoPreview(
-                localPreview
-            );
-
-
-            showSettingsStatus(
-                "Logo Supabase Storage'a yükleniyor...",
-                "loading"
-            );
-
-
-            try {
-
-                const logoUrl =
-                    await uploadLogo(
-                        file
-                    );
-
-
-                setInputValue(
-                    "logoUrl",
-                    logoUrl
-                );
-
-
-                updateLogoPreview(
-                    logoUrl
-                );
-
-
-                showSettingsStatus(
-                    "Logo başarıyla yüklendi. Ayarları kaydetmeyi unutmayın.",
-                    "success"
-                );
-
-            } catch (error) {
-
-                console.error(
-                    "Logo yükleme hatası:",
-                    error
-                );
-
-
-                showSettingsStatus(
-                    "Logo yüklenemedi: " +
-                    getErrorMessage(
-                        error
-                    ),
-                    "error"
-                );
-
-            } finally {
-
-                URL.revokeObjectURL(
-                    localPreview
-                );
-
-            }
+            await saveSettings();
 
         }
     );
@@ -379,59 +551,318 @@ function initializeLogoUpload() {
 
 
 /* =========================================
-   LOGOYU STORAGE'A YÜKLE
+   SAVE SETTINGS
+========================================= */
+
+async function saveSettings() {
+
+    const client =
+        getSupabaseClient();
+
+
+    if (!client) {
+
+        return;
+
+    }
+
+
+    const saveButton =
+        document.getElementById(
+            "saveSettingsButton"
+        );
+
+
+    if (
+        saveButton
+    ) {
+
+        saveButton.disabled =
+            true;
+
+
+        saveButton.textContent =
+            "Kaydediliyor...";
+
+    }
+
+
+    showSettingsMessage(
+        "",
+        ""
+    );
+
+
+    try {
+
+        let logoUrl =
+            await getCurrentLogoUrl();
+
+
+        const logoFile =
+            document.getElementById(
+                "logoFile"
+            );
+
+
+        if (
+            logoFile &&
+            logoFile.files &&
+            logoFile.files.length > 0
+        ) {
+
+            logoUrl =
+                await uploadLogo(
+                    logoFile.files[0]
+                );
+
+        }
+
+
+        const previewImage =
+            document.getElementById(
+                "logoPreviewImage"
+            );
+
+
+        const removeRequested =
+            previewImage &&
+            !previewImage.src;
+
+
+        if (
+            removeRequested
+        ) {
+
+            logoUrl =
+                "";
+
+        }
+
+
+        const settings = {
+
+            site_name:
+                getInputValue(
+                    "siteName"
+                ),
+
+            site_subtitle:
+                getInputValue(
+                    "siteSubtitle"
+                ),
+
+            hero_title:
+                getInputValue(
+                    "heroTitle"
+                ),
+
+            hero_description:
+                getInputValue(
+                    "heroDescription"
+                ),
+
+            about_text:
+                getInputValue(
+                    "aboutText"
+                ),
+
+            email:
+                getInputValue(
+                    "email"
+                ),
+
+            whatsapp:
+                getInputValue(
+                    "whatsapp"
+                ),
+
+            instagram:
+                getInputValue(
+                    "instagram"
+                ),
+
+            logo_url:
+                logoUrl
+
+        };
+
+
+        for (
+            const [
+                key,
+                value
+            ]
+            of Object.entries(
+                settings
+            )
+        ) {
+
+            await saveSetting(
+                key,
+                value
+            );
+
+        }
+
+
+        showSettingsMessage(
+            "Ayarlar başarıyla kaydedildi.",
+            "success"
+        );
+
+
+        window.dispatchEvent(
+            new Event(
+                "settingsUpdated"
+            )
+        );
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "Ayarlar kaydedilirken hata:",
+            error
+        );
+
+
+        showSettingsMessage(
+            "Hata: " +
+            error.message,
+            "error"
+        );
+
+    } finally {
+
+        if (
+            saveButton
+        ) {
+
+            saveButton.disabled =
+                false;
+
+
+            saveButton.textContent =
+                "Ayarları Kaydet";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================
+   GET CURRENT LOGO
+========================================= */
+
+async function getCurrentLogoUrl() {
+
+    const client =
+        getSupabaseClient();
+
+
+    if (!client) {
+
+        return "";
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await client
+            .from("site_settings")
+            .select("*")
+            .or(
+                "key.eq.logo_url,setting_key.eq.logo_url"
+            );
+
+
+    if (error) {
+
+        return "";
+
+    }
+
+
+    if (
+        !data ||
+        !data.length
+    ) {
+
+        return "";
+
+    }
+
+
+    const item =
+        data[0];
+
+
+    return (
+        item.value ||
+        item.setting_value ||
+        ""
+    );
+
+}
+
+
+/* =========================================
+   UPLOAD LOGO
 ========================================= */
 
 async function uploadLogo(
     file
 ) {
 
-    const bucketName =
-        "site-assets";
+    const client =
+        getSupabaseClient();
+
+
+    if (!client) {
+
+        throw new Error(
+            "Supabase bağlantısı bulunamadı."
+        );
+
+    }
 
 
     const fileExtension =
-        getFileExtension(
-            file.name
-        );
+        file.name
+            .split(".")
+            .pop();
 
 
     const fileName =
-        "logo-" +
+        "site-logo-" +
         Date.now() +
-        "-" +
-        generateRandomString(
-            8
-        ) +
         "." +
         fileExtension;
-
-
-    const filePath =
-        "logos/" +
-        fileName;
 
 
     const {
         error
     } =
-        await supabaseClient
+        await client
             .storage
-            .from(
-                bucketName
-            )
+            .from("furkankaya-portfolio")
             .upload(
-                filePath,
+                fileName,
                 file,
                 {
                     cacheControl:
                         "3600",
 
                     upsert:
-                        false,
-
-                    contentType:
-                        file.type
+                        true
                 }
             );
 
@@ -446,13 +877,11 @@ async function uploadLogo(
     const {
         data
     } =
-        supabaseClient
+        client
             .storage
-            .from(
-                bucketName
-            )
+            .from("furkankaya-portfolio")
             .getPublicUrl(
-                filePath
+                fileName
             );
 
 
@@ -462,7 +891,7 @@ async function uploadLogo(
     ) {
 
         throw new Error(
-            "Logo için public URL oluşturulamadı."
+            "Logo URL'si oluşturulamadı."
         );
 
     }
@@ -474,244 +903,225 @@ async function uploadLogo(
 
 
 /* =========================================
-   LOGO ÖNİZLEME
+   SAVE SINGLE SETTING
 ========================================= */
 
-function updateLogoPreview(
-    logoUrl
+async function saveSetting(
+    key,
+    value
 ) {
 
-    const logoPreview =
-        document.getElementById(
-            "logoPreview"
-        );
+    const client =
+        getSupabaseClient();
 
 
-    const logoPreviewWrapper =
-        document.getElementById(
-            "logoPreviewWrapper"
+    if (!client) {
+
+        throw new Error(
+            "Supabase bağlantısı bulunamadı."
         );
+
+    }
+
+
+    /*
+    Önce mevcut kaydı kontrol ediyoruz.
+    Böylece site_settings tablosunun
+    farklı kolon yapılarıyla uyum sağlıyoruz.
+    */
+
+    const {
+        data:
+            existingData,
+        error:
+            selectError
+    } =
+        await client
+            .from("site_settings")
+            .select("*");
 
 
     if (
-        !logoPreview ||
-        !logoPreviewWrapper
+        selectError
     ) {
 
-        return;
+        throw selectError;
 
     }
 
 
-    if (!logoUrl) {
-
-        logoPreview.removeAttribute(
-            "src"
-        );
+    let existingItem =
+        null;
 
 
-        logoPreviewWrapper.classList.remove(
-            "has-image"
-        );
+    if (
+        existingData
+    ) {
 
-        return;
+        existingItem =
+            existingData.find(
+                function (
+                    item
+                ) {
 
-    }
+                    return (
+                        item.key === key ||
+                        item.setting_key === key
+                    );
 
-
-    logoPreview.src =
-        logoUrl;
-
-
-    logoPreviewWrapper.classList.add(
-        "has-image"
-    );
-
-}
-
-
-/* =========================================
-   AYARLARI KAYDET
-========================================= */
-
-async function saveSettings(
-    event
-) {
-
-    event.preventDefault();
-
-
-    const saveButton =
-        document.getElementById(
-            "saveSettingsButton"
-        );
-
-
-    const originalButtonText =
-        saveButton ?
-        saveButton.textContent :
-        "Ayarları Kaydet";
-
-
-    if (saveButton) {
-
-        saveButton.disabled =
-            true;
-
-
-        saveButton.textContent =
-            "Kaydediliyor...";
+                }
+            );
 
     }
 
 
-    showSettingsStatus(
-        "Ayarlar Supabase'e kaydediliyor...",
-        "loading"
-    );
+    if (
+        existingItem
+    ) {
+
+        const updateData = {};
 
 
-    try {
+        if (
+            existingItem.key !==
+            undefined
+        ) {
 
-        const settingsToSave = [
+            updateData.value =
+                value;
 
-            {
-                setting_key:
-                    "site_name",
+        } else {
 
-                setting_value:
-                    getInputValue(
-                        "siteName"
-                    )
-            },
+            updateData.setting_value =
+                value;
 
-            {
-                setting_key:
-                    "logo_url",
+        }
 
-                setting_value:
-                    getInputValue(
-                        "logoUrl"
-                    )
-            },
 
-            {
-                setting_key:
-                    "hero_small_text",
+        let query =
+            client
+                .from("site_settings")
+                .update(
+                    updateData
+                );
 
-                setting_value:
-                    getInputValue(
-                        "heroSmallText"
-                    )
-            },
 
-            {
-                setting_key:
-                    "hero_title",
+        if (
+            existingItem.id
+        ) {
 
-                setting_value:
-                    getInputValue(
-                        "heroTitle"
-                    )
-            },
+            query =
+                query.eq(
+                    "id",
+                    existingItem.id
+                );
 
-            {
-                setting_key:
-                    "hero_description",
+        } else if (
+            existingItem.key !==
+            undefined
+        ) {
 
-                setting_value:
-                    getInputValue(
-                        "heroDescription"
-                    )
-            },
+            query =
+                query.eq(
+                    "key",
+                    key
+                );
 
-            {
-                setting_key:
-                    "contact_email",
+        } else {
 
-                setting_value:
-                    getInputValue(
-                        "contactEmail"
-                    )
-            },
+            query =
+                query.eq(
+                    "setting_key",
+                    key
+                );
 
-            {
-                setting_key:
-                    "contact_whatsapp",
-
-                setting_value:
-                    getInputValue(
-                        "contactWhatsapp"
-                    )
-            },
-
-            {
-                setting_key:
-                    "contact_instagram",
-
-                setting_value:
-                    getInputValue(
-                        "contactInstagram"
-                    )
-            }
-
-        ];
+        }
 
 
         const {
             error
         } =
-            await supabaseClient
-                .from(
-                    "site_settings"
-                )
-                .upsert(
-                    settingsToSave,
-                    {
-                        onConflict:
-                            "setting_key"
-                    }
-                );
+            await query;
 
 
-        if (error) {
+        if (
+            error
+        ) {
 
             throw error;
 
         }
 
 
-        showSettingsStatus(
-            "✓ Tüm ayarlar başarıyla kaydedildi.",
-            "success"
-        );
+    } else {
 
-    } catch (error) {
+        let insertData = {};
 
-        console.error(
-            "Ayarlar kaydedilirken hata:",
+
+        /*
+        Tablo önceki SQL yapısında
+        setting_key kullanıyorsa bunu
+        kullanır. Yeni yapıda key varsa
+        Supabase hatası alınabilir.
+        */
+
+        insertData =
+            {
+                setting_key:
+                    key,
+
+                setting_value:
+                    value
+            };
+
+
+        let {
             error
-        );
+        } =
+            await client
+                .from("site_settings")
+                .insert(
+                    insertData
+                );
 
 
-        showSettingsStatus(
-            "Ayarlar kaydedilemedi: " +
-            getErrorMessage(
-                error
-            ),
-            "error"
-        );
+        if (
+            error &&
+            error.message &&
+            error.message.includes(
+                "setting_key"
+            )
+        ) {
 
-    } finally {
+            insertData =
+                {
+                    key:
+                        key,
 
-        if (saveButton) {
+                    value:
+                        value
+                };
 
-            saveButton.disabled =
-                false;
+
+            const result =
+                await client
+                    .from("site_settings")
+                    .insert(
+                        insertData
+                    );
 
 
-            saveButton.textContent =
-                originalButtonText;
+            error =
+                result.error;
+
+        }
+
+
+        if (
+            error
+        ) {
+
+            throw error;
 
         }
 
@@ -721,20 +1131,22 @@ async function saveSettings(
 
 
 /* =========================================
-   INPUT DEĞERİ AL
+   GET INPUT VALUE
 ========================================= */
 
 function getInputValue(
-    elementId
+    id
 ) {
 
     const element =
         document.getElementById(
-            elementId
+            id
         );
 
 
-    if (!element) {
+    if (
+        !element
+    ) {
 
         return "";
 
@@ -747,173 +1159,92 @@ function getInputValue(
 
 
 /* =========================================
-   DOSYA UZANTISI
+   MESSAGE
 ========================================= */
 
-function getFileExtension(
-    fileName
-) {
-
-    const parts =
-        fileName.split(
-            "."
-        );
-
-
-    if (
-        parts.length <
-        2
-    ) {
-
-        return "png";
-
-    }
-
-
-    return parts
-        .pop()
-        .toLowerCase();
-
-}
-
-
-/* =========================================
-   RANDOM STRING
-========================================= */
-
-function generateRandomString(
-    length
-) {
-
-    const characters =
-        "abcdefghijklmnopqrstuvwxyz0123456789";
-
-
-    let result =
-        "";
-
-
-    for (
-        let i = 0;
-        i < length;
-        i++
-    ) {
-
-        result +=
-            characters.charAt(
-                Math.floor(
-                    Math.random() *
-                    characters.length
-                )
-            );
-
-    }
-
-
-    return result;
-
-}
-
-
-/* =========================================
-   HATA MESAJI
-========================================= */
-
-function getErrorMessage(
-    error
-) {
-
-    if (
-        !error
-    ) {
-
-        return
-            "Bilinmeyen hata.";
-
-    }
-
-
-    if (
-        error.message
-    ) {
-
-        return error.message;
-
-    }
-
-
-    return String(
-        error
-    );
-
-}
-
-
-/* =========================================
-   STATUS GÖSTER
-========================================= */
-
-function showSettingsStatus(
+function showSettingsMessage(
     message,
     type
 ) {
 
-    const status =
+    const settingsMessage =
         document.getElementById(
-            "settingsStatus"
+            "settingsMessage"
         );
 
 
-    if (!status) {
+    if (
+        !settingsMessage
+    ) {
 
         return;
 
     }
 
 
-    status.textContent =
+    settingsMessage.textContent =
         message;
 
 
-    status.className =
-        "admin-status " +
-        type;
+    settingsMessage.className =
+        "settings-message";
 
 
-    status.style.display =
-        "block";
+    if (
+        type
+    ) {
+
+        settingsMessage.classList.add(
+            type
+        );
+
+    }
 
 }
 
 
 /* =========================================
-   STATUS TEMİZLE
+   LOGOUT
 ========================================= */
 
-function clearSettingsStatus() {
+function initializeLogout() {
 
-    const status =
+    const logoutButton =
         document.getElementById(
-            "settingsStatus"
+            "logoutButton"
         );
 
 
-    if (!status) {
+    if (
+        !logoutButton
+    ) {
 
         return;
 
     }
 
 
-    status.textContent =
-        "";
+    logoutButton.addEventListener(
+        "click",
+        async function () {
+
+            const client =
+                getSupabaseClient();
 
 
-    status.className =
-        "admin-status";
+            if (
+                client
+            ) {
+
+                await client.auth.signOut();
+
+            }
 
 
-    status.style.display =
-        "none";
+            window.location.href =
+                "login.html";
+
+        }
+    );
 
 }
