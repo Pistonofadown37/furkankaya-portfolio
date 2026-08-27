@@ -14,8 +14,6 @@ document.addEventListener(
 
         initializePortfolio();
 
-        initializeLightbox();
-
     }
 );
 
@@ -83,6 +81,69 @@ function initializeNavigation() {
         }
     );
 
+
+    const sections =
+        document.querySelectorAll(
+            "section[id]"
+        );
+
+
+    window.addEventListener(
+        "scroll",
+        function () {
+
+            let currentSection = "";
+
+
+            sections.forEach(
+                function (section) {
+
+                    const sectionTop =
+                        section.offsetTop - 150;
+
+
+                    const sectionHeight =
+                        section.offsetHeight;
+
+
+                    if (
+                        window.scrollY >= sectionTop &&
+                        window.scrollY <
+                        sectionTop + sectionHeight
+                    ) {
+
+                        currentSection =
+                            section.getAttribute(
+                                "id"
+                            );
+
+                    }
+
+                }
+            );
+
+
+            navLinks.forEach(
+                function (link) {
+
+                    const href =
+                        link.getAttribute(
+                            "href"
+                        );
+
+
+                    link.classList.toggle(
+                        "active",
+                        href ===
+                        "#" + currentSection
+                    );
+
+                }
+            );
+
+        }
+    );
+
 }
 
 
@@ -104,8 +165,13 @@ function initializeMobileMenu() {
         );
 
 
-    if (!button || !menu) {
+    if (
+        !button ||
+        !menu
+    ) {
+
         return;
+
     }
 
 
@@ -115,7 +181,7 @@ function initializeMobileMenu() {
 
             const isOpen =
                 menu.classList.toggle(
-                    "active"
+                    "open"
                 );
 
 
@@ -126,23 +192,17 @@ function initializeMobileMenu() {
                     : "false"
             );
 
-
-            document.body.classList.toggle(
-                "menu-open",
-                isOpen
-            );
-
         }
     );
 
 
-    const links =
+    const mobileLinks =
         menu.querySelectorAll(
             ".mobile-nav-link"
         );
 
 
-    links.forEach(
+    mobileLinks.forEach(
         function (link) {
 
             link.addEventListener(
@@ -150,12 +210,7 @@ function initializeMobileMenu() {
                 function () {
 
                     menu.classList.remove(
-                        "active"
-                    );
-
-
-                    document.body.classList.remove(
-                        "menu-open"
+                        "open"
                     );
 
 
@@ -203,20 +258,7 @@ function initializePortfolio() {
         );
 
 
-    const portfolioViewport =
-        document.getElementById(
-            "portfolioViewport"
-        );
-
-
-    if (
-        !portfolioSlider ||
-        !portfolioViewport
-    ) {
-
-        console.error(
-            "Portföy slider elemanları bulunamadı."
-        );
+    if (!portfolioSlider) {
 
         return;
 
@@ -231,28 +273,28 @@ function initializePortfolio() {
         portfolios.length === 0
     ) {
 
-        portfolioSlider.innerHTML =
-            `
+        portfolioSlider.innerHTML = `
+
             <div class="portfolio-loading">
                 Henüz portföy çalışması eklenmedi.
             </div>
-            `;
+
+        `;
 
 
         if (portfolioPrev) {
+
             portfolioPrev.style.display =
                 "none";
+
         }
 
 
         if (portfolioNext) {
+
             portfolioNext.style.display =
                 "none";
-        }
 
-
-        if (portfolioDots) {
-            portfolioDots.innerHTML = "";
         }
 
 
@@ -269,7 +311,6 @@ function initializePortfolio() {
 
     initializePortfolioSlider(
         portfolioSlider,
-        portfolioViewport,
         portfolioPrev,
         portfolioNext,
         portfolioDots
@@ -279,7 +320,7 @@ function initializePortfolio() {
 
 
 /* =========================================
-   STORAGE DATA
+   GET PORTFOLIOS
 ========================================= */
 
 function getPortfoliosFromStorage() {
@@ -294,16 +335,12 @@ function getPortfoliosFromStorage() {
 
         if (!savedPortfolios) {
 
-            console.log(
-                "Portföy verisi bulunamadı."
-            );
-
             return [];
 
         }
 
 
-        const parsedPortfolios =
+        const portfolios =
             JSON.parse(
                 savedPortfolios
             );
@@ -311,7 +348,7 @@ function getPortfoliosFromStorage() {
 
         if (
             !Array.isArray(
-                parsedPortfolios
+                portfolios
             )
         ) {
 
@@ -320,20 +357,26 @@ function getPortfoliosFromStorage() {
         }
 
 
-        return parsedPortfolios.filter(
+        return portfolios.filter(
             function (item) {
 
                 if (
-                    !item.status
+                    item.status === undefined
                 ) {
+
                     return true;
+
                 }
 
 
                 return (
-                    item.status === "active" ||
+
                     item.status === true ||
+
+                    item.status === "active" ||
+
                     item.status === "aktif"
+
                 );
 
             }
@@ -342,7 +385,7 @@ function getPortfoliosFromStorage() {
     } catch (error) {
 
         console.error(
-            "Portföy verileri okunamadı:",
+            "Portföy verisi okunamadı:",
             error
         );
 
@@ -390,7 +433,7 @@ function renderPortfolios(
 
 
 /* =========================================
-   CREATE CARD
+   CREATE PORTFOLIO CARD
 ========================================= */
 
 function createPortfolioCard(
@@ -408,8 +451,10 @@ function createPortfolioCard(
         "portfolio-card";
 
 
-    article.tabIndex =
-        0;
+    article.setAttribute(
+        "tabindex",
+        "0"
+    );
 
 
     const title =
@@ -444,7 +489,7 @@ function createPortfolioCard(
                 "type",
                 "kategori"
             ],
-            ""
+            "TASARIM"
         );
 
 
@@ -472,16 +517,11 @@ function createPortfolioCard(
             );
 
 
-        img.src =
-            image;
+        img.src = image;
 
+        img.alt = title;
 
-        img.alt =
-            title;
-
-
-        img.loading =
-            "lazy";
+        img.loading = "lazy";
 
 
         imageContainer.appendChild(
@@ -507,8 +547,7 @@ function createPortfolioCard(
 
 
         categoryText.textContent =
-            category ||
-            "TASARIM";
+            category;
 
 
         const number =
@@ -553,27 +592,18 @@ function createPortfolioCard(
         "portfolio-info";
 
 
-    if (category) {
-
-        const categoryElement =
-            document.createElement(
-                "span"
-            );
-
-
-        categoryElement.className =
-            "portfolio-category";
-
-
-        categoryElement.textContent =
-            category;
-
-
-        info.appendChild(
-            categoryElement
+    const categoryElement =
+        document.createElement(
+            "span"
         );
 
-    }
+
+    categoryElement.className =
+        "portfolio-category";
+
+
+    categoryElement.textContent =
+        category;
 
 
     const heading =
@@ -584,6 +614,11 @@ function createPortfolioCard(
 
     heading.textContent =
         title;
+
+
+    info.appendChild(
+        categoryElement
+    );
 
 
     info.appendChild(
@@ -624,16 +659,15 @@ function createPortfolioCard(
         "click",
         function () {
 
-            if (!image) {
-                return;
+            if (image) {
+
+                openPortfolioLightbox(
+                    image,
+                    title,
+                    description
+                );
+
             }
-
-
-            openPortfolioLightbox(
-                image,
-                title,
-                description
-            );
 
         }
     );
@@ -673,7 +707,7 @@ function createPortfolioCard(
 
 
 /* =========================================
-   GET PORTFOLIO VALUE
+   GET VALUE
 ========================================= */
 
 function getPortfolioValue(
@@ -693,9 +727,13 @@ function getPortfolioValue(
 
 
         if (
+
             portfolio[key] !== undefined &&
+
             portfolio[key] !== null &&
+
             portfolio[key] !== ""
+
         ) {
 
             return String(
@@ -745,9 +783,13 @@ function getPortfolioImage(
 
 
         if (
+
             portfolio[key] !== undefined &&
+
             portfolio[key] !== null &&
+
             portfolio[key] !== ""
+
         ) {
 
             return portfolio[key];
@@ -763,45 +805,19 @@ function getPortfolioImage(
 
 
 /* =========================================
-   RESPONSIVE CARD COUNT
-========================================= */
-
-function getVisibleCardCount() {
-
-    const width =
-        window.innerWidth;
-
-
-    if (width <= 700) {
-        return 1;
-    }
-
-
-    if (width <= 1100) {
-        return 2;
-    }
-
-
-    return 4;
-
-}
-
-
-/* =========================================
-   SLIDER
+   PORTFOLIO SLIDER
 ========================================= */
 
 function initializePortfolioSlider(
-    slider,
-    viewport,
-    prevButton,
-    nextButton,
-    dotsContainer
+    portfolioSlider,
+    portfolioPrev,
+    portfolioNext,
+    portfolioDots
 ) {
 
     const cards =
         Array.from(
-            slider.querySelectorAll(
+            portfolioSlider.querySelectorAll(
                 ".portfolio-card"
             )
         );
@@ -810,180 +826,69 @@ function initializePortfolioSlider(
     if (
         cards.length === 0
     ) {
+
         return;
-    }
-
-
-    let currentIndex = 0;
-
-    let autoplayTimer = null;
-
-    let touchStartX = 0;
-
-    let touchEndX = 0;
-
-
-    function getMaximumIndex() {
-
-        const visibleCards =
-            getVisibleCardCount();
-
-
-        return Math.max(
-            0,
-            cards.length -
-            visibleCards
-        );
 
     }
 
 
-    function getCardWidth() {
-
-        if (!cards[0]) {
-            return 0;
-        }
+    let currentPage = 0;
 
 
-        const cardWidth =
-            cards[0].getBoundingClientRect()
-                .width;
-
-
-        const sliderStyle =
-            window.getComputedStyle(
-                slider
-            );
-
-
-        const gap =
-            parseFloat(
-                sliderStyle.gap
-            ) || 0;
-
-
-        return cardWidth + gap;
-
-    }
-
-
-    function updateDots() {
-
-        if (!dotsContainer) {
-            return;
-        }
-
-
-        const dots =
-            dotsContainer.querySelectorAll(
-                ".portfolio-dot"
-            );
-
-
-        dots.forEach(
-            function (
-                dot,
-                index
-            ) {
-
-                dot.classList.toggle(
-                    "active",
-                    index === currentIndex
-                );
-
-            }
-        );
-
-    }
-
-
-    function updateButtons() {
-
-        const maximumIndex =
-            getMaximumIndex();
-
-
-        if (prevButton) {
-
-            prevButton.style.display =
-                maximumIndex === 0
-                    ? "none"
-                    : "flex";
-
-        }
-
-
-        if (nextButton) {
-
-            nextButton.style.display =
-                maximumIndex === 0
-                    ? "none"
-                    : "flex";
-
-        }
-
-    }
-
-
-    function updateSlider() {
-
-        const maximumIndex =
-            getMaximumIndex();
-
+    function getCardsPerPage() {
 
         if (
-            currentIndex >
-            maximumIndex
+            window.innerWidth <= 800
         ) {
 
-            currentIndex =
-                maximumIndex;
+            return 1;
 
         }
 
 
         if (
-            currentIndex < 0
+            window.innerWidth <= 1100
         ) {
 
-            currentIndex = 0;
+            return 2;
 
         }
 
 
-        const translateAmount =
-            currentIndex *
-            getCardWidth();
+        return 4;
+
+    }
 
 
-        slider.style.transform =
-            `translateX(-${translateAmount}px)`;
+    function getTotalPages() {
 
-
-        updateDots();
-
-        updateButtons();
+        return Math.ceil(
+            cards.length /
+            getCardsPerPage()
+        );
 
     }
 
 
     function createDots() {
 
-        if (!dotsContainer) {
+        if (!portfolioDots) {
+
             return;
+
         }
 
 
-        dotsContainer.innerHTML = "";
+        portfolioDots.innerHTML = "";
 
 
-        const maximumIndex =
-            getMaximumIndex();
+        const totalPages =
+            getTotalPages();
 
 
         for (
             let i = 0;
-            i <= maximumIndex;
+            i < totalPages;
             i++
         ) {
 
@@ -1003,7 +908,10 @@ function initializePortfolioSlider(
 
             dot.setAttribute(
                 "aria-label",
-                `${i + 1}. portföy grubuna git`
+                (
+                    i + 1
+                ) +
+                ". sayfaya git"
             );
 
 
@@ -1011,46 +919,130 @@ function initializePortfolioSlider(
                 "click",
                 function () {
 
-                    currentIndex =
-                        i;
-
+                    currentPage = i;
 
                     updateSlider();
-
-                    restartAutoplay();
 
                 }
             );
 
 
-            dotsContainer.appendChild(
+            portfolioDots.appendChild(
                 dot
             );
 
         }
 
+    }
 
-        updateDots();
+
+    function updateSlider() {
+
+        const cardsPerPage =
+            getCardsPerPage();
+
+
+        const totalPages =
+            getTotalPages();
+
+
+        if (
+            currentPage >= totalPages
+        ) {
+
+            currentPage =
+                totalPages - 1;
+
+        }
+
+
+        cards.forEach(
+            function (
+                card,
+                index
+            ) {
+
+                const start =
+                    currentPage *
+                    cardsPerPage;
+
+
+                const end =
+                    start +
+                    cardsPerPage;
+
+
+                const visible =
+                    index >= start &&
+                    index < end;
+
+
+                card.style.display =
+                    visible
+                        ? "block"
+                        : "none";
+
+            }
+        );
+
+
+        if (portfolioDots) {
+
+            const dots =
+                portfolioDots.querySelectorAll(
+                    ".portfolio-dot"
+                );
+
+
+            dots.forEach(
+                function (
+                    dot,
+                    index
+                ) {
+
+                    dot.classList.toggle(
+                        "active",
+                        index === currentPage
+                    );
+
+                }
+            );
+
+        }
+
+
+        if (portfolioPrev) {
+
+            portfolioPrev.style.display =
+                totalPages > 1
+                    ? "flex"
+                    : "none";
+
+        }
+
+
+        if (portfolioNext) {
+
+            portfolioNext.style.display =
+                totalPages > 1
+                    ? "flex"
+                    : "none";
+
+        }
 
     }
 
 
-    function goNext() {
+    function nextPage() {
 
-        const maximumIndex =
-            getMaximumIndex();
+        currentPage++;
 
 
         if (
-            currentIndex >=
-            maximumIndex
+            currentPage >= getTotalPages()
         ) {
 
-            currentIndex = 0;
-
-        } else {
-
-            currentIndex++;
+            currentPage = 0;
 
         }
 
@@ -1060,22 +1052,17 @@ function initializePortfolioSlider(
     }
 
 
-    function goPrevious() {
+    function previousPage() {
 
-        const maximumIndex =
-            getMaximumIndex();
+        currentPage--;
 
 
         if (
-            currentIndex <= 0
+            currentPage < 0
         ) {
 
-            currentIndex =
-                maximumIndex;
-
-        } else {
-
-            currentIndex--;
+            currentPage =
+                getTotalPages() - 1;
 
         }
 
@@ -1085,113 +1072,35 @@ function initializePortfolioSlider(
     }
 
 
-    function startAutoplay() {
+    if (portfolioNext) {
 
-        if (
-            cards.length <=
-            getVisibleCardCount()
-        ) {
-
-            return;
-
-        }
-
-
-        stopAutoplay();
-
-
-        autoplayTimer =
-            setInterval(
-                function () {
-
-                    goNext();
-
-                },
-                4000
-            );
-
-    }
-
-
-    function stopAutoplay() {
-
-        if (autoplayTimer) {
-
-            clearInterval(
-                autoplayTimer
-            );
-
-
-            autoplayTimer = null;
-
-        }
-
-    }
-
-
-    function restartAutoplay() {
-
-        stopAutoplay();
-
-        startAutoplay();
-
-    }
-
-
-    if (prevButton) {
-
-        prevButton.addEventListener(
+        portfolioNext.addEventListener(
             "click",
-            function () {
-
-                goPrevious();
-
-                restartAutoplay();
-
-            }
+            nextPage
         );
 
     }
 
 
-    if (nextButton) {
+    if (portfolioPrev) {
 
-        nextButton.addEventListener(
+        portfolioPrev.addEventListener(
             "click",
-            function () {
-
-                goNext();
-
-                restartAutoplay();
-
-            }
+            previousPage
         );
 
     }
 
 
-    viewport.addEventListener(
-        "mouseenter",
-        stopAutoplay
-    );
+    let touchStartX = 0;
 
 
-    viewport.addEventListener(
-        "mouseleave",
-        startAutoplay
-    );
-
-
-    viewport.addEventListener(
+    portfolioSlider.addEventListener(
         "touchstart",
         function (event) {
 
             touchStartX =
-                event.changedTouches[0]
-                    .screenX;
-
-
-            stopAutoplay();
+                event.changedTouches[0].screenX;
 
         },
         {
@@ -1200,13 +1109,12 @@ function initializePortfolioSlider(
     );
 
 
-    viewport.addEventListener(
+    portfolioSlider.addEventListener(
         "touchend",
         function (event) {
 
-            touchEndX =
-                event.changedTouches[0]
-                    .screenX;
+            const touchEndX =
+                event.changedTouches[0].screenX;
 
 
             const distance =
@@ -1215,26 +1123,22 @@ function initializePortfolioSlider(
 
 
             if (
-                Math.abs(distance) >
-                50
+                Math.abs(distance) > 50
             ) {
 
                 if (
                     distance < 0
                 ) {
 
-                    goNext();
+                    nextPage();
 
                 } else {
 
-                    goPrevious();
+                    previousPage();
 
                 }
 
             }
-
-
-            startAutoplay();
 
         },
         {
@@ -1246,21 +1150,6 @@ function initializePortfolioSlider(
     window.addEventListener(
         "resize",
         function () {
-
-            const maximumIndex =
-                getMaximumIndex();
-
-
-            if (
-                currentIndex >
-                maximumIndex
-            ) {
-
-                currentIndex =
-                    maximumIndex;
-
-            }
-
 
             createDots();
 
@@ -1274,102 +1163,11 @@ function initializePortfolioSlider(
 
     updateSlider();
 
-    startAutoplay();
-
 }
 
 
 /* =========================================
-   LIGHTBOX INITIALIZE
-========================================= */
-
-function initializeLightbox() {
-
-    const lightbox =
-        document.getElementById(
-            "lightbox"
-        );
-
-
-    const closeButton =
-        document.getElementById(
-            "lightboxClose"
-        );
-
-
-    if (!lightbox) {
-        return;
-    }
-
-
-    function closeLightbox() {
-
-        lightbox.classList.remove(
-            "active"
-        );
-
-
-        lightbox.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-
-        document.body.classList.remove(
-            "lightbox-open"
-        );
-
-    }
-
-
-    if (closeButton) {
-
-        closeButton.addEventListener(
-            "click",
-            closeLightbox
-        );
-
-    }
-
-
-    lightbox.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                event.target ===
-                lightbox
-            ) {
-
-                closeLightbox();
-
-            }
-
-        }
-    );
-
-
-    document.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key ===
-                "Escape"
-            ) {
-
-                closeLightbox();
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================
-   OPEN LIGHTBOX
+   LIGHTBOX
 ========================================= */
 
 function openPortfolioLightbox(
@@ -1412,20 +1210,15 @@ function openPortfolioLightbox(
     }
 
 
-    lightboxImage.src =
-        image;
+    lightboxImage.src = image;
 
-
-    lightboxImage.alt =
-        title ||
-        "Portföy çalışması";
+    lightboxImage.alt = title;
 
 
     if (lightboxTitle) {
 
         lightboxTitle.textContent =
-            title ||
-            "";
+            title || "";
 
     }
 
@@ -1433,8 +1226,7 @@ function openPortfolioLightbox(
     if (lightboxDescription) {
 
         lightboxDescription.textContent =
-            description ||
-            "";
+            description || "";
 
     }
 
@@ -1450,11 +1242,101 @@ function openPortfolioLightbox(
     );
 
 
-    document.body.classList.add(
-        "lightbox-open"
-    );
+    document.body.style.overflow =
+        "hidden";
 
 }
+
+
+/* =========================================
+   LIGHTBOX CLOSE
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const lightbox =
+            document.getElementById(
+                "lightbox"
+            );
+
+
+        const closeButton =
+            document.getElementById(
+                "lightboxClose"
+            );
+
+
+        if (!lightbox) {
+
+            return;
+
+        }
+
+
+        function closeLightbox() {
+
+            lightbox.classList.remove(
+                "active"
+            );
+
+
+            lightbox.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+
+            document.body.style.overflow =
+                "";
+
+        }
+
+
+        if (closeButton) {
+
+            closeButton.addEventListener(
+                "click",
+                closeLightbox
+            );
+
+        }
+
+
+        lightbox.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target === lightbox
+                ) {
+
+                    closeLightbox();
+
+                }
+
+            }
+        );
+
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    closeLightbox();
+
+                }
+
+            }
+        );
+
+    }
+);
 
 
 /* =========================================
