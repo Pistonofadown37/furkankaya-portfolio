@@ -1,40 +1,116 @@
+// =============================================
+// FURKAN KAYA PORTFOLIO
+// ADMIN LOGIN
+// =============================================
+
+
 document.addEventListener(
     "DOMContentLoaded",
-    async () => {
+    async function () {
+
+
+        // =====================================
+        // ELEMENTS
+        // =====================================
 
         const loginForm =
-            document.getElementById("loginForm");
+            document.getElementById(
+                "loginForm"
+            );
 
-        const emailInput =
-            document.getElementById("email");
 
-        const passwordInput =
-            document.getElementById("password");
+        const loginEmail =
+            document.getElementById(
+                "loginEmail"
+            );
 
-        const passwordToggle =
-            document.getElementById("passwordToggle");
+
+        const loginPassword =
+            document.getElementById(
+                "loginPassword"
+            );
+
 
         const loginButton =
-            document.getElementById("loginButton");
+            document.getElementById(
+                "loginButton"
+            );
 
-        const formMessage =
-            document.getElementById("formMessage");
+
+        const loginMessage =
+            document.getElementById(
+                "loginMessage"
+            );
 
 
-        /* =====================================
-           ZATEN GİRİŞ YAPILMIŞSA
-        ===================================== */
+        // =====================================
+        // MESSAGE
+        // =====================================
+
+        function showMessage(
+            message,
+            type = "error"
+        ) {
+
+            if (!loginMessage) {
+                return;
+            }
+
+
+            loginMessage.textContent =
+                message;
+
+
+            loginMessage.className =
+                "admin-message show " + type;
+
+        }
+
+
+        function hideMessage() {
+
+            if (!loginMessage) {
+                return;
+            }
+
+
+            loginMessage.textContent =
+                "";
+
+
+            loginMessage.className =
+                "admin-message";
+
+        }
+
+
+        // =====================================
+        // CHECK EXISTING SESSION
+        // =====================================
 
         try {
 
             const {
-                data
-            } = await supabaseClient
-                .auth
-                .getUser();
+                data,
+                error
+            } =
+                await supabaseClient.auth.getSession();
 
 
-            if (data.user) {
+            if (error) {
+
+                console.error(
+                    "Session kontrol hatası:",
+                    error
+                );
+
+            }
+
+
+            if (
+                data &&
+                data.session
+            ) {
 
                 window.location.href =
                     "admin.html";
@@ -46,97 +122,16 @@ document.addEventListener(
         } catch (error) {
 
             console.error(
-                "Oturum kontrol hatası:",
+                "Session kontrolü başarısız:",
                 error
             );
 
         }
 
 
-        /* =====================================
-           ŞİFRE GÖSTER / GİZLE
-        ===================================== */
-
-        if (passwordToggle) {
-
-            passwordToggle.addEventListener(
-                "click",
-                () => {
-
-                    const isPassword =
-                        passwordInput.type ===
-                        "password";
-
-
-                    passwordInput.type =
-                        isPassword
-                            ? "text"
-                            : "password";
-
-
-                    passwordToggle.textContent =
-                        isPassword
-                            ? "🙈"
-                            : "👁";
-
-
-                    passwordToggle.setAttribute(
-                        "aria-label",
-                        isPassword
-                            ? "Şifreyi gizle"
-                            : "Şifreyi göster"
-                    );
-
-                }
-            );
-
-        }
-
-
-        /* =====================================
-           FORM MESAJI
-        ===================================== */
-
-        function showMessage(
-            message,
-            type = "error"
-        ) {
-
-            if (!formMessage) {
-                return;
-            }
-
-
-            formMessage.textContent =
-                message;
-
-
-            formMessage.className =
-                `form-message ${type} show`;
-
-        }
-
-
-        function clearMessage() {
-
-            if (!formMessage) {
-                return;
-            }
-
-
-            formMessage.textContent =
-                "";
-
-
-            formMessage.className =
-                "form-message";
-
-        }
-
-
-        /* =====================================
-           GİRİŞ FORMU
-        ===================================== */
+        // =====================================
+        // LOGIN FORM
+        // =====================================
 
         if (!loginForm) {
             return;
@@ -145,30 +140,38 @@ document.addEventListener(
 
         loginForm.addEventListener(
             "submit",
-            async (event) => {
+            async function (
+                event
+            ) {
 
                 event.preventDefault();
 
 
-                clearMessage();
+                hideMessage();
 
 
                 const email =
-                    emailInput.value
-                        .trim();
+                    loginEmail
+                        ? loginEmail.value.trim()
+                        : "";
 
 
                 const password =
-                    passwordInput.value;
+                    loginPassword
+                        ? loginPassword.value
+                        : "";
 
+
+                // =============================
+                // VALIDATION
+                // =============================
 
                 if (!email) {
 
                     showMessage(
-                        "E-posta adresinizi girin."
+                        "Lütfen e-posta adresinizi girin.",
+                        "error"
                     );
-
-                    emailInput.focus();
 
                     return;
 
@@ -178,56 +181,126 @@ document.addEventListener(
                 if (!password) {
 
                     showMessage(
-                        "Şifrenizi girin."
+                        "Lütfen şifrenizi girin.",
+                        "error"
                     );
-
-                    passwordInput.focus();
 
                     return;
 
                 }
 
 
-                try {
+                // =============================
+                // BUTTON LOADING
+                // =============================
+
+                const originalButtonText =
+                    loginButton
+                        ? loginButton.textContent
+                        : "Giriş Yap";
+
+
+                if (loginButton) {
 
                     loginButton.disabled =
                         true;
 
 
-                    loginButton.classList.add(
-                        "loading"
-                    );
+                    loginButton.textContent =
+                        "Giriş yapılıyor...";
 
+                }
+
+
+                // =============================
+                // SUPABASE LOGIN
+                // =============================
+
+                try {
 
                     const {
                         data,
                         error
-                    } = await supabaseClient
-                        .auth
-                        .signInWithPassword(
-                            {
-                                email:
-                                    email,
-
-                                password:
-                                    password
-                            }
-                        );
+                    } =
+                        await supabaseClient
+                            .auth
+                            .signInWithPassword(
+                                {
+                                    email: email,
+                                    password: password
+                                }
+                            );
 
 
                     if (error) {
-                        throw error;
-                    }
 
-
-                    if (!data.user) {
-
-                        throw new Error(
-                            "Kullanıcı oturumu oluşturulamadı."
+                        console.error(
+                            "Giriş hatası:",
+                            error
                         );
 
+
+                        let errorMessage =
+                            "Giriş yapılırken bir hata oluştu.";
+
+
+                        if (
+                            error.message
+                                .toLowerCase()
+                                .includes(
+                                    "invalid login credentials"
+                                )
+                        ) {
+
+                            errorMessage =
+                                "E-posta veya şifre hatalı.";
+
+                        }
+
+
+                        if (
+                            error.message
+                                .toLowerCase()
+                                .includes(
+                                    "email not confirmed"
+                                )
+                        ) {
+
+                            errorMessage =
+                                "E-posta adresi henüz doğrulanmamış.";
+
+                        }
+
+
+                        showMessage(
+                            errorMessage,
+                            "error"
+                        );
+
+
+                        return;
+
                     }
 
+
+                    if (
+                        !data ||
+                        !data.session
+                    ) {
+
+                        showMessage(
+                            "Oturum oluşturulamadı.",
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
+
+                    // =========================
+                    // SUCCESS
+                    // =========================
 
                     showMessage(
                         "Giriş başarılı. Yönlendiriliyorsunuz...",
@@ -236,51 +309,40 @@ document.addEventListener(
 
 
                     setTimeout(
-                        () => {
+                        function () {
 
                             window.location.href =
                                 "admin.html";
 
                         },
-                        700
+                        500
                     );
 
                 } catch (error) {
 
                     console.error(
-                        "Giriş hatası:",
+                        "Beklenmeyen giriş hatası:",
                         error
                     );
 
 
-                    let errorMessage =
-                        "Giriş yapılırken bir hata oluştu.";
-
-
-                    if (
-                        error.message ===
-                        "Invalid login credentials"
-                    ) {
-
-                        errorMessage =
-                            "E-posta veya şifre hatalı.";
-
-                    }
-
-
                     showMessage(
-                        errorMessage,
+                        "Beklenmeyen bir hata oluştu.",
                         "error"
                     );
 
+                } finally {
 
-                    loginButton.disabled =
-                        false;
+                    if (loginButton) {
+
+                        loginButton.disabled =
+                            false;
 
 
-                    loginButton.classList.remove(
-                        "loading"
-                    );
+                        loginButton.textContent =
+                            originalButtonText;
+
+                    }
 
                 }
 
