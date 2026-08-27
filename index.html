@@ -10,60 +10,132 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        Yönetim Paneli | Furkan Kaya
+    <meta
+        name="description"
+        content="Furkan Kaya - Grafik Tasarım ve Kreatif Portföy"
+    >
+
+    <title id="pageTitle">
+        Furkan Kaya | Grafik Tasarım
     </title>
+
+
+    <!-- CSS -->
 
     <link
         rel="stylesheet"
-        href="admin.css"
+        href="style.css"
     >
 
 </head>
 
 
-<body class="admin-page">
+<body>
+
+
+    <!-- =====================================
+         BACKGROUND PATTERN
+    ====================================== -->
+
+    <div
+        class="site-background-pattern"
+        aria-hidden="true"
+    ></div>
+
 
 
     <!-- =====================================
          HEADER
     ====================================== -->
 
-    <header class="admin-header">
+    <header
+        class="header"
+        id="home"
+    >
 
-        <div class="admin-header-container">
+        <div class="header-container">
 
+
+            <!-- LOGO -->
 
             <a
-                href="../index.html"
-                class="admin-logo"
+                href="#home"
+                class="logo"
+                id="siteLogo"
             >
-                FURKAN<span>KAYA</span>
+
+                <span id="siteLogoText">
+                    FURKAN <strong>KAYA</strong>
+                </span>
+
             </a>
 
 
-            <div class="admin-header-actions">
 
+            <!-- NAVIGATION -->
+
+            <nav
+                class="nav"
+                id="mainNavigation"
+            >
 
                 <a
-                    href="../index.html"
-                    target="_blank"
-                    class="admin-site-button"
+                    href="#home"
+                    class="nav-link active"
                 >
-                    ↗ Siteyi Görüntüle
+                    Ana Sayfa
                 </a>
 
 
-                <button
-                    type="button"
-                    id="logoutButton"
-                    class="admin-logout-button"
+                <a
+                    href="#portfolio"
+                    class="nav-link"
                 >
-                    Çıkış Yap
-                </button>
+                    Portföy
+                </a>
 
 
-            </div>
+                <a
+                    href="#about"
+                    class="nav-link"
+                >
+                    Hakkımda
+                </a>
+
+
+                <a
+                    href="#contact"
+                    class="nav-link"
+                >
+                    İletişim
+                </a>
+
+            </nav>
+
+
+
+            <!-- HEADER CONTACT -->
+
+            <a
+                href="#contact"
+                class="header-button"
+            >
+                İletişime Geç
+            </a>
+
+
+
+            <!-- MOBILE MENU -->
+
+            <button
+                type="button"
+                class="menu-button"
+                id="menuButton"
+                aria-label="Menüyü aç"
+                aria-expanded="false"
+            >
+                ☰
+            </button>
 
 
         </div>
@@ -71,429 +143,478 @@
     </header>
 
 
+
     <!-- =====================================
          MAIN
     ====================================== -->
 
-    <main class="admin-main">
+    <main>
 
 
-        <div class="admin-page-heading">
 
-            <h1>
-                Yönetim Paneli
-            </h1>
-
-            <p>
-                Portföyünü ve site içeriklerini buradan yönetebilirsin.
-            </p>
-
-        </div>
-
-
-        <!-- =====================================
-             NAVIGATION
-        ====================================== -->
-
-        <nav class="admin-navigation">
-
-
-            <button
-                type="button"
-                class="admin-nav-button active"
-                data-target="dashboardSection"
-            >
-                ⌂ Genel Bakış
-            </button>
-
-
-            <button
-                type="button"
-                class="admin-nav-button"
-                data-target="portfolioSection"
-            >
-                ▣ Portföy
-            </button>
-
-
-            <a
-                href="settings.html"
-                class="admin-nav-button"
-            >
-                ⚙ Site Ayarları
-            </a>
-
-
-        </nav>
-
-
-        <!-- =====================================
-             DASHBOARD
-        ====================================== -->
+        <!-- =================================
+             HERO
+        ================================== -->
 
         <section
-            id="dashboardSection"
-            class="admin-section active"
+            class="hero"
+            id="hero"
         >
 
+            <div class="container">
 
-            <div class="admin-card">
-
-
-                <div class="admin-card-header">
-
-                    <div>
-
-                        <h2 class="admin-card-title">
-                            Genel Bakış
-                        </h2>
-
-                        <p class="admin-card-description">
-                            Portföy istatistiklerin.
-                        </p>
-
-                    </div>
-
-                </div>
+                <div class="hero-content">
 
 
-                <div class="admin-form-grid">
+                    <p
+                        class="hero-eyebrow"
+                        id="heroEyebrow"
+                    >
+                        GRAPHIC DESIGNER • CREATIVE DIRECTOR
+                    </p>
 
 
-                    <div class="admin-form-group">
+                    <h1
+                        class="hero-title"
+                        id="heroTitle"
+                    >
+                        TASARIMIN
+                        <br>
+                        GÜCÜNÜ
+                        <br>
+                        KEŞFEDİN.
+                    </h1>
 
-                        <label>
-                            Toplam Portföy
-                        </label>
 
-                        <input
-                            type="text"
-                            id="totalPortfolio"
-                            value="0"
-                            readonly
+                    <p
+                        class="hero-description"
+                        id="heroDescription"
+                    >
+                        Markalar için güçlü, modern ve akılda kalıcı
+                        görsel deneyimler tasarlıyorum.
+                    </p>
+
+
+                    <div class="hero-actions">
+
+                        <a
+                            href="#portfolio"
+                            class="hero-primary-button"
                         >
+                            Çalışmalarımı İncele
+                        </a>
 
-                    </div>
 
-
-                    <div class="admin-form-group">
-
-                        <label>
-                            Aktif Portföy
-                        </label>
-
-                        <input
-                            type="text"
-                            id="activePortfolio"
-                            value="0"
-                            readonly
+                        <a
+                            href="#contact"
+                            class="hero-secondary-button"
                         >
+                            Benimle İletişime Geç
+                        </a>
 
                     </div>
 
 
                 </div>
-
 
             </div>
-
 
         </section>
 
 
-        <!-- =====================================
+
+        <!-- =================================
              PORTFOLIO
-        ====================================== -->
+        ================================== -->
 
         <section
-            id="portfolioSection"
-            class="admin-section"
+            class="portfolio-section"
+            id="portfolio"
         >
 
+            <div class="container">
 
-            <div class="admin-card">
 
+                <!-- PORTFOLIO HEADER -->
 
-                <div class="admin-card-header">
+                <div class="portfolio-header">
 
 
                     <div>
 
-                        <h2 class="admin-card-title">
-                            Portföy Çalışmaları
+                        <p class="portfolio-eyebrow">
+                            SEÇİLMİŞ ÇALIŞMALAR
+                        </p>
+
+
+                        <h2 class="portfolio-title">
+                            PORTFÖY
                         </h2>
 
-                        <p class="admin-card-description">
-                            Çalışmalarını ekle, düzenle veya sil.
-                        </p>
+                    </div>
+
+
+                    <p class="portfolio-description">
+                        Marka kimliği, grafik tasarım, sosyal medya,
+                        baskı ve dijital tasarım alanlarında gerçekleştirdiğim
+                        seçilmiş çalışmalar.
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- SLIDER -->
+
+                <div
+                    class="portfolio-slider"
+                    id="portfolioSliderWrapper"
+                >
+
+
+                    <button
+                        type="button"
+                        class="portfolio-slider-button prev"
+                        id="portfolioPrev"
+                        aria-label="Önceki çalışma"
+                    >
+                        ←
+                    </button>
+
+
+                    <div
+                        class="portfolio-slider-track"
+                        id="portfolioSlider"
+                    >
+
+                        <!-- JAVASCRIPT İLE YÜKLENECEK -->
 
                     </div>
 
 
                     <button
                         type="button"
-                        id="newPortfolioButton"
-                        class="admin-primary-button"
+                        class="portfolio-slider-button next"
+                        id="portfolioNext"
+                        aria-label="Sonraki çalışma"
                     >
-                        + Yeni Çalışma
+                        →
                     </button>
 
 
                 </div>
 
 
-                <div
-                    id="portfolioEmptyState"
-                    class="admin-empty-state"
-                >
-                    Henüz portföy çalışması bulunmuyor.
-                </div>
 
+                <!-- PORTFOLIO DOTS -->
 
                 <div
-                    id="portfolioList"
-                    class="portfolio-admin-list"
+                    class="portfolio-dots"
+                    id="portfolioDots"
+                ></div>
+
+
+                <!-- EMPTY STATE -->
+
+                <div
+                    class="portfolio-empty"
+                    id="portfolioEmpty"
+                    hidden
                 >
+                    Henüz portföy çalışması eklenmedi.
                 </div>
 
 
             </div>
-
-
-            <!-- =====================================
-                 PORTFOLIO FORM
-            ====================================== -->
-
-            <div
-                id="portfolioFormCard"
-                class="admin-card"
-                style="display: none;"
-            >
-
-
-                <div class="admin-card-header">
-
-                    <div>
-
-                        <h2
-                            id="portfolioFormTitle"
-                            class="admin-card-title"
-                        >
-                            Yeni Portföy Çalışması
-                        </h2>
-
-                        <p class="admin-card-description">
-                            Portföy çalışmasının bilgilerini gir.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <form id="portfolioForm">
-
-
-                    <input
-                        type="hidden"
-                        id="portfolioEditId"
-                    >
-
-
-                    <div class="admin-form-grid">
-
-
-                        <div class="admin-form-group">
-
-                            <label for="portfolioTitle">
-                                Proje Başlığı
-                            </label>
-
-                            <input
-                                type="text"
-                                id="portfolioTitle"
-                                required
-                            >
-
-                        </div>
-
-
-                        <div class="admin-form-group">
-
-                            <label for="portfolioCategory">
-                                Kategori
-                            </label>
-
-                            <input
-                                type="text"
-                                id="portfolioCategory"
-                            >
-
-                        </div>
-
-
-                        <div class="admin-form-group full-width">
-
-                            <label for="portfolioDescription">
-                                Açıklama
-                            </label>
-
-                            <textarea
-                                id="portfolioDescription"
-                            ></textarea>
-
-                        </div>
-
-
-                        <div class="admin-form-group">
-
-                            <label for="portfolioDate">
-                                Proje Tarihi
-                            </label>
-
-                            <input
-                                type="date"
-                                id="portfolioDate"
-                            >
-
-                        </div>
-
-
-                        <div class="admin-form-group">
-
-                            <label for="portfolioStatus">
-                                Durum
-                            </label>
-
-                            <select id="portfolioStatus">
-
-                                <option value="active">
-                                    Aktif
-                                </option>
-
-                                <option value="inactive">
-                                    Pasif
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <div class="admin-form-group full-width">
-
-
-                            <label for="portfolioImageInput">
-                                Proje Görseli
-                            </label>
-
-
-                            <label
-                                for="portfolioImageInput"
-                                class="image-upload-area"
-                            >
-
-
-                                <div
-                                    id="imageUploadContent"
-                                    class="image-upload-content"
-                                >
-
-                                    <span class="image-upload-icon">
-                                        🖼
-                                    </span>
-
-                                    <span class="image-upload-title">
-                                        Görsel yüklemek için tıkla
-                                    </span>
-
-                                    <span class="image-upload-text">
-                                        JPG, PNG veya WEBP
-                                    </span>
-
-                                </div>
-
-
-                                <img
-                                    id="portfolioImagePreview"
-                                    class="image-preview"
-                                    alt="Görsel önizleme"
-                                >
-
-
-                            </label>
-
-
-                            <input
-                                type="file"
-                                id="portfolioImageInput"
-                                class="image-upload-input"
-                                accept="image/png,image/jpeg,image/webp"
-                            >
-
-
-                        </div>
-
-
-                    </div>
-
-
-                    <div class="admin-form-actions">
-
-
-                        <button
-                            type="submit"
-                            class="admin-primary-button"
-                        >
-                            Kaydet
-                        </button>
-
-
-                        <button
-                            type="button"
-                            id="cancelPortfolioButton"
-                            class="admin-secondary-button"
-                        >
-                            İptal
-                        </button>
-
-
-                    </div>
-
-
-                </form>
-
-
-            </div>
-
 
         </section>
 
 
-        <!-- =====================================
-             MESSAGE
-        ====================================== -->
 
-        <div
-            id="adminMessage"
-            class="admin-message"
+        <!-- =================================
+             ABOUT
+        ================================== -->
+
+        <section
+            class="section about-section"
+            id="about"
         >
-        </div>
+
+            <div class="container">
+
+
+                <div class="about-grid">
+
+
+                    <div>
+
+                        <p class="section-eyebrow">
+                            HAKKIMDA
+                        </p>
+
+
+                        <h2 class="about-title">
+                            FİKİRLERİ
+                            <br>
+                            GÖRSEL
+                            <br>
+                            DENEYİMLERE
+                            <br>
+                            DÖNÜŞTÜRÜYORUM.
+                        </h2>
+
+                    </div>
+
+
+
+                    <div
+                        class="about-content"
+                        id="aboutContent"
+                    >
+
+                        <p>
+                            Grafik tasarım ve yaratıcı iletişim alanında,
+                            markaların kendilerini daha güçlü ifade etmesine
+                            yardımcı olacak çözümler üretiyorum.
+                        </p>
+
+
+                        <p>
+                            Her projeye yalnızca estetik açıdan değil,
+                            markanın hedef kitlesi, karakteri ve amacı
+                            doğrultusunda yaklaşarak özgün tasarım
+                            deneyimleri oluşturuyorum.
+                        </p>
+
+
+                        <p>
+                            Logo tasarımı, kurumsal kimlik, sosyal medya,
+                            reklam ve baskı tasarımlarından dijital
+                            içeriklere kadar geniş bir alanda çalışıyorum.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             CONTACT
+        ================================== -->
+
+        <section
+            class="contact-section"
+            id="contact"
+        >
+
+            <div class="container">
+
+
+                <div class="contact-content">
+
+
+                    <p class="contact-eyebrow">
+                        BİRLİKTE ÇALIŞALIM
+                    </p>
+
+
+                    <h2 class="contact-title">
+                        BİR SONRAKİ
+                        <br>
+                        PROJENİZİ
+                        <br>
+                        BİRLİKTE
+                        <br>
+                        TASARLAYALIM.
+                    </h2>
+
+
+                    <p
+                        class="contact-text"
+                        id="contactText"
+                    >
+                        Yeni bir proje, marka veya fikir hakkında
+                        konuşmak isterseniz benimle iletişime geçebilirsiniz.
+                    </p>
+
+
+                    <div class="contact-links">
+
+
+                        <a
+                            href="mailto:"
+                            class="contact-button"
+                            id="contactEmailButton"
+                        >
+                            E-posta Gönder
+                        </a>
+
+
+                        <a
+                            href="#"
+                            class="contact-link"
+                            id="instagramButton"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Instagram
+                        </a>
+
+
+                    </div>
+
+
+
+                    <div
+                        class="contact-details"
+                    >
+
+
+                        <p
+                            id="contactEmailText"
+                        ></p>
+
+
+                        <p
+                            id="contactPhoneText"
+                        ></p>
+
+
+                        <p
+                            id="contactAddressText"
+                        ></p>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
 
 
     </main>
 
 
+
     <!-- =====================================
-         JAVASCRIPT
+         FOOTER
     ====================================== -->
 
+    <footer class="footer">
+
+        <div class="footer-container">
+
+
+            <div
+                class="footer-logo"
+                id="footerLogo"
+            >
+                FURKAN KAYA
+            </div>
+
+
+            <p class="footer-text">
+
+                ©
+                <span id="currentYear"></span>
+
+                <span id="footerSiteName">
+                    Furkan Kaya
+                </span>
+
+                — Tüm hakları saklıdır.
+
+            </p>
+
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- =====================================
+         LIGHTBOX
+    ====================================== -->
+
+    <div
+        class="lightbox"
+        id="lightbox"
+        aria-hidden="true"
+    >
+
+
+        <button
+            type="button"
+            class="lightbox-close"
+            id="lightboxClose"
+            aria-label="Kapat"
+        >
+            ×
+        </button>
+
+
+
+        <div class="lightbox-content">
+
+
+            <img
+                src=""
+                alt=""
+                id="lightboxImage"
+            >
+
+
+            <div class="lightbox-info">
+
+
+                <h3
+                    id="lightboxTitle"
+                ></h3>
+
+
+                <p
+                    id="lightboxDescription"
+                ></p>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================
+         SUPABASE
+    ====================================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="supabase.js"></script>
+    <script src="admin/supabase.js"></script>
 
-    <script src="admin.js"></script>
+
+
+    <!-- =====================================
+         MAIN SCRIPT
+    ====================================== -->
+
+    <script src="script.js"></script>
 
 
 </body>
