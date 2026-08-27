@@ -1,291 +1,201 @@
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-        const loginForm =
-            document.getElementById("loginForm");
+    const loginForm = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
 
-        const emailInput =
-            document.getElementById("email");
+    const passwordToggle =
+        document.getElementById("passwordToggle");
 
-        const passwordInput =
-            document.getElementById("password");
+    const loginButton =
+        document.getElementById("loginButton");
 
-        const passwordToggle =
-            document.getElementById("passwordToggle");
-
-        const loginButton =
-            document.getElementById("loginButton");
-
-        const formMessage =
-            document.getElementById("formMessage");
+    const formMessage =
+        document.getElementById("formMessage");
 
 
-        /* =====================================
-           ZATEN GİRİŞ YAPILMIŞSA
-        ===================================== */
+    function showMessage(message, type = "error") {
 
-        try {
-
-            const {
-                data
-            } = await supabaseClient
-                .auth
-                .getUser();
-
-
-            if (data.user) {
-
-                window.location.href =
-                    "admin.html";
-
-                return;
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Oturum kontrol hatası:",
-                error
-            );
-
-        }
-
-
-        /* =====================================
-           ŞİFRE GÖSTER / GİZLE
-        ===================================== */
-
-        if (passwordToggle) {
-
-            passwordToggle.addEventListener(
-                "click",
-                () => {
-
-                    const isPassword =
-                        passwordInput.type ===
-                        "password";
-
-
-                    passwordInput.type =
-                        isPassword
-                            ? "text"
-                            : "password";
-
-
-                    passwordToggle.textContent =
-                        isPassword
-                            ? "🙈"
-                            : "👁";
-
-
-                    passwordToggle.setAttribute(
-                        "aria-label",
-                        isPassword
-                            ? "Şifreyi gizle"
-                            : "Şifreyi göster"
-                    );
-
-                }
-            );
-
-        }
-
-
-        /* =====================================
-           FORM MESAJI
-        ===================================== */
-
-        function showMessage(
-            message,
-            type = "error"
-        ) {
-
-            if (!formMessage) {
-                return;
-            }
-
-
-            formMessage.textContent =
-                message;
-
-
-            formMessage.className =
-                `form-message ${type} show`;
-
-        }
-
-
-        function clearMessage() {
-
-            if (!formMessage) {
-                return;
-            }
-
-
-            formMessage.textContent =
-                "";
-
-
-            formMessage.className =
-                "form-message";
-
-        }
-
-
-        /* =====================================
-           GİRİŞ FORMU
-        ===================================== */
-
-        if (!loginForm) {
+        if (!formMessage) {
             return;
         }
 
+        formMessage.textContent = message;
 
-        loginForm.addEventListener(
-            "submit",
-            async (event) => {
+        formMessage.className =
+            `form-message show ${type}`;
 
-                event.preventDefault();
-
-
-                clearMessage();
+    }
 
 
-                const email =
-                    emailInput.value
-                        .trim();
+    function setLoading(isLoading) {
+
+        if (!loginButton) {
+            return;
+        }
+
+        loginButton.disabled = isLoading;
+
+        loginButton.classList.toggle(
+            "loading",
+            isLoading
+        );
+
+    }
 
 
-                const password =
-                    passwordInput.value;
+    if (passwordToggle && passwordInput) {
 
+        passwordToggle.addEventListener(
+            "click",
+            () => {
 
-                if (!email) {
+                const isPassword =
+                    passwordInput.type === "password";
 
-                    showMessage(
-                        "E-posta adresinizi girin."
-                    );
+                passwordInput.type =
+                    isPassword
+                        ? "text"
+                        : "password";
 
-                    emailInput.focus();
-
-                    return;
-
-                }
-
-
-                if (!password) {
-
-                    showMessage(
-                        "Şifrenizi girin."
-                    );
-
-                    passwordInput.focus();
-
-                    return;
-
-                }
-
-
-                try {
-
-                    loginButton.disabled =
-                        true;
-
-
-                    loginButton.classList.add(
-                        "loading"
-                    );
-
-
-                    const {
-                        data,
-                        error
-                    } = await supabaseClient
-                        .auth
-                        .signInWithPassword(
-                            {
-                                email:
-                                    email,
-
-                                password:
-                                    password
-                            }
-                        );
-
-
-                    if (error) {
-                        throw error;
-                    }
-
-
-                    if (!data.user) {
-
-                        throw new Error(
-                            "Kullanıcı oturumu oluşturulamadı."
-                        );
-
-                    }
-
-
-                    showMessage(
-                        "Giriş başarılı. Yönlendiriliyorsunuz...",
-                        "success"
-                    );
-
-
-                    setTimeout(
-                        () => {
-
-                            window.location.href =
-                                "admin.html";
-
-                        },
-                        700
-                    );
-
-                } catch (error) {
-
-                    console.error(
-                        "Giriş hatası:",
-                        error
-                    );
-
-
-                    let errorMessage =
-                        "Giriş yapılırken bir hata oluştu.";
-
-
-                    if (
-                        error.message ===
-                        "Invalid login credentials"
-                    ) {
-
-                        errorMessage =
-                            "E-posta veya şifre hatalı.";
-
-                    }
-
-
-                    showMessage(
-                        errorMessage,
-                        "error"
-                    );
-
-
-                    loginButton.disabled =
-                        false;
-
-
-                    loginButton.classList.remove(
-                        "loading"
-                    );
-
-                }
+                passwordToggle.textContent =
+                    isPassword
+                        ? "🙈"
+                        : "👁";
 
             }
         );
 
     }
-);
+
+
+    if (!loginForm) {
+        return;
+    }
+
+
+    loginForm.addEventListener(
+        "submit",
+        async (event) => {
+
+            event.preventDefault();
+
+
+            const email =
+                emailInput.value.trim();
+
+            const password =
+                passwordInput.value;
+
+
+            if (!email || !password) {
+
+                showMessage(
+                    "E-posta ve şifre giriniz."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !window.supabaseClient &&
+                !window.supabase
+            ) {
+
+                showMessage(
+                    "Supabase bağlantısı bulunamadı."
+                );
+
+                return;
+
+            }
+
+
+            const client =
+                window.supabaseClient;
+
+
+            if (!client) {
+
+                showMessage(
+                    "Supabase istemcisi oluşturulamadı."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                setLoading(true);
+
+                showMessage(
+                    "Giriş yapılıyor...",
+                    "success"
+                );
+
+
+                const {
+                    data,
+                    error
+                } =
+                    await client.auth.signInWithPassword({
+
+                        email: email,
+
+                        password: password
+
+                    });
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                if (!data.user) {
+
+                    throw new Error(
+                        "Kullanıcı bulunamadı."
+                    );
+
+                }
+
+
+                showMessage(
+                    "Giriş başarılı. Yönlendiriliyorsunuz...",
+                    "success"
+                );
+
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        "admin.html";
+
+                }, 500);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Login error:",
+                    error
+                );
+
+                showMessage(
+                    error.message ||
+                    "Giriş sırasında hata oluştu."
+                );
+
+                setLoading(false);
+
+            }
+
+        }
+    );
+
+});
