@@ -1,1048 +1,1301 @@
 /* =========================================
-   FURKAN KAYA PORTFOLYO SİTESİ
+   FURKAN KAYA PORTFOLIO
+   ANA SITE JAVASCRIPT
 ========================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
+document.addEventListener("DOMContentLoaded", function () {
 
-        /* =====================================
-           SUPABASE KONTROL
-        ====================================== */
+    initializeCurrentYear();
 
-        if (
-            typeof supabaseClient === "undefined"
-        ) {
+    initializeNavigation();
+
+    initializePortfolio();
+
+});
+
+
+/* =========================================
+   CURRENT YEAR
+========================================= */
+
+function initializeCurrentYear() {
+
+    const currentYear =
+        document.getElementById("currentYear");
+
+
+    if (!currentYear) {
+        return;
+    }
+
+
+    currentYear.textContent =
+        new Date().getFullYear();
+
+}
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+function initializeNavigation() {
+
+    const navLinks =
+        document.querySelectorAll(".nav-link");
+
+
+    if (!navLinks.length) {
+        return;
+    }
+
+
+    navLinks.forEach(function (link) {
+
+        link.addEventListener(
+            "click",
+            function () {
+
+                navLinks.forEach(function (item) {
+
+                    item.classList.remove("active");
+
+                });
+
+
+                link.classList.add("active");
+
+            }
+        );
+
+    });
+
+}
+
+
+/* =========================================
+   PORTFOLIO
+========================================= */
+
+function initializePortfolio() {
+
+    const portfolioSlider =
+        document.getElementById("portfolioSlider");
+
+    const portfolioPrev =
+        document.getElementById("portfolioPrev");
+
+    const portfolioNext =
+        document.getElementById("portfolioNext");
+
+    const portfolioDots =
+        document.getElementById("portfolioDots");
+
+
+    if (!portfolioSlider) {
+
+        console.error(
+            "portfolioSlider bulunamadı."
+        );
+
+        return;
+
+    }
+
+
+    const portfolios =
+        getPortfoliosFromStorage();
+
+
+    if (portfolios.length === 0) {
+
+        portfolioSlider.innerHTML = `
+
+            <div
+                class="portfolio-loading"
+            >
+                Henüz portföy çalışması eklenmedi.
+            </div>
+
+        `;
+
+
+        if (portfolioDots) {
+
+            portfolioDots.innerHTML = "";
+
+        }
+
+
+        if (portfolioPrev) {
+
+            portfolioPrev.style.display =
+                "none";
+
+        }
+
+
+        if (portfolioNext) {
+
+            portfolioNext.style.display =
+                "none";
+
+        }
+
+
+        return;
+
+    }
+
+
+    renderPortfolios(
+        portfolioSlider,
+        portfolios
+    );
+
+
+    createPortfolioDots(
+        portfolioDots,
+        portfolios
+    );
+
+
+    initializePortfolioSlider(
+        portfolioSlider,
+        portfolioPrev,
+        portfolioNext,
+        portfolioDots,
+        portfolios
+    );
+
+}
+
+
+/* =========================================
+   LOCAL STORAGE'DAN PORTFÖYLERİ AL
+========================================= */
+
+function getPortfoliosFromStorage() {
+
+    let portfolios = [];
+
+
+    try {
+
+        const savedPortfolios =
+            localStorage.getItem(
+                "furkanKayaPortfolios"
+            );
+
+
+        if (!savedPortfolios) {
+
+            console.log(
+                "LocalStorage içerisinde furkanKayaPortfolios bulunamadı."
+            );
+
+            return [];
+
+        }
+
+
+        const parsedPortfolios =
+            JSON.parse(
+                savedPortfolios
+            );
+
+
+        if (!Array.isArray(parsedPortfolios)) {
 
             console.error(
-                "Supabase bağlantısı bulunamadı."
+                "Portföy verisi dizi formatında değil."
             );
+
+            return [];
+
+        }
+
+
+        portfolios =
+            parsedPortfolios.filter(
+                function (item) {
+
+                    /*
+                    Yönetim panelinde status alanı
+                    yoksa da çalışmayı göster.
+                    */
+
+                    if (
+                        !item.status
+                    ) {
+
+                        return true;
+
+                    }
+
+
+                    return (
+                        item.status === "active" ||
+                        item.status === true ||
+                        item.status === "aktif"
+                    );
+
+                }
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "Portföy verileri okunurken hata oluştu:",
+            error
+        );
+
+    }
+
+
+    return portfolios;
+
+}
+
+
+/* =========================================
+   PORTFÖYLERİ HTML'E YAZ
+========================================= */
+
+function renderPortfolios(
+    portfolioSlider,
+    portfolios
+) {
+
+    portfolioSlider.innerHTML = "";
+
+
+    portfolios.forEach(
+        function (
+            portfolio,
+            index
+        ) {
+
+            const portfolioCard =
+                createPortfolioCard(
+                    portfolio,
+                    index
+                );
+
+
+            portfolioSlider.appendChild(
+                portfolioCard
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   PORTFÖY KARTI OLUŞTUR
+========================================= */
+
+function createPortfolioCard(
+    portfolio,
+    index
+) {
+
+    const article =
+        document.createElement(
+            "article"
+        );
+
+
+    article.className =
+        "portfolio-card";
+
+
+    article.setAttribute(
+        "tabindex",
+        "0"
+    );
+
+
+    const title =
+        getPortfolioValue(
+            portfolio,
+            [
+                "title",
+                "name",
+                "baslik"
+            ],
+            "İsimsiz Çalışma"
+        );
+
+
+    const description =
+        getPortfolioValue(
+            portfolio,
+            [
+                "description",
+                "content",
+                "aciklama"
+            ],
+            ""
+        );
+
+
+    const category =
+        getPortfolioValue(
+            portfolio,
+            [
+                "category",
+                "type",
+                "kategori"
+            ],
+            ""
+        );
+
+
+    const image =
+        getPortfolioImage(
+            portfolio
+        );
+
+
+    const imageContainer =
+        document.createElement(
+            "div"
+        );
+
+
+    imageContainer.className =
+        "portfolio-image";
+
+
+    if (image) {
+
+        const img =
+            document.createElement(
+                "img"
+            );
+
+
+        img.src =
+            image;
+
+
+        img.alt =
+            title;
+
+
+        img.loading =
+            "lazy";
+
+
+        imageContainer.appendChild(
+            img
+        );
+
+    } else {
+
+        const placeholder =
+            document.createElement(
+                "div"
+            );
+
+
+        placeholder.className =
+            "portfolio-placeholder";
+
+
+        const placeholderTitle =
+            document.createElement(
+                "span"
+            );
+
+
+        placeholderTitle.textContent =
+            category ||
+            "TASARIM";
+
+
+        const placeholderNumber =
+            document.createElement(
+                "strong"
+            );
+
+
+        placeholderNumber.textContent =
+            String(
+                index + 1
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        placeholder.appendChild(
+            placeholderTitle
+        );
+
+
+        placeholder.appendChild(
+            placeholderNumber
+        );
+
+
+        imageContainer.appendChild(
+            placeholder
+        );
+
+    }
+
+
+    const info =
+        document.createElement(
+            "div"
+        );
+
+
+    info.className =
+        "portfolio-info";
+
+
+    if (category) {
+
+        const categoryElement =
+            document.createElement(
+                "span"
+            );
+
+
+        categoryElement.className =
+            "portfolio-category";
+
+
+        categoryElement.textContent =
+            category;
+
+
+        info.appendChild(
+            categoryElement
+        );
+
+    }
+
+
+    const heading =
+        document.createElement(
+            "h3"
+        );
+
+
+    heading.textContent =
+        title;
+
+
+    info.appendChild(
+        heading
+    );
+
+
+    if (description) {
+
+        const paragraph =
+            document.createElement(
+                "p"
+            );
+
+
+        paragraph.textContent =
+            description;
+
+
+        info.appendChild(
+            paragraph
+        );
+
+    }
+
+
+    article.appendChild(
+        imageContainer
+    );
+
+
+    article.appendChild(
+        info
+    );
+
+
+    /*
+    Kart tıklandığında
+    görseli lightbox içerisinde aç.
+    */
+
+    article.addEventListener(
+        "click",
+        function () {
+
+            if (!image) {
+                return;
+            }
+
+
+            openPortfolioLightbox(
+                image,
+                title,
+                description
+            );
+
+        }
+    );
+
+
+    article.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+
+                event.preventDefault();
+
+
+                if (!image) {
+                    return;
+                }
+
+
+                openPortfolioLightbox(
+                    image,
+                    title,
+                    description
+                );
+
+            }
+
+        }
+    );
+
+
+    return article;
+
+}
+
+
+/* =========================================
+   PORTFÖY DEĞERİ BUL
+========================================= */
+
+function getPortfolioValue(
+    portfolio,
+    possibleKeys,
+    defaultValue
+) {
+
+    for (
+        let i = 0;
+        i < possibleKeys.length;
+        i++
+    ) {
+
+        const key =
+            possibleKeys[i];
+
+
+        if (
+            portfolio[key] !== undefined &&
+            portfolio[key] !== null &&
+            portfolio[key] !== ""
+        ) {
+
+            return String(
+                portfolio[key]
+            );
+
+        }
+
+    }
+
+
+    return defaultValue;
+
+}
+
+
+/* =========================================
+   PORTFÖY GÖRSELİ BUL
+========================================= */
+
+function getPortfolioImage(
+    portfolio
+) {
+
+    const possibleKeys = [
+
+        "image",
+        "imageUrl",
+        "image_url",
+        "imageData",
+        "image_data",
+        "thumbnail",
+        "thumbnailUrl",
+        "cover"
+
+    ];
+
+
+    for (
+        let i = 0;
+        i < possibleKeys.length;
+        i++
+    ) {
+
+        const key =
+            possibleKeys[i];
+
+
+        if (
+            portfolio[key] !== undefined &&
+            portfolio[key] !== null &&
+            portfolio[key] !== ""
+        ) {
+
+            return portfolio[key];
+
+        }
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =========================================
+   DOTS OLUŞTUR
+========================================= */
+
+function createPortfolioDots(
+    portfolioDots,
+    portfolios
+) {
+
+    if (!portfolioDots) {
+        return;
+    }
+
+
+    portfolioDots.innerHTML = "";
+
+
+    portfolios.forEach(
+        function (
+            portfolio,
+            index
+        ) {
+
+            const dot =
+                document.createElement(
+                    "button"
+                );
+
+
+            dot.type =
+                "button";
+
+
+            dot.className =
+                "portfolio-dot";
+
+
+            dot.setAttribute(
+                "aria-label",
+                (
+                    index + 1
+                ) +
+                ". çalışmaya git"
+            );
+
+
+            dot.dataset.index =
+                index;
+
+
+            portfolioDots.appendChild(
+                dot
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   PORTFÖY SLIDER
+========================================= */
+
+function initializePortfolioSlider(
+    portfolioSlider,
+    portfolioPrev,
+    portfolioNext,
+    portfolioDots,
+    portfolios
+) {
+
+    const cards =
+        portfolioSlider.querySelectorAll(
+            ".portfolio-card"
+        );
+
+
+    if (!cards.length) {
+        return;
+    }
+
+
+    let currentIndex = 0;
+
+
+    function updateSlider() {
+
+        cards.forEach(
+            function (
+                card,
+                index
+            ) {
+
+                if (
+                    index === currentIndex
+                ) {
+
+                    card.style.display =
+                        "block";
+
+
+                    card.classList.add(
+                        "active"
+                    );
+
+                } else {
+
+                    card.style.display =
+                        "none";
+
+
+                    card.classList.remove(
+                        "active"
+                    );
+
+                }
+
+            }
+        );
+
+
+        if (portfolioDots) {
+
+            const dots =
+                portfolioDots.querySelectorAll(
+                    ".portfolio-dot"
+                );
+
+
+            dots.forEach(
+                function (
+                    dot,
+                    index
+                ) {
+
+                    dot.classList.toggle(
+                        "active",
+                        index === currentIndex
+                    );
+
+                }
+            );
+
+        }
+
+    }
+
+
+    function goToSlide(
+        index
+    ) {
+
+        currentIndex =
+            index;
+
+
+        if (
+            currentIndex <
+            0
+        ) {
+
+            currentIndex =
+                cards.length - 1;
+
+        }
+
+
+        if (
+            currentIndex >=
+            cards.length
+        ) {
+
+            currentIndex =
+                0;
+
+        }
+
+
+        updateSlider();
+
+    }
+
+
+    if (
+        portfolioPrev
+    ) {
+
+        if (
+            cards.length <= 1
+        ) {
+
+            portfolioPrev.style.display =
+                "none";
+
+        } else {
+
+            portfolioPrev.style.display =
+                "flex";
+
+        }
+
+
+        portfolioPrev.addEventListener(
+            "click",
+            function () {
+
+                goToSlide(
+                    currentIndex - 1
+                );
+
+            }
+        );
+
+    }
+
+
+    if (
+        portfolioNext
+    ) {
+
+        if (
+            cards.length <= 1
+        ) {
+
+            portfolioNext.style.display =
+                "none";
+
+        } else {
+
+            portfolioNext.style.display =
+                "flex";
+
+        }
+
+
+        portfolioNext.addEventListener(
+            "click",
+            function () {
+
+                goToSlide(
+                    currentIndex + 1
+                );
+
+            }
+        );
+
+    }
+
+
+    if (
+        portfolioDots
+    ) {
+
+        const dots =
+            portfolioDots.querySelectorAll(
+                ".portfolio-dot"
+            );
+
+
+        dots.forEach(
+            function (
+                dot,
+                index
+            ) {
+
+                dot.addEventListener(
+                    "click",
+                    function () {
+
+                        goToSlide(
+                            index
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    /*
+    Klavye yön tuşları
+    */
+
+    document.addEventListener(
+        "keydown",
+        function (
+            event
+        ) {
+
+            if (
+                event.key ===
+                "ArrowLeft"
+            ) {
+
+                goToSlide(
+                    currentIndex - 1
+                );
+
+            }
+
+
+            if (
+                event.key ===
+                "ArrowRight"
+            ) {
+
+                goToSlide(
+                    currentIndex + 1
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+    Mobil swipe
+    */
+
+    let touchStartX = 0;
+
+    let touchEndX = 0;
+
+
+    portfolioSlider.addEventListener(
+        "touchstart",
+        function (
+            event
+        ) {
+
+            touchStartX =
+                event.changedTouches[0]
+                    .screenX;
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    portfolioSlider.addEventListener(
+        "touchend",
+        function (
+            event
+        ) {
+
+            touchEndX =
+                event.changedTouches[0]
+                    .screenX;
+
+
+            handleSwipe();
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    function handleSwipe() {
+
+        const swipeDistance =
+            touchEndX -
+            touchStartX;
+
+
+        if (
+            Math.abs(
+                swipeDistance
+            ) <
+            50
+        ) {
 
             return;
 
         }
 
 
-        /* =====================================
-           ELEMENTLER
-        ====================================== */
+        if (
+            swipeDistance <
+            0
+        ) {
 
-        const mobileMenuButton =
-            document.getElementById(
-                "mobileMenuButton"
+            goToSlide(
+                currentIndex + 1
             );
 
-        const mobileMenu =
-            document.getElementById(
-                "mobileMenu"
+        } else {
+
+            goToSlide(
+                currentIndex - 1
             );
-
-        const mobileNavLinks =
-            document.querySelectorAll(
-                ".mobile-nav-link"
-            );
-
-
-        const portfolioSlider =
-            document.getElementById(
-                "portfolioSlider"
-            );
-
-        const portfolioDots =
-            document.getElementById(
-                "portfolioDots"
-            );
-
-        const portfolioPrev =
-            document.getElementById(
-                "portfolioPrev"
-            );
-
-        const portfolioNext =
-            document.getElementById(
-                "portfolioNext"
-            );
-
-
-        const heroSmallText =
-            document.getElementById(
-                "heroSmallText"
-            );
-
-        const heroTitle =
-            document.getElementById(
-                "heroTitle"
-            );
-
-        const heroDescription =
-            document.getElementById(
-                "heroDescription"
-            );
-
-        const aboutText =
-            document.getElementById(
-                "aboutText"
-            );
-
-
-        const contactEmail =
-            document.getElementById(
-                "contactEmail"
-            );
-
-        const contactEmailText =
-            document.getElementById(
-                "contactEmailText"
-            );
-
-        const contactWhatsapp =
-            document.getElementById(
-                "contactWhatsapp"
-            );
-
-        const contactWhatsappText =
-            document.getElementById(
-                "contactWhatsappText"
-            );
-
-        const contactInstagram =
-            document.getElementById(
-                "contactInstagram"
-            );
-
-        const contactInstagramText =
-            document.getElementById(
-                "contactInstagramText"
-            );
-
-
-        /* =====================================
-           FOOTER YILI
-        ====================================== */
-
-        const currentYear =
-            document.getElementById(
-                "currentYear"
-            );
-
-        if (currentYear) {
-
-            currentYear.textContent =
-                new Date().getFullYear();
 
         }
 
+    }
 
-        /* =====================================
-           MOBİL MENÜ
-        ====================================== */
+
+    updateSlider();
+
+}
+
+
+/* =========================================
+   LIGHTBOX
+========================================= */
+
+function openPortfolioLightbox(
+    image,
+    title,
+    description
+) {
+
+    const lightbox =
+        document.getElementById(
+            "lightbox"
+        );
+
+
+    const lightboxImage =
+        document.getElementById(
+            "lightboxImage"
+        );
+
+
+    const lightboxTitle =
+        document.getElementById(
+            "lightboxTitle"
+        );
+
+
+    const lightboxDescription =
+        document.getElementById(
+            "lightboxDescription"
+        );
+
+
+    if (
+        !lightbox ||
+        !lightboxImage
+    ) {
+
+        return;
+
+    }
+
+
+    lightboxImage.src =
+        image;
+
+
+    lightboxImage.alt =
+        title ||
+        "Portföy çalışması";
+
+
+    if (
+        lightboxTitle
+    ) {
+
+        lightboxTitle.textContent =
+            title ||
+            "";
+
+    }
+
+
+    if (
+        lightboxDescription
+    ) {
+
+        lightboxDescription.textContent =
+            description ||
+            "";
+
+    }
+
+
+    lightbox.classList.add(
+        "active"
+    );
+
+
+    lightbox.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+/* =========================================
+   LIGHTBOX BAŞLAT
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const lightbox =
+            document.getElementById(
+                "lightbox"
+            );
+
+
+        const lightboxClose =
+            document.getElementById(
+                "lightboxClose"
+            );
+
 
         if (
-            mobileMenuButton &&
-            mobileMenu
+            !lightbox
         ) {
 
-            mobileMenuButton.addEventListener(
-                "click",
-                () => {
+            return;
 
-                    const isOpen =
-                        mobileMenu.classList.toggle(
-                            "active"
-                        );
+        }
 
 
-                    mobileMenuButton.setAttribute(
-                        "aria-expanded",
-                        isOpen
-                    );
+        function closeLightbox() {
 
-
-                    mobileMenuButton.setAttribute(
-                        "aria-label",
-                        isOpen
-                            ? "Menüyü kapat"
-                            : "Menüyü aç"
-                    );
-
-                }
+            lightbox.classList.remove(
+                "active"
             );
 
-        }
 
+            lightbox.setAttribute(
+                "aria-hidden",
+                "true"
+            );
 
-        mobileNavLinks.forEach(
-            (link) => {
 
-                link.addEventListener(
-                    "click",
-                    () => {
-
-                        if (
-                            mobileMenu &&
-                            mobileMenuButton
-                        ) {
-
-                            mobileMenu.classList.remove(
-                                "active"
-                            );
-
-
-                            mobileMenuButton.setAttribute(
-                                "aria-expanded",
-                                "false"
-                            );
-
-
-                            mobileMenuButton.setAttribute(
-                                "aria-label",
-                                "Menüyü aç"
-                            );
-
-                        }
-
-                    }
-                );
-
-            }
-        );
-
-
-        /* =====================================
-           SITE AYARLARINI YÜKLE
-        ====================================== */
-
-        async function loadSiteSettings() {
-
-            try {
-
-                const {
-                    data,
-                    error
-                } = await supabaseClient
-                    .from("site_settings")
-                    .select("*")
-                    .limit(1)
-                    .maybeSingle();
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                if (!data) {
-                    return;
-                }
-
-
-                if (
-                    heroSmallText &&
-                    data.hero_small_text
-                ) {
-
-                    heroSmallText.textContent =
-                        data.hero_small_text;
-
-                }
-
-
-                if (
-                    heroTitle &&
-                    data.hero_title
-                ) {
-
-                    /*
-                       Admin panelinden gelen başlık
-                       normal metin olarak gösterilir.
-                    */
-
-                    heroTitle.textContent =
-                        data.hero_title;
-
-                }
-
-
-                if (
-                    heroDescription &&
-                    data.hero_description
-                ) {
-
-                    heroDescription.textContent =
-                        data.hero_description;
-
-                }
-
-
-                if (
-                    aboutText &&
-                    data.about_text
-                ) {
-
-                    aboutText.textContent =
-                        data.about_text;
-
-                }
-
-
-                if (
-                    data.site_title
-                ) {
-
-                    document.title =
-                        data.site_title;
-
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "Site ayarları yüklenemedi:",
-                    error
-                );
-
-            }
-
-        }
-
-
-        /* =====================================
-           İLETİŞİM BİLGİLERİNİ YÜKLE
-        ====================================== */
-
-        async function loadContactSettings() {
-
-            try {
-
-                const {
-                    data,
-                    error
-                } = await supabaseClient
-                    .from("contact_settings")
-                    .select("*")
-                    .limit(1)
-                    .maybeSingle();
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                if (!data) {
-                    return;
-                }
-
-
-                /* E-POSTA */
-
-                if (data.email) {
-
-                    if (contactEmail) {
-
-                        contactEmail.href =
-                            `mailto:${data.email}`;
-
-                    }
-
-
-                    if (contactEmailText) {
-
-                        contactEmailText.textContent =
-                            data.email;
-
-                    }
-
-                }
-
-
-                /* WHATSAPP */
-
-                if (data.whatsapp) {
-
-                    const whatsappNumber =
-                        data.whatsapp
-                            .replace(
-                                /\D/g,
-                                ""
-                            );
-
-
-                    if (contactWhatsapp) {
-
-                        contactWhatsapp.href =
-                            `https://wa.me/${whatsappNumber}`;
-
-                    }
-
-
-                    if (contactWhatsappText) {
-
-                        contactWhatsappText.textContent =
-                            data.whatsapp;
-
-                    }
-
-                }
-
-
-                /* INSTAGRAM */
-
-                if (data.instagram) {
-
-                    const instagramUsername =
-                        data.instagram
-                            .replace(
-                                /^@/,
-                                ""
-                            )
-                            .trim();
-
-
-                    if (contactInstagram) {
-
-                        contactInstagram.href =
-                            `https://instagram.com/${instagramUsername}`;
-
-                    }
-
-
-                    if (contactInstagramText) {
-
-                        contactInstagramText.textContent =
-                            `@${instagramUsername}`;
-
-                    }
-
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "İletişim bilgileri yüklenemedi:",
-                    error
-                );
-
-            }
-
-        }
-
-
-        /* =====================================
-           PORTFÖY VERİLERİNİ YÜKLE
-        ====================================== */
-
-        async function loadPortfolio() {
-
-            if (!portfolioSlider) {
-                return;
-            }
-
-
-            try {
-
-                portfolioSlider.innerHTML =
-                    `
-                        <div class="portfolio-loading">
-                            Çalışmalar yükleniyor...
-                        </div>
-                    `;
-
-
-                const {
-                    data,
-                    error
-                } = await supabaseClient
-                    .from("portfolio")
-                    .select("*")
-                    .eq(
-                        "is_active",
-                        true
-                    )
-                    .order(
-                        "sort_order",
-                        {
-                            ascending: true
-                        }
-                    )
-                    .order(
-                        "created_at",
-                        {
-                            ascending: false
-                        }
-                    );
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                if (
-                    !data ||
-                    data.length === 0
-                ) {
-
-                    portfolioSlider.innerHTML =
-                        `
-                            <div class="portfolio-empty">
-                                Henüz portföy çalışması eklenmedi.
-                            </div>
-                        `;
-
-
-                    if (portfolioDots) {
-
-                        portfolioDots.innerHTML =
-                            "";
-
-                    }
-
-
-                    return;
-
-                }
-
-
-                portfolioSlider.innerHTML =
-                    data
-                        .map(
-                            (item) =>
-                                createPortfolioItem(
-                                    item
-                                )
-                        )
-                        .join("");
-
-
-                createPortfolioDots(
-                    data.length
-                );
-
-
-                initializePortfolioSlider(
-                    data.length
-                );
-
-            } catch (error) {
-
-                console.error(
-                    "Portföy yükleme hatası:",
-                    error
-                );
-
-
-                portfolioSlider.innerHTML =
-                    `
-                        <div class="portfolio-empty">
-                            Portföy çalışmaları yüklenirken
-                            bir hata oluştu.
-                        </div>
-                    `;
-
-            }
-
-        }
-
-
-        /* =====================================
-           PORTFÖY HTML
-        ====================================== */
-
-        function createPortfolioItem(
-            item
-        ) {
-
-            const image =
-                item.image_url
-                    ? `
-                        <img
-                            src="${escapeHtmlAttribute(item.image_url)}"
-                            alt="${escapeHtmlAttribute(item.title || "Portföy çalışması")}"
-                            loading="lazy"
-                        >
-                    `
-                    : `
-                        <div class="portfolio-image-placeholder">
-                            Görsel bulunamadı
-                        </div>
-                    `;
-
-
-            return `
-                <article
-                    class="portfolio-item"
-                >
-
-                    <div class="portfolio-image">
-                        ${image}
-                    </div>
-
-
-                    <div class="portfolio-content">
-
-                        <span class="portfolio-number">
-                            ${String(
-                                item.sort_order || 0
-                            ).padStart(
-                                2,
-                                "0"
-                            )}
-                        </span>
-
-
-                        <h3>
-                            ${escapeHtml(
-                                item.title || ""
-                            )}
-                        </h3>
-
-
-                        <p>
-                            ${escapeHtml(
-                                item.description || ""
-                            )}
-                        </p>
-
-                    </div>
-
-                </article>
-            `;
-
-        }
-
-
-        /* =====================================
-           PORTFÖY NOKTALARI
-        ====================================== */
-
-        function createPortfolioDots(
-            total
-        ) {
-
-            if (!portfolioDots) {
-                return;
-            }
-
-
-            portfolioDots.innerHTML =
+            document.body.style.overflow =
                 "";
 
-
-            for (
-                let index = 0;
-                index < total;
-                index++
-            ) {
-
-                const dot =
-                    document.createElement(
-                        "button"
-                    );
-
-
-                dot.type =
-                    "button";
-
-
-                dot.className =
-                    "portfolio-dot";
-
-
-                dot.setAttribute(
-                    "aria-label",
-                    `${index + 1}. çalışmaya git`
-                );
-
-
-                dot.dataset.index =
-                    index;
-
-
-                portfolioDots.appendChild(
-                    dot
-                );
-
-            }
-
         }
 
 
-        /* =====================================
-           PORTFÖY SLIDER
-        ====================================== */
-
-        function initializePortfolioSlider(
-            total
+        if (
+            lightboxClose
         ) {
 
-            if (
-                !portfolioSlider ||
-                total === 0
-            ) {
-                return;
-            }
-
-
-            let currentIndex = 0;
-
-
-            const items =
-                portfolioSlider.querySelectorAll(
-                    ".portfolio-item"
-                );
-
-
-            const dots =
-                portfolioDots
-                    ? portfolioDots.querySelectorAll(
-                        ".portfolio-dot"
-                    )
-                    : [];
-
-
-            function updateSlider() {
-
-                if (!items.length) {
-                    return;
-                }
-
-
-                const itemWidth =
-                    items[0].offsetWidth;
-
-
-                const gap =
-                    getSliderGap();
-
-
-                portfolioSlider.scrollTo(
-                    {
-                        left:
-                            currentIndex *
-                            (
-                                itemWidth +
-                                gap
-                            ),
-
-                        behavior: "smooth"
-                    }
-                );
-
-
-                dots.forEach(
-                    (
-                        dot,
-                        index
-                    ) => {
-
-                        dot.classList.toggle(
-                            "active",
-                            index ===
-                            currentIndex
-                        );
-
-                    }
-                );
-
-            }
-
-
-            function getSliderGap() {
-
-                const sliderStyle =
-                    window.getComputedStyle(
-                        portfolioSlider
-                    );
-
-
-                const gap =
-                    parseFloat(
-                        sliderStyle.gap ||
-                        sliderStyle.columnGap ||
-                        0
-                    );
-
-
-                return isNaN(gap)
-                    ? 0
-                    : gap;
-
-            }
-
-
-            function nextSlide() {
-
-                currentIndex =
-                    currentIndex >=
-                    total - 1
-                        ? 0
-                        : currentIndex + 1;
-
-
-                updateSlider();
-
-            }
-
-
-            function previousSlide() {
-
-                currentIndex =
-                    currentIndex <= 0
-                        ? total - 1
-                        : currentIndex - 1;
-
-
-                updateSlider();
-
-            }
-
-
-            if (portfolioNext) {
-
-                portfolioNext.onclick =
-                    nextSlide;
-
-            }
-
-
-            if (portfolioPrev) {
-
-                portfolioPrev.onclick =
-                    previousSlide;
-
-            }
-
-
-            dots.forEach(
-                (
-                    dot,
-                    index
-                ) => {
-
-                    dot.addEventListener(
-                        "click",
-                        () => {
-
-                            currentIndex =
-                                index;
-
-                            updateSlider();
-
-                        }
-                    );
-
-                }
+            lightboxClose.addEventListener(
+                "click",
+                closeLightbox
             );
-
-
-            /*
-               Kullanıcı manuel olarak
-               slider'ı kaydırırsa aktif
-               noktayı güncelle.
-            */
-
-            portfolioSlider.addEventListener(
-                "scroll",
-                () => {
-
-                    if (!items.length) {
-                        return;
-                    }
-
-
-                    const itemWidth =
-                        items[0].offsetWidth;
-
-
-                    const gap =
-                        getSliderGap();
-
-
-                    const position =
-                        portfolioSlider.scrollLeft;
-
-
-                    const newIndex =
-                        Math.round(
-                            position /
-                            (
-                                itemWidth +
-                                gap
-                            )
-                        );
-
-
-                    if (
-                        newIndex >= 0 &&
-                        newIndex < total
-                    ) {
-
-                        currentIndex =
-                            newIndex;
-
-
-                        dots.forEach(
-                            (
-                                dot,
-                                index
-                            ) => {
-
-                                dot.classList.toggle(
-                                    "active",
-                                    index ===
-                                    currentIndex
-                                );
-
-                            }
-                        );
-
-                    }
-
-                }
-            );
-
-
-            updateSlider();
 
         }
 
 
-        /* =====================================
-           NAVIGATION ACTIVE STATE
-        ====================================== */
+        lightbox.addEventListener(
+            "click",
+            function (
+                event
+            ) {
 
-        const navLinks =
-            document.querySelectorAll(
-                ".nav-link"
-            );
+                if (
+                    event.target ===
+                    lightbox
+                ) {
 
+                    closeLightbox();
 
-        const sections =
-            document.querySelectorAll(
-                "main section[id]"
-            );
-
-
-        const observer =
-            new IntersectionObserver(
-                (entries) => {
-
-                    entries.forEach(
-                        (entry) => {
-
-                            if (
-                                !entry.isIntersecting
-                            ) {
-                                return;
-                            }
-
-
-                            navLinks.forEach(
-                                (link) => {
-
-                                    link.classList.toggle(
-                                        "active",
-                                        link.getAttribute(
-                                            "href"
-                                        ) ===
-                                        `#${entry.target.id}`
-                                    );
-
-                                }
-                            );
-
-                        }
-                    );
-
-                },
-                {
-                    threshold: 0.4
                 }
-            );
-
-
-        sections.forEach(
-            (section) => {
-
-                observer.observe(
-                    section
-                );
 
             }
         );
 
 
-        /* =====================================
-           HTML GÜVENLİK
-        ====================================== */
-
-        function escapeHtml(
-            value
-        ) {
-
-            if (
-                value === null ||
-                value === undefined
+        document.addEventListener(
+            "keydown",
+            function (
+                event
             ) {
-                return "";
+
+                if (
+                    event.key ===
+                    "Escape"
+                ) {
+
+                    closeLightbox();
+
+                }
+
             }
+        );
+
+    }
+);
 
 
-            return String(value)
+/* =========================================
+   STORAGE DEĞİŞİKLİĞİNİ DİNLE
+========================================= */
 
-                .replace(
-                    /&/g,
-                    "&amp;"
-                )
+window.addEventListener(
+    "storage",
+    function (
+        event
+    ) {
 
-                .replace(
-                    /</g,
-                    "&lt;"
-                )
-
-                .replace(
-                    />/g,
-                    "&gt;"
-                )
-
-                .replace(
-                    /"/g,
-                    "&quot;"
-                )
-
-                .replace(
-                    /'/g,
-                    "&#039;"
-                );
-
-        }
-
-
-        function escapeHtmlAttribute(
-            value
+        if (
+            event.key ===
+            "furkanKayaPortfolios"
         ) {
 
-            return escapeHtml(
-                value
-            );
+            window.location.reload();
 
         }
-
-
-        /* =====================================
-           SAYFA VERİLERİNİ YÜKLE
-        ====================================== */
-
-        await Promise.all([
-
-            loadSiteSettings(),
-
-            loadContactSettings(),
-
-            loadPortfolio()
-
-        ]);
 
     }
 );
