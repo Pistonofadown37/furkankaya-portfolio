@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Site Ayarları | Furkan Kaya Admin
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         ADMIN HEADER
+    ========================================= -->
+
+    <header class="admin-header">
+
+        <div class="admin-header-container">
+
+
+            <a
+                href="dashboard.html"
+                class="admin-brand"
+            >
+                FK
+                <span>
+                    REKLAM
+                </span>
+            </a>
+
+
+            <nav class="admin-nav">
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="admin.html">
+                    Portföy
+                </a>
+
+                <a
+                    href="settings.html"
+                    class="active"
+                >
+                    Site Ayarları
+                </a>
+
+            </nav>
+
+
+            <button
+                type="button"
+                id="logoutButton"
+                class="admin-logout-button"
+            >
+                Çıkış Yap
+            </button>
+
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================================
+         MAIN
+    ========================================= -->
+
+    <main class="admin-main">
+
+
+        <div class="admin-page-header">
+
+            <div>
+
+                <span class="admin-eyebrow">
+                    SİTE YÖNETİMİ
+                </span>
+
+                <h1>
+                    Site Ayarları
+                </h1>
+
+                <p>
+                    Ana sitenizde görüntülenecek bilgileri buradan
+                    düzenleyebilirsiniz.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================
+             SETTINGS FORM
+        ====================================== -->
+
+        <form
+            id="settingsForm"
+            class="settings-form"
+        >
+
+
+            <!-- =================================
+                 LOGO
+            ================================== -->
+
+            <section class="settings-card">
+
+
+                <div class="settings-card-header">
+
+                    <div>
+
+                        <span class="settings-number">
+                            01
+                        </span>
+
+                        <h2>
+                            Logo
+                        </h2>
+
+                    </div>
+
+
+                    <p>
+                        Sitenin üst bölümünde kullanılacak logo görseli.
+                    </p>
+
+                </div>
+
+
+                <div class="logo-upload-area">
+
+
+                    <div
+                        class="logo-preview"
+                        id="logoPreview"
+                    >
+
+                        <span id="logoPlaceholder">
+                            Logo Henüz Yüklenmedi
+                        </span>
+
+                        <img
+                            id="logoPreviewImage"
+                            src=""
+                            alt="Logo Önizleme"
+                        >
+
+                    </div>
+
+
+                    <div class="logo-upload-content">
+
+                        <label
+                            for="logoFile"
+                            class="file-upload-button"
+                        >
+                            Logo Görseli Seç
+                        </label>
+
+
+                        <input
+                            type="file"
+                            id="logoFile"
+                            accept="image/*"
+                        >
+
+
+                        <p
+                            id="selectedLogoName"
+                            class="selected-file-name"
+                        >
+                            PNG, JPG veya WEBP formatında logo yükleyebilirsiniz.
+                        </p>
+
+
+                        <button
+                            type="button"
+                            id="removeLogoButton"
+                            class="remove-logo-button"
+                        >
+                            Logoyu Kaldır
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================
+                 GENERAL
+            ================================== -->
+
+            <section class="settings-card">
+
+
+                <div class="settings-card-header">
+
+                    <div>
+
+                        <span class="settings-number">
+                            02
+                        </span>
+
+                        <h2>
+                            Genel Bilgiler
+                        </h2>
+
+                    </div>
+
+
+                    <p>
+                        Marka ve site ile ilgili temel bilgiler.
+                    </p>
+
+                </div>
+
+
+
+                <div class="settings-grid">
+
+
+                    <div class="form-group">
+
+                        <label for="siteName">
+                            Site / Marka Adı
+                        </label>
+
+                        <input
+                            type="text"
+                            id="siteName"
+                            name="siteName"
+                            placeholder="FK REKLAM"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="siteSubtitle">
+                            Alt Başlık
+                        </label>
+
+                        <input
+                            type="text"
+                            id="siteSubtitle"
+                            name="siteSubtitle"
+                            placeholder="GRAFİK TASARIM & DİJİTAL ÇÖZÜMLER"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================
+                 HERO
+            ================================== -->
+
+            <section class="settings-card">
+
+
+                <div class="settings-card-header">
+
+                    <div>
+
+                        <span class="settings-number">
+                            03
+                        </span>
+
+                        <h2>
+                            Ana Sayfa
+                        </h2>
+
+                    </div>
+
+
+                    <p>
+                        Ana sayfadaki büyük başlık ve açıklama alanı.
+                    </p>
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label for="heroTitle">
+                        Ana Başlık
+                    </label>
+
+                    <textarea
+                        id="heroTitle"
+                        name="heroTitle"
+                        rows="4"
+                        placeholder="Fikirleri etkileyici tasarımlara dönüştürüyorum."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="heroDescription">
+                        Ana Sayfa Açıklaması
+                    </label>
+
+                    <textarea
+                        id="heroDescription"
+                        name="heroDescription"
+                        rows="4"
+                        placeholder="Markalar, işletmeler ve projeler için modern..."
+                    ></textarea>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================
+                 ABOUT
+            ================================== -->
+
+            <section class="settings-card">
+
+
+                <div class="settings-card-header">
+
+                    <div>
+
+                        <span class="settings-number">
+                            04
+                        </span>
+
+                        <h2>
+                            Hakkımda
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="aboutText">
+                        Hakkımda Metni
+                    </label>
+
+                    <textarea
+                        id="aboutText"
+                        name="aboutText"
+                        rows="7"
+                        placeholder="Hakkımda bölümünde görüntülenecek metin..."
+                    ></textarea>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================
+                 CONTACT
+            ================================== -->
+
+            <section class="settings-card">
+
+
+                <div class="settings-card-header">
+
+                    <div>
+
+                        <span class="settings-number">
+                            05
+                        </span>
+
+                        <h2>
+                            İletişim Bilgileri
+                        </h2>
+
+                    </div>
+
+
+                    <p>
+                        Ziyaretçilerin sizinle iletişime geçmesi için
+                        kullanılacak bilgiler.
+                    </p>
+
+                </div>
+
+
+
+                <div class="settings-grid">
+
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            E-Posta Adresi
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="ornek@mail.com"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="whatsapp">
+                            WhatsApp Numarası
+                        </label>
+
+                        <input
+                            type="text"
+                            id="whatsapp"
+                            name="whatsapp"
+                            placeholder="905xxxxxxxxx"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="instagram">
+                            Instagram Kullanıcı Adı / Linki
+                        </label>
+
+                        <input
+                            type="text"
+                            id="instagram"
+                            name="instagram"
+                            placeholder="@kullaniciadi"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================
+                 SAVE
+            ================================== -->
+
+            <div class="settings-actions">
+
+
+                <button
+                    type="submit"
+                    id="saveSettingsButton"
+                    class="settings-save-button"
+                >
+                    Ayarları Kaydet
+                </button>
+
+
+                <p
+                    id="settingsMessage"
+                    class="settings-message"
+                ></p>
+
+
+            </div>
+
+
+        </form>
+
+
+    </main>
+
+
+
+    <!-- =========================================
+         SCRIPTS
+    ========================================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="../supabase.js"></script>
+
+    <script src="settings.js"></script>
+
+
+</body>
+
+</html>
