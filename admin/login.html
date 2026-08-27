@@ -1,136 +1,64 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <meta
-        name="description"
-        content="Furkan Kaya Portföy Yönetim Paneli"
-    >
-
-    <meta
-        name="robots"
-        content="noindex, nofollow"
-    >
+    <meta name="robots" content="noindex, nofollow">
 
     <title>Admin Girişi | Furkan Kaya</title>
 
-    <!-- ADMIN CSS -->
-
-    <link
-        rel="stylesheet"
-        href="admin.css"
-    >
-
+    <link rel="stylesheet" href="admin.css">
 </head>
-
 
 <body class="login-page">
 
-
-    <!-- =====================================
-         LOGIN CONTAINER
-    ====================================== -->
-
     <main class="login-container">
 
+        <section class="login-card">
 
-        <section
-            class="login-card"
-            aria-labelledby="loginTitle"
-        >
-
-
-            <!-- LOGO -->
-
-            <a
-                href="../index.html"
-                class="admin-logo"
-            >
+            <a href="../index.html" class="admin-logo">
                 FURKAN<span>KAYA</span>
             </a>
 
-
-            <!-- BAŞLIK -->
-
             <div class="login-heading">
-
-                <h1 id="loginTitle">
-                    Yönetim Paneli
-                </h1>
-
-                <p>
-                    Devam etmek için giriş yapın.
-                </p>
-
+                <h1>Yönetim Paneli</h1>
+                <p>Devam etmek için giriş yapın.</p>
             </div>
 
-
-            <!-- =================================
-                 GİRİŞ FORMU
-            ================================== -->
-
-            <form
-                id="loginForm"
-                class="login-form"
-                novalidate
-            >
-
-
-                <!-- E-POSTA -->
+            <form id="loginForm" class="login-form">
 
                 <div class="form-group">
-
-                    <label for="email">
-                        E-posta
-                    </label>
+                    <label for="email">E-posta</label>
 
                     <input
                         type="email"
                         id="email"
-                        name="email"
                         placeholder="E-posta adresiniz"
                         autocomplete="email"
                         required
                     >
-
                 </div>
-
-
-                <!-- ŞİFRE -->
 
                 <div class="form-group">
 
-                    <label for="password">
-                        Şifre
-                    </label>
-
+                    <label for="password">Şifre</label>
 
                     <div class="password-wrapper">
 
                         <input
                             type="password"
                             id="password"
-                            name="password"
                             placeholder="Şifreniz"
                             autocomplete="current-password"
                             required
                         >
-
 
                         <button
                             type="button"
                             class="password-toggle"
                             id="passwordToggle"
                             aria-label="Şifreyi göster"
-                            tabindex="0"
                         >
                             👁
                         </button>
@@ -139,79 +67,41 @@
 
                 </div>
 
-
-                <!-- MESAJ -->
-
                 <div
-                    class="form-message"
                     id="formMessage"
-                    role="alert"
-                    aria-live="polite"
+                    class="form-message"
                 ></div>
-
-
-                <!-- GİRİŞ BUTONU -->
 
                 <button
                     type="submit"
                     class="login-button"
                     id="loginButton"
                 >
-
                     <span class="button-text">
                         Giriş Yap
                     </span>
 
-
-                    <span
-                        class="button-loading"
-                        aria-hidden="true"
-                    >
+                    <span class="button-loading">
                         Giriş yapılıyor...
                     </span>
-
                 </button>
-
 
             </form>
 
-
-            <!-- SITEYE DÖN -->
-
-            <a
-                href="../index.html"
-                class="back-site"
-            >
+            <a href="../index.html" class="back-site">
                 ← Siteye Dön
             </a>
 
-
         </section>
-
 
     </main>
 
-
-    <!-- =====================================
-         JAVASCRIPT
-    ====================================== -->
-
-
-    <!-- 1. SUPABASE KÜTÜPHANESİ -->
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
-    <!-- 2. SUPABASE BAĞLANTISI -->
-
+    <!-- KÖK DİZİNDE supabase.js varsa bu doğru -->
     <script src="../supabase.js"></script>
-
-
-    <!-- 3. SADECE LOGIN JAVASCRIPT -->
 
     <script src="login.js"></script>
 
-
 </body>
-
 </html>
