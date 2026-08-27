@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Furkan Kaya - Grafik Tasarım ve Dijital Tasarım Portföyü"
+    >
+
+    <title>Furkan Kaya | Grafik Tasarım</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================
+         HEADER
+    ====================================== -->
+
+    <header class="site-header">
+
+        <div class="header-container">
+
+            <a
+                href="#home"
+                class="site-logo"
+                aria-label="Ana Sayfa"
+            >
+                FURKAN<span>KAYA</span>
+            </a>
+
+
+            <nav
+                class="main-nav"
+                aria-label="Ana navigasyon"
+            >
+
+                <a
+                    href="#home"
+                    class="nav-link active"
+                >
+                    Ana Sayfa
+                </a>
+
+                <a
+                    href="#portfolio"
+                    class="nav-link"
+                >
+                    Portföy
+                </a>
+
+                <a
+                    href="#about"
+                    class="nav-link"
+                >
+                    Hakkımda
+                </a>
+
+                <a
+                    href="#contact"
+                    class="nav-link"
+                >
+                    İletişim
+                </a>
+
+            </nav>
+
+
+            <a
+                href="#contact"
+                class="header-contact-button"
+            >
+                İletişime Geç
+            </a>
+
+
+            <button
+                type="button"
+                class="mobile-menu-button"
+                id="mobileMenuButton"
+                aria-label="Menüyü aç"
+                aria-expanded="false"
+            >
+
+                <span></span>
+                <span></span>
+                <span></span>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================
+         MOBILE MENU
+    ====================================== -->
+
+    <div
+        class="mobile-menu"
+        id="mobileMenu"
+    >
+
+        <a
+            href="#home"
+            class="mobile-nav-link"
+        >
+            Ana Sayfa
+        </a>
+
+        <a
+            href="#portfolio"
+            class="mobile-nav-link"
+        >
+            Portföy
+        </a>
+
+        <a
+            href="#about"
+            class="mobile-nav-link"
+        >
+            Hakkımda
+        </a>
+
+        <a
+            href="#contact"
+            class="mobile-nav-link"
+        >
+            İletişim
+        </a>
+
+    </div>
+
+
+
+    <!-- =====================================
+         MAIN
+    ====================================== -->
+
+    <main>
+
+
+        <!-- =================================
+             HERO
+        ================================== -->
+
+        <section
+            class="hero-section"
+            id="home"
+        >
+
+            <div class="hero-container">
+
+                <div class="hero-content">
+
+                    <span
+                        class="hero-small-text"
+                        id="heroSmallText"
+                    >
+                        GRAFİK TASARIM & DIJİTAL ÇÖZÜMLER
+                    </span>
+
+
+                    <h1
+                        class="hero-title"
+                        id="heroTitle"
+                    >
+                        Fikirleri <span>etkileyici</span> tasarımlara dönüştürüyorum.
+                    </h1>
+
+
+                    <p
+                        class="hero-description"
+                        id="heroDescription"
+                    >
+                        Markalar, işletmeler ve projeler için modern,
+                        dikkat çekici ve özgün görsel çözümler üretiyorum.
+                    </p>
+
+
+                    <div class="hero-buttons">
+
+                        <a
+                            href="#portfolio"
+                            class="primary-button"
+                        >
+                            Çalışmalarımı İncele
+                        </a>
+
+                        <a
+                            href="#contact"
+                            class="secondary-button"
+                        >
+                            Benimle İletişime Geç
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="hero-visual"
+                    aria-hidden="true"
+                >
+
+                    <div class="hero-circle hero-circle-one"></div>
+
+                    <div class="hero-circle hero-circle-two"></div>
+
+                    <div class="hero-square hero-square-one"></div>
+
+                    <div class="hero-square hero-square-two"></div>
+
+
+                    <div class="hero-name">
+
+                        <span>FK</span>
+
+                        <small>
+                            DESIGN
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             PORTFOLIO
+        ================================== -->
+
+        <section
+            class="portfolio-section"
+            id="portfolio"
+        >
+
+            <div class="section-container">
+
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-small-title">
+                            PORTFÖY
+                        </span>
+
+                        <h2>
+                            Seçili Çalışmalar
+                        </h2>
+
+                    </div>
+
+
+                    <p>
+                        Farklı sektörler ve markalar için hazırladığım
+                        tasarım çalışmalarından bazıları.
+                    </p>
+
+                </div>
+
+
+
+                <div
+                    class="portfolio-slider-wrapper"
+                    id="portfolioSliderWrapper"
+                >
+
+                    <button
+                        type="button"
+                        class="slider-arrow slider-prev"
+                        id="portfolioPrev"
+                        aria-label="Önceki çalışmalar"
+                    >
+                        ←
+                    </button>
+
+
+                    <div
+                        class="portfolio-slider"
+                        id="portfolioSlider"
+                    >
+
+                        <div
+                            class="portfolio-loading"
+                            id="portfolioLoading"
+                        >
+                            Çalışmalar yükleniyor...
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="slider-arrow slider-next"
+                        id="portfolioNext"
+                        aria-label="Sonraki çalışmalar"
+                    >
+                        →
+                    </button>
+
+                </div>
+
+
+
+                <div
+                    class="portfolio-dots"
+                    id="portfolioDots"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             ABOUT
+        ================================== -->
+
+        <section
+            class="about-section"
+            id="about"
+        >
+
+            <div class="section-container">
+
+                <div class="about-grid">
+
+
+                    <div class="about-heading">
+
+                        <span class="section-small-title">
+                            HAKKIMDA
+                        </span>
+
+                        <h2>
+                            Tasarım sadece güzel görünmek değildir.
+                        </h2>
+
+                    </div>
+
+
+                    <div class="about-content">
+
+                        <p id="aboutText">
+                            Her projenin kendine ait bir hikayesi olduğuna
+                            inanıyorum. Bu nedenle tasarım sürecinde sadece
+                            estetik değil, markanın karakterini, hedef
+                            kitlesini ve vermek istediği mesajı da ön planda
+                            tutuyorum.
+                        </p>
+
+
+                        <div class="about-stats">
+
+                            <div class="about-stat">
+
+                                <strong>
+                                    01
+                                </strong>
+
+                                <span>
+                                    Özgün Tasarım
+                                </span>
+
+                            </div>
+
+
+                            <div class="about-stat">
+
+                                <strong>
+                                    02
+                                </strong>
+
+                                <span>
+                                    Modern Yaklaşım
+                                </span>
+
+                            </div>
+
+
+                            <div class="about-stat">
+
+                                <strong>
+                                    03
+                                </strong>
+
+                                <span>
+                                    Dijital Çözümler
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             SERVICES
+        ================================== -->
+
+        <section
+            class="services-section"
+            id="services"
+        >
+
+            <div class="section-container">
+
+                <div class="section-heading services-heading">
+
+                    <div>
+
+                        <span class="section-small-title">
+                            NELER YAPIYORUM?
+                        </span>
+
+                        <h2>
+                            Tasarım Hizmetleri
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="services-grid">
+
+
+                    <article class="service-card">
+
+                        <span class="service-number">
+                            01
+                        </span>
+
+                        <h3>
+                            Grafik Tasarım
+                        </h3>
+
+                        <p>
+                            Sosyal medya, reklam, broşür, afiş ve
+                            kurumsal tasarım çözümleri.
+                        </p>
+
+                    </article>
+
+
+                    <article class="service-card">
+
+                        <span class="service-number">
+                            02
+                        </span>
+
+                        <h3>
+                            Marka Tasarımı
+                        </h3>
+
+                        <p>
+                            Logo, kurumsal kimlik ve markanızın
+                            görsel dünyasının oluşturulması.
+                        </p>
+
+                    </article>
+
+
+                    <article class="service-card">
+
+                        <span class="service-number">
+                            03
+                        </span>
+
+                        <h3>
+                            Dijital Tasarım
+                        </h3>
+
+                        <p>
+                            Dijital platformlar için modern ve
+                            dikkat çekici tasarım çözümleri.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             CONTACT
+        ================================== -->
+
+        <section
+            class="contact-section"
+            id="contact"
+        >
+
+            <div class="section-container">
+
+                <div class="contact-box">
+
+                    <div class="contact-content">
+
+                        <span class="contact-small-title">
+                            BİRLİKTE ÇALIŞALIM
+                        </span>
+
+                        <h2>
+                            Yeni bir proje mi düşünüyorsunuz?
+                        </h2>
+
+                        <p>
+                            Projeniz, markanız veya tasarım ihtiyacınız
+                            hakkında benimle iletişime geçebilirsiniz.
+                        </p>
+
+                    </div>
+
+
+                    <div class="contact-links">
+
+
+                        <a
+                            href="#"
+                            id="contactEmail"
+                            class="contact-link"
+                        >
+
+                            <span class="contact-link-label">
+                                E-POSTA
+                            </span>
+
+                            <strong id="contactEmailText">
+                                E-posta yükleniyor...
+                            </strong>
+
+                        </a>
+
+
+                        <a
+                            href="#"
+                            id="contactWhatsapp"
+                            class="contact-link"
+                            target="_blank"
+                            rel="noopener"
+                        >
+
+                            <span class="contact-link-label">
+                                WHATSAPP
+                            </span>
+
+                            <strong id="contactWhatsappText">
+                                WhatsApp
+                            </strong>
+
+                        </a>
+
+
+                        <a
+                            href="#"
+                            id="contactInstagram"
+                            class="contact-link"
+                            target="_blank"
+                            rel="noopener"
+                        >
+
+                            <span class="contact-link-label">
+                                INSTAGRAM
+                            </span>
+
+                            <strong id="contactInstagramText">
+                                Instagram
+                            </strong>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================
+         FOOTER
+    ====================================== -->
+
+    <footer class="site-footer">
+
+        <div class="footer-container">
+
+            <a
+                href="#home"
+                class="site-logo footer-logo"
+            >
+                FURKAN<span>KAYA</span>
+            </a>
+
+
+            <p>
+                ©
+                <span id="currentYear"></span>
+                Furkan Kaya. Tüm hakları saklıdır.
+            </p>
+
+
+            <a
+                href="admin/login.html"
+                class="admin-link"
+                aria-label="Yönetim Paneli"
+            >
+                •
+            </a>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- =====================================
+         JAVASCRIPT
+    ====================================== -->
+
+    <!-- SUPABASE -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <!-- SUPABASE CONFIG -->
+
+    <script src="supabase.js"></script>
+
+
+    <!-- SITE SCRIPT -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>
