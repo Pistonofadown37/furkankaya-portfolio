@@ -857,5 +857,120 @@ select:focus {
         flex-direction: row;
         flex-wrap: wrap;
     }
+/* =========================================
+   ADMIN.HTML İLE UYUMLU NAVIGATION FIX
+========================================= */
+
+.admin-page .admin-navigation {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 32px 0;
+
+    padding-bottom: 26px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-page .admin-nav-button {
+    appearance: none;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 48px;
+
+    padding: 0 20px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 12px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    color:
+        #9a9ca3;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.admin-page .admin-nav-button:hover {
+    color:
+        #ffffff;
+
+    border-color:
+        rgba(212, 168, 83, 0.35);
+
+    background:
+        rgba(212, 168, 83, 0.08);
+
+    transform:
+        translateY(-1px);
+}
+
+.admin-page .admin-nav-button.active {
+    color:
+        #f0c875;
+
+    border-color:
+        rgba(212, 168, 83, 0.50);
+
+    background:
+        rgba(212, 168, 83, 0.12);
+
+    box-shadow:
+        0 8px 30px
+        rgba(212, 168, 83, 0.08);
+}
+
+
+/* =========================================
+   SECTION SYSTEM
+========================================= */
+
+.admin-page .admin-section {
+    display: none;
+}
+
+.admin-page .admin-section.active {
+    display: block;
+}
+
+
+/* =========================================
+   RESPONSIVE NAVIGATION
+========================================= */
+
+@media (max-width: 768px) {
+
+    .admin-page .admin-navigation {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-page .admin-nav-button {
+        width: 100%;
+
+        padding: 0 10px;
+
+        font-size: 12px;
+    }
 
 }
+
