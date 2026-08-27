@@ -1797,43 +1797,80 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
 
-    /* =========================================
-       ÇIKIŞ YAP
-    ========================================= */
+   /* =========================================
+   LOGOUT
+========================================= */
 
-    if (logoutButton) {
+if (logoutButton) {
 
-        logoutButton.addEventListener(
-            "click",
-            async function () {
+    logoutButton.addEventListener(
+        "click",
+        async function () {
+
+            try {
+
+                logoutButton.disabled = true;
+
+                logoutButton.textContent =
+                    "Çıkış yapılıyor...";
+
 
                 const {
                     error
-                } = await supabaseClient
-                    .auth
-                    .signOut();
+                } = await supabaseClient.auth.signOut();
 
 
                 if (error) {
 
-                    showMessage(
-                        "Çıkış yapılırken hata oluştu.",
-                        "error"
-                    );
-
-
-                    return;
+                    throw error;
 
                 }
 
 
-                window.location.href =
-                    "login.html";
+                /*
+                Eski localStorage verilerini temizle
+                */
+
+                localStorage.removeItem(
+                    "furkanKayaAdminLoggedIn"
+                );
+
+
+                /*
+                Admin sayfasından çık
+                */
+
+                window.location.replace(
+                    "login.html"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Çıkış yapılırken hata oluştu:",
+                    error
+                );
+
+
+                showMessage(
+                    "Çıkış yapılırken bir hata oluştu: " +
+                    error.message,
+                    "error"
+                );
+
+
+                logoutButton.disabled = false;
+
+                logoutButton.textContent =
+                    "Çıkış Yap";
 
             }
-        );
 
-    }
+        }
+    );
+
+}
 
 
     /* =========================================
