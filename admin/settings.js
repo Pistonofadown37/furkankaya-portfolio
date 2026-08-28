@@ -10,7 +10,9 @@ document.addEventListener(
             await checkAuthentication();
 
         if (!authenticated) {
+
             return;
+
         }
 
         await initializeSettings();
@@ -76,12 +78,6 @@ async function checkAuthentication() {
             error
         );
 
-        showSettingsMessage(
-            "Oturum kontrolü sırasında hata oluştu: " +
-            error.message,
-            "error"
-        );
-
         return false;
 
     }
@@ -123,6 +119,17 @@ async function initializeSettings() {
 
 
 /* =========================================
+   SETTINGS STATE
+========================================= */
+
+let currentLogoUrl =
+    "";
+
+let logoRemovalRequested =
+    false;
+
+
+/* =========================================
    LOAD SETTINGS
 ========================================= */
 
@@ -145,7 +152,9 @@ async function loadSettings() {
     } =
         await client
             .from("site_settings")
-            .select("*");
+            .select(
+                "id, setting_key, setting_value"
+            );
 
 
     if (error) {
@@ -154,6 +163,7 @@ async function loadSettings() {
             "Ayarlar yüklenirken hata:",
             error
         );
+
 
         showSettingsMessage(
             "Ayarlar yüklenemedi: " +
@@ -182,65 +192,14 @@ async function loadSettings() {
     data.forEach(
         function (item) {
 
-            let key = null;
-            let value = "";
-
-
             if (
-                Object.prototype.hasOwnProperty.call(
-                    item,
-                    "setting_key"
-                )
+                item.setting_key
             ) {
 
-                key =
-                    item.setting_key;
-
-            }
-            else if (
-                Object.prototype.hasOwnProperty.call(
-                    item,
-                    "key"
-                )
-            ) {
-
-                key =
-                    item.key;
-
-            }
-
-
-            if (
-                Object.prototype.hasOwnProperty.call(
-                    item,
-                    "setting_value"
-                )
-            ) {
-
-                value =
-                    item.setting_value;
-
-            }
-            else if (
-                Object.prototype.hasOwnProperty.call(
-                    item,
-                    "value"
-                )
-            ) {
-
-                value =
-                    item.value;
-
-            }
-
-
-            if (
-                key !== null &&
-                key !== undefined
-            ) {
-
-                settings[key] =
-                    value ?? "";
+                settings[
+                    item.setting_key
+                ] =
+                    item.setting_value ?? "";
 
             }
 
@@ -256,7 +215,7 @@ async function loadSettings() {
 
 
 /* =========================================
-   FILL FORM
+   FILL SETTINGS FORM
 ========================================= */
 
 function fillSettingsForm(
@@ -311,12 +270,16 @@ function fillSettingsForm(
     );
 
 
+    currentLogoUrl =
+        settings.logo_url || "";
+
+
     if (
-        settings.logo_url
+        currentLogoUrl
     ) {
 
         setLogoPreview(
-            settings.logo_url
+            currentLogoUrl
         );
 
     }
@@ -325,7 +288,7 @@ function fillSettingsForm(
 
 
 /* =========================================
-   INPUT VALUE
+   SET INPUT VALUE
 ========================================= */
 
 function setInputValue(
@@ -339,9 +302,7 @@ function setInputValue(
         );
 
 
-    if (
-        !element
-    ) {
+    if (!element) {
 
         return;
 
@@ -355,18 +316,7 @@ function setInputValue(
 
 
 /* =========================================
-   LOGO STATE
-========================================= */
-
-let logoRemovalRequested =
-    false;
-
-let currentLogoUrl =
-    "";
-
-
-/* =========================================
-   LOGO UPLOAD
+   LOGO UPLOAD INITIALIZE
 ========================================= */
 
 function initializeLogoUpload() {
@@ -383,9 +333,7 @@ function initializeLogoUpload() {
         );
 
 
-    if (
-        logoFile
-    ) {
+    if (logoFile) {
 
         logoFile.addEventListener(
             "change",
@@ -412,6 +360,7 @@ function initializeLogoUpload() {
                         "Lütfen geçerli bir görsel seçin.",
                         "error"
                     );
+
 
                     logoFile.value =
                         "";
@@ -442,9 +391,7 @@ function initializeLogoUpload() {
                     );
 
 
-                if (
-                    selectedLogoName
-                ) {
+                if (selectedLogoName) {
 
                     selectedLogoName.textContent =
                         file.name;
@@ -457,20 +404,17 @@ function initializeLogoUpload() {
     }
 
 
-    if (
-        removeLogoButton
-    ) {
+    if (removeLogoButton) {
 
         removeLogoButton.addEventListener(
             "click",
-            function (
-                event
-            ) {
+            function (event) {
 
                 event.preventDefault();
 
                 logoRemovalRequested =
                     true;
+
 
                 removeLogoPreview();
 
@@ -502,9 +446,7 @@ function setLogoPreview(
         );
 
 
-    if (
-        previewImage
-    ) {
+    if (previewImage) {
 
         previewImage.src =
             imageUrl;
@@ -515,9 +457,7 @@ function setLogoPreview(
     }
 
 
-    if (
-        placeholder
-    ) {
+    if (placeholder) {
 
         placeholder.style.display =
             "none";
@@ -528,7 +468,7 @@ function setLogoPreview(
 
 
 /* =========================================
-   REMOVE LOGO
+   REMOVE LOGO PREVIEW
 ========================================= */
 
 function removeLogoPreview() {
@@ -557,9 +497,7 @@ function removeLogoPreview() {
         );
 
 
-    if (
-        previewImage
-    ) {
+    if (previewImage) {
 
         previewImage.removeAttribute(
             "src"
@@ -571,9 +509,7 @@ function removeLogoPreview() {
     }
 
 
-    if (
-        placeholder
-    ) {
+    if (placeholder) {
 
         placeholder.style.display =
             "block";
@@ -581,9 +517,7 @@ function removeLogoPreview() {
     }
 
 
-    if (
-        logoFile
-    ) {
+    if (logoFile) {
 
         logoFile.value =
             "";
@@ -591,9 +525,7 @@ function removeLogoPreview() {
     }
 
 
-    if (
-        selectedLogoName
-    ) {
+    if (selectedLogoName) {
 
         selectedLogoName.textContent =
             "Logo kaldırılacak.";
@@ -615,9 +547,7 @@ function initializeSettingsForm() {
         );
 
 
-    if (
-        !settingsForm
-    ) {
+    if (!settingsForm) {
 
         console.error(
             "settingsForm bulunamadı."
@@ -630,9 +560,7 @@ function initializeSettingsForm() {
 
     settingsForm.addEventListener(
         "submit",
-        async function (
-            event
-        ) {
+        async function (event) {
 
             event.preventDefault();
 
@@ -672,9 +600,7 @@ async function saveSettings() {
         );
 
 
-    if (
-        saveButton
-    ) {
+    if (saveButton) {
 
         saveButton.disabled =
             true;
@@ -693,32 +619,14 @@ async function saveSettings() {
 
     try {
 
-        const {
-            data: existingSettings,
-            error: existingSettingsError
-        } =
-            await client
-                .from("site_settings")
-                .select("*");
-
-
-        if (
-            existingSettingsError
-        ) {
-
-            throw existingSettingsError;
-
-        }
-
-
-        const tableStructure =
-            detectSettingsTableStructure(
-                existingSettings
-            );
-
-
         let logoUrl =
             currentLogoUrl;
+
+
+        const logoFile =
+            document.getElementById(
+                "logoFile"
+            );
 
 
         if (
@@ -729,12 +637,6 @@ async function saveSettings() {
                 "";
 
         }
-
-
-        const logoFile =
-            document.getElementById(
-                "logoFile"
-            );
 
 
         if (
@@ -799,38 +701,20 @@ async function saveSettings() {
         };
 
 
-        const results =
-            await Promise.all(
-                Object.entries(
-                    settings
-                ).map(
-                    async function (
-                        entry
-                    ) {
-
-                        const key =
-                            entry[0];
-
-                        const value =
-                            entry[1];
-
-                        await saveSetting(
-                            key,
-                            value,
-                            existingSettings,
-                            tableStructure
-                        );
-
-                    }
-                )
-            );
-
-
-        if (
-            results
+        for (
+            const [
+                settingKey,
+                settingValue
+            ]
+            of Object.entries(
+                settings
+            )
         ) {
 
-            await loadSettings();
+            await saveSetting(
+                settingKey,
+                settingValue
+            );
 
         }
 
@@ -838,8 +722,20 @@ async function saveSettings() {
         currentLogoUrl =
             logoUrl;
 
+
         logoRemovalRequested =
             false;
+
+
+        if (logoFile) {
+
+            logoFile.value =
+                "";
+
+        }
+
+
+        await loadSettings();
 
 
         showSettingsMessage(
@@ -855,9 +751,7 @@ async function saveSettings() {
         );
 
 
-    } catch (
-        error
-    ) {
+    } catch (error) {
 
         console.error(
             "Ayarlar kaydedilirken hata:",
@@ -877,9 +771,7 @@ async function saveSettings() {
 
     } finally {
 
-        if (
-            saveButton
-        ) {
+        if (saveButton) {
 
             saveButton.disabled =
                 false;
@@ -895,76 +787,13 @@ async function saveSettings() {
 
 
 /* =========================================
-   DETECT TABLE STRUCTURE
+   SAVE SINGLE SETTING
 ========================================= */
 
-function detectSettingsTableStructure(
-    existingSettings
+async function saveSetting(
+    settingKey,
+    settingValue
 ) {
-
-    if (
-        existingSettings &&
-        existingSettings.length > 0
-    ) {
-
-        const firstItem =
-            existingSettings[0];
-
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                firstItem,
-                "setting_key"
-            )
-        ) {
-
-            return {
-                keyColumn:
-                    "setting_key",
-
-                valueColumn:
-                    "setting_value"
-            };
-
-        }
-
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                firstItem,
-                "key"
-            )
-        ) {
-
-            return {
-                keyColumn:
-                    "key",
-
-                valueColumn:
-                    "value"
-            };
-
-        }
-
-    }
-
-
-    return {
-        keyColumn:
-            "setting_key",
-
-        valueColumn:
-            "setting_value"
-    };
-
-}
-
-
-/* =========================================
-   GET CURRENT LOGO
-========================================= */
-
-async function getCurrentLogoUrl() {
 
     const client =
         getSupabaseClient();
@@ -972,64 +801,138 @@ async function getCurrentLogoUrl() {
 
     if (!client) {
 
-        return "";
+        throw new Error(
+            "Supabase bağlantısı bulunamadı."
+        );
 
     }
 
 
+    /*
+       Önce sadece setting_key ile
+       mevcut kayıt aranır.
+
+       Burada kesinlikle "key"
+       kolonu kullanılmaz.
+    */
+
     const {
-        data,
-        error
+        data: existingData,
+        error: selectError
     } =
         await client
             .from("site_settings")
-            .select("*");
+            .select(
+                "id, setting_key, setting_value"
+            )
+            .eq(
+                "setting_key",
+                settingKey
+            )
+            .maybeSingle();
 
 
-    if (
-        error ||
-        !data ||
-        !data.length
-    ) {
+    if (selectError) {
 
-        return "";
+        throw selectError;
 
     }
 
 
-    const logoItem =
-        data.find(
-            function (
-                item
-            ) {
+    /*
+       Kayıt varsa güncelle
+    */
 
-                return (
-                    item.setting_key ===
-                    "logo_url"
-                ) ||
-                (
-                    item.key ===
-                    "logo_url"
+    if (existingData) {
+
+        const {
+            data: updatedData,
+            error: updateError
+        } =
+            await client
+                .from("site_settings")
+                .update(
+                    {
+                        setting_value:
+                            settingValue
+                    }
+                )
+                .eq(
+                    "id",
+                    existingData.id
+                )
+                .select(
+                    "id, setting_key, setting_value"
                 );
 
-            }
-        );
+
+        if (updateError) {
+
+            throw updateError;
+
+        }
 
 
-    if (
-        !logoItem
-    ) {
+        if (
+            !updatedData ||
+            updatedData.length === 0
+        ) {
 
-        return "";
+            throw new Error(
+                settingKey +
+                " ayarı güncellenemedi."
+            );
+
+        }
+
+
+        return;
 
     }
 
 
-    return (
-        logoItem.setting_value ??
-        logoItem.value ??
-        ""
-    );
+    /*
+       Kayıt yoksa yeni kayıt ekle
+    */
+
+    const {
+        data: insertedData,
+        error: insertError
+    } =
+        await client
+            .from("site_settings")
+            .insert(
+                {
+                    setting_key:
+                        settingKey,
+
+                    setting_value:
+                        settingValue
+                }
+            )
+            .select(
+                "id, setting_key, setting_value"
+            );
+
+
+    if (insertError) {
+
+        throw insertError;
+
+    }
+
+
+    if (
+        !insertedData ||
+        insertedData.length === 0
+    ) {
+
+        throw new Error(
+            settingKey +
+            " ayarı eklenemedi."
+        );
+
+    }
 
 }
 
@@ -1070,7 +973,7 @@ async function uploadLogo(
 
 
     const {
-        error
+        error: uploadError
     } =
         await client
             .storage
@@ -1083,16 +986,14 @@ async function uploadLogo(
                         "3600",
 
                     upsert:
-                        true
+                        false
                 }
             );
 
 
-    if (
-        error
-    ) {
+    if (uploadError) {
 
-        throw error;
+        throw uploadError;
 
     }
 
@@ -1126,252 +1027,6 @@ async function uploadLogo(
 
 
 /* =========================================
-   SAVE SINGLE SETTING
-========================================= */
-
-async function saveSetting(
-    key,
-    value,
-    existingSettings,
-    tableStructure
-) {
-
-    const client =
-        getSupabaseClient();
-
-
-    if (!client) {
-
-        throw new Error(
-            "Supabase bağlantısı bulunamadı."
-        );
-
-    }
-
-
-    const existingItem =
-        existingSettings.find(
-            function (
-                item
-            ) {
-
-                return (
-                    item.setting_key ===
-                    key
-                ) ||
-                (
-                    item.key ===
-                    key
-                );
-
-            }
-        );
-
-
-    if (
-        existingItem
-    ) {
-
-        const updateData =
-            {
-                [
-                    tableStructure.valueColumn
-                ]:
-                    value
-            };
-
-
-        let query =
-            client
-                .from("site_settings")
-                .update(
-                    updateData
-                );
-
-
-        if (
-            existingItem.id !==
-            undefined &&
-            existingItem.id !==
-            null
-        ) {
-
-            query =
-                query.eq(
-                    "id",
-                    existingItem.id
-                );
-
-        }
-        else {
-
-            query =
-                query.eq(
-                    tableStructure.keyColumn,
-                    key
-                );
-
-        }
-
-
-        const {
-            data,
-            error
-        } =
-            await query
-                .select();
-
-
-        if (
-            error
-        ) {
-
-            throw error;
-
-        }
-
-
-        if (
-            !data ||
-            data.length === 0
-        ) {
-
-            throw new Error(
-                key +
-                " ayarı güncellenemedi."
-            );
-
-        }
-
-
-    }
-    else {
-
-        const insertData =
-            {
-                [
-                    tableStructure.keyColumn
-                ]:
-                    key,
-
-                [
-                    tableStructure.valueColumn
-                ]:
-                    value
-            };
-
-
-        let {
-            data,
-            error
-        } =
-            await client
-                .from("site_settings")
-                .insert(
-                    insertData
-                )
-                .select();
-
-
-        /*
-           Eğer tablo boşsa ve kolon yapısı
-           yanlış tahmin edilmişse diğer
-           olası kolon yapısını da dene.
-        */
-
-        if (
-            error &&
-            tableStructure.keyColumn ===
-            "setting_key"
-        ) {
-
-            const alternativeInsertData =
-                {
-                    key:
-                        key,
-
-                    value:
-                        value
-                };
-
-
-            const alternativeResult =
-                await client
-                    .from("site_settings")
-                    .insert(
-                        alternativeInsertData
-                    )
-                    .select();
-
-
-            data =
-                alternativeResult.data;
-
-            error =
-                alternativeResult.error;
-
-        }
-        else if (
-            error &&
-            tableStructure.keyColumn ===
-            "key"
-        ) {
-
-            const alternativeInsertData =
-                {
-                    setting_key:
-                        key,
-
-                    setting_value:
-                        value
-                };
-
-
-            const alternativeResult =
-                await client
-                    .from("site_settings")
-                    .insert(
-                        alternativeInsertData
-                    )
-                    .select();
-
-
-            data =
-                alternativeResult.data;
-
-            error =
-                alternativeResult.error;
-
-        }
-
-
-        if (
-            error
-        ) {
-
-            throw error;
-
-        }
-
-
-        if (
-            !data ||
-            data.length === 0
-        ) {
-
-            throw new Error(
-                key +
-                " ayarı eklenemedi."
-            );
-
-        }
-
-    }
-
-}
-
-
-/* =========================================
    GET INPUT VALUE
 ========================================= */
 
@@ -1385,9 +1040,7 @@ function getInputValue(
         );
 
 
-    if (
-        !element
-    ) {
+    if (!element) {
 
         return "";
 
@@ -1400,7 +1053,7 @@ function getInputValue(
 
 
 /* =========================================
-   MESSAGE
+   SHOW MESSAGE
 ========================================= */
 
 function showSettingsMessage(
@@ -1414,9 +1067,7 @@ function showSettingsMessage(
         );
 
 
-    if (
-        !settingsMessage
-    ) {
+    if (!settingsMessage) {
 
         return;
 
@@ -1431,9 +1082,7 @@ function showSettingsMessage(
         "settings-message";
 
 
-    if (
-        type
-    ) {
+    if (type) {
 
         settingsMessage.classList.add(
             type
@@ -1456,9 +1105,7 @@ function initializeLogout() {
         );
 
 
-    if (
-        !logoutButton
-    ) {
+    if (!logoutButton) {
 
         return;
 
@@ -1473,9 +1120,7 @@ function initializeLogout() {
                 getSupabaseClient();
 
 
-            if (
-                client
-            ) {
+            if (client) {
 
                 const {
                     error
@@ -1485,9 +1130,7 @@ function initializeLogout() {
                         .signOut();
 
 
-                if (
-                    error
-                ) {
+                if (error) {
 
                     console.error(
                         "Çıkış hatası:",
