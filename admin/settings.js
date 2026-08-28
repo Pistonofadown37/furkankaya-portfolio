@@ -6,9 +6,14 @@ document.addEventListener(
     "DOMContentLoaded",
     async function () {
 
-        await checkAuthentication();
+        const authenticated =
+            await checkAuthentication();
 
-        initializeSettings();
+        if (!authenticated) {
+            return;
+        }
+
+        await initializeSettings();
 
     }
 );
@@ -22,7 +27,8 @@ function getSupabaseClient() {
 
     if (
         typeof supabaseClient ===
-        "undefined"
+        "undefined" ||
+        !supabaseClient
     ) {
 
         console.error(
@@ -51,7 +57,7 @@ async function checkAuthentication() {
 
     if (!client) {
 
-        return;
+        return false;
 
     }
 
@@ -70,17 +76,31 @@ async function checkAuthentication() {
             error
         );
 
+        showSettingsMessage(
+            "Oturum kontrolü sırasında hata oluştu: " +
+            error.message,
+            "error"
+        );
+
+        return false;
+
     }
 
 
     if (
+        !data ||
         !data.session
     ) {
 
         window.location.href =
             "login.html";
 
+        return false;
+
     }
+
+
+    return true;
 
 }
 
@@ -162,20 +182,65 @@ async function loadSettings() {
     data.forEach(
         function (item) {
 
-            const key =
-                item.key ||
-                item.setting_key;
+            let key = null;
+            let value = "";
 
 
-            const value =
-                item.value ||
-                item.setting_value;
+            if (
+                Object.prototype.hasOwnProperty.call(
+                    item,
+                    "setting_key"
+                )
+            ) {
+
+                key =
+                    item.setting_key;
+
+            }
+            else if (
+                Object.prototype.hasOwnProperty.call(
+                    item,
+                    "key"
+                )
+            ) {
+
+                key =
+                    item.key;
+
+            }
 
 
-            if (key) {
+            if (
+                Object.prototype.hasOwnProperty.call(
+                    item,
+                    "setting_value"
+                )
+            ) {
+
+                value =
+                    item.setting_value;
+
+            }
+            else if (
+                Object.prototype.hasOwnProperty.call(
+                    item,
+                    "value"
+                )
+            ) {
+
+                value =
+                    item.value;
+
+            }
+
+
+            if (
+                key !== null &&
+                key !== undefined
+            ) {
 
                 settings[key] =
-                    value;
+                    value ?? "";
 
             }
 
@@ -284,9 +349,20 @@ function setInputValue(
 
 
     element.value =
-        value || "";
+        value ?? "";
 
 }
+
+
+/* =========================================
+   LOGO STATE
+========================================= */
+
+let logoRemovalRequested =
+    false;
+
+let currentLogoUrl =
+    "";
 
 
 /* =========================================
@@ -337,9 +413,16 @@ function initializeLogoUpload() {
                         "error"
                     );
 
+                    logoFile.value =
+                        "";
+
                     return;
 
                 }
+
+
+                logoRemovalRequested =
+                    false;
 
 
                 const imageUrl =
@@ -380,7 +463,14 @@ function initializeLogoUpload() {
 
         removeLogoButton.addEventListener(
             "click",
-            function () {
+            function (
+                event
+            ) {
+
+                event.preventDefault();
+
+                logoRemovalRequested =
+                    true;
 
                 removeLogoPreview();
 
@@ -418,7 +508,6 @@ function setLogoPreview(
 
         previewImage.src =
             imageUrl;
-
 
         previewImage.style.display =
             "block";
@@ -472,8 +561,9 @@ function removeLogoPreview() {
         previewImage
     ) {
 
-        previewImage.src =
-            "";
+        previewImage.removeAttribute(
+            "src"
+        );
 
         previewImage.style.display =
             "none";
@@ -529,6 +619,10 @@ function initializeSettingsForm() {
         !settingsForm
     ) {
 
+        console.error(
+            "settingsForm bulunamadı."
+        );
+
         return;
 
     }
@@ -562,6 +656,11 @@ async function saveSettings() {
 
     if (!client) {
 
+        showSettingsMessage(
+            "Supabase bağlantısı bulunamadı.",
+            "error"
+        );
+
         return;
 
     }
@@ -580,7 +679,6 @@ async function saveSettings() {
         saveButton.disabled =
             true;
 
-
         saveButton.textContent =
             "Kaydediliyor...";
 
@@ -595,8 +693,42 @@ async function saveSettings() {
 
     try {
 
+        const {
+            data: existingSettings,
+            error: existingSettingsError
+        } =
+            await client
+                .from("site_settings")
+                .select("*");
+
+
+        if (
+            existingSettingsError
+        ) {
+
+            throw existingSettingsError;
+
+        }
+
+
+        const tableStructure =
+            detectSettingsTableStructure(
+                existingSettings
+            );
+
+
         let logoUrl =
-            await getCurrentLogoUrl();
+            currentLogoUrl;
+
+
+        if (
+            logoRemovalRequested
+        ) {
+
+            logoUrl =
+                "";
+
+        }
 
 
         const logoFile =
@@ -615,27 +747,6 @@ async function saveSettings() {
                 await uploadLogo(
                     logoFile.files[0]
                 );
-
-        }
-
-
-        const previewImage =
-            document.getElementById(
-                "logoPreviewImage"
-            );
-
-
-        const removeRequested =
-            previewImage &&
-            !previewImage.src;
-
-
-        if (
-            removeRequested
-        ) {
-
-            logoUrl =
-                "";
 
         }
 
@@ -688,22 +799,47 @@ async function saveSettings() {
         };
 
 
-        for (
-            const [
-                key,
-                value
-            ]
-            of Object.entries(
-                settings
-            )
-        ) {
+        const results =
+            await Promise.all(
+                Object.entries(
+                    settings
+                ).map(
+                    async function (
+                        entry
+                    ) {
 
-            await saveSetting(
-                key,
-                value
+                        const key =
+                            entry[0];
+
+                        const value =
+                            entry[1];
+
+                        await saveSetting(
+                            key,
+                            value,
+                            existingSettings,
+                            tableStructure
+                        );
+
+                    }
+                )
             );
 
+
+        if (
+            results
+        ) {
+
+            await loadSettings();
+
         }
+
+
+        currentLogoUrl =
+            logoUrl;
+
+        logoRemovalRequested =
+            false;
 
 
         showSettingsMessage(
@@ -731,9 +867,13 @@ async function saveSettings() {
 
         showSettingsMessage(
             "Hata: " +
-            error.message,
+            (
+                error.message ||
+                "Ayarlar kaydedilemedi."
+            ),
             "error"
         );
+
 
     } finally {
 
@@ -744,13 +884,78 @@ async function saveSettings() {
             saveButton.disabled =
                 false;
 
-
             saveButton.textContent =
                 "Ayarları Kaydet";
 
         }
 
     }
+
+}
+
+
+/* =========================================
+   DETECT TABLE STRUCTURE
+========================================= */
+
+function detectSettingsTableStructure(
+    existingSettings
+) {
+
+    if (
+        existingSettings &&
+        existingSettings.length > 0
+    ) {
+
+        const firstItem =
+            existingSettings[0];
+
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                firstItem,
+                "setting_key"
+            )
+        ) {
+
+            return {
+                keyColumn:
+                    "setting_key",
+
+                valueColumn:
+                    "setting_value"
+            };
+
+        }
+
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                firstItem,
+                "key"
+            )
+        ) {
+
+            return {
+                keyColumn:
+                    "key",
+
+                valueColumn:
+                    "value"
+            };
+
+        }
+
+    }
+
+
+    return {
+        keyColumn:
+            "setting_key",
+
+        valueColumn:
+            "setting_value"
+    };
 
 }
 
@@ -778,20 +983,11 @@ async function getCurrentLogoUrl() {
     } =
         await client
             .from("site_settings")
-            .select("*")
-            .or(
-                "key.eq.logo_url,setting_key.eq.logo_url"
-            );
-
-
-    if (error) {
-
-        return "";
-
-    }
+            .select("*");
 
 
     if (
+        error ||
         !data ||
         !data.length
     ) {
@@ -801,13 +997,37 @@ async function getCurrentLogoUrl() {
     }
 
 
-    const item =
-        data[0];
+    const logoItem =
+        data.find(
+            function (
+                item
+            ) {
+
+                return (
+                    item.setting_key ===
+                    "logo_url"
+                ) ||
+                (
+                    item.key ===
+                    "logo_url"
+                );
+
+            }
+        );
+
+
+    if (
+        !logoItem
+    ) {
+
+        return "";
+
+    }
 
 
     return (
-        item.value ||
-        item.setting_value ||
+        logoItem.setting_value ??
+        logoItem.value ??
         ""
     );
 
@@ -838,7 +1058,8 @@ async function uploadLogo(
     const fileExtension =
         file.name
             .split(".")
-            .pop();
+            .pop()
+            .toLowerCase();
 
 
     const fileName =
@@ -853,7 +1074,7 @@ async function uploadLogo(
     } =
         await client
             .storage
-            .from("furkankaya-portfolio")
+            .from("portfolio-images")
             .upload(
                 fileName,
                 file,
@@ -867,7 +1088,9 @@ async function uploadLogo(
             );
 
 
-    if (error) {
+    if (
+        error
+    ) {
 
         throw error;
 
@@ -879,7 +1102,7 @@ async function uploadLogo(
     } =
         client
             .storage
-            .from("furkankaya-portfolio")
+            .from("portfolio-images")
             .getPublicUrl(
                 fileName
             );
@@ -908,7 +1131,9 @@ async function uploadLogo(
 
 async function saveSetting(
     key,
-    value
+    value,
+    existingSettings,
+    tableStructure
 ) {
 
     const client =
@@ -924,78 +1149,36 @@ async function saveSetting(
     }
 
 
-    /*
-    Önce mevcut kaydı kontrol ediyoruz.
-    Böylece site_settings tablosunun
-    farklı kolon yapılarıyla uyum sağlıyoruz.
-    */
+    const existingItem =
+        existingSettings.find(
+            function (
+                item
+            ) {
 
-    const {
-        data:
-            existingData,
-        error:
-            selectError
-    } =
-        await client
-            .from("site_settings")
-            .select("*");
+                return (
+                    item.setting_key ===
+                    key
+                ) ||
+                (
+                    item.key ===
+                    key
+                );
 
-
-    if (
-        selectError
-    ) {
-
-        throw selectError;
-
-    }
-
-
-    let existingItem =
-        null;
-
-
-    if (
-        existingData
-    ) {
-
-        existingItem =
-            existingData.find(
-                function (
-                    item
-                ) {
-
-                    return (
-                        item.key === key ||
-                        item.setting_key === key
-                    );
-
-                }
-            );
-
-    }
+            }
+        );
 
 
     if (
         existingItem
     ) {
 
-        const updateData = {};
-
-
-        if (
-            existingItem.key !==
-            undefined
-        ) {
-
-            updateData.value =
-                value;
-
-        } else {
-
-            updateData.setting_value =
-                value;
-
-        }
+        const updateData =
+            {
+                [
+                    tableStructure.valueColumn
+                ]:
+                    value
+            };
 
 
         let query =
@@ -1007,7 +1190,10 @@ async function saveSetting(
 
 
         if (
-            existingItem.id
+            existingItem.id !==
+            undefined &&
+            existingItem.id !==
+            null
         ) {
 
             query =
@@ -1016,22 +1202,12 @@ async function saveSetting(
                     existingItem.id
                 );
 
-        } else if (
-            existingItem.key !==
-            undefined
-        ) {
+        }
+        else {
 
             query =
                 query.eq(
-                    "key",
-                    key
-                );
-
-        } else {
-
-            query =
-                query.eq(
-                    "setting_key",
+                    tableStructure.keyColumn,
                     key
                 );
 
@@ -1039,9 +1215,11 @@ async function saveSetting(
 
 
         const {
+            data,
             error
         } =
-            await query;
+            await query
+                .select();
 
 
         if (
@@ -1053,47 +1231,61 @@ async function saveSetting(
         }
 
 
-    } else {
+        if (
+            !data ||
+            data.length === 0
+        ) {
 
-        let insertData = {};
+            throw new Error(
+                key +
+                " ayarı güncellenemedi."
+            );
+
+        }
 
 
-        /*
-        Tablo önceki SQL yapısında
-        setting_key kullanıyorsa bunu
-        kullanır. Yeni yapıda key varsa
-        Supabase hatası alınabilir.
-        */
+    }
+    else {
 
-        insertData =
+        const insertData =
             {
-                setting_key:
+                [
+                    tableStructure.keyColumn
+                ]:
                     key,
 
-                setting_value:
+                [
+                    tableStructure.valueColumn
+                ]:
                     value
             };
 
 
         let {
+            data,
             error
         } =
             await client
                 .from("site_settings")
                 .insert(
                     insertData
-                );
+                )
+                .select();
 
+
+        /*
+           Eğer tablo boşsa ve kolon yapısı
+           yanlış tahmin edilmişse diğer
+           olası kolon yapısını da dene.
+        */
 
         if (
             error &&
-            error.message &&
-            error.message.includes(
-                "setting_key"
-            )
+            tableStructure.keyColumn ===
+            "setting_key"
         ) {
 
-            insertData =
+            const alternativeInsertData =
                 {
                     key:
                         key,
@@ -1103,16 +1295,52 @@ async function saveSetting(
                 };
 
 
-            const result =
+            const alternativeResult =
                 await client
                     .from("site_settings")
                     .insert(
-                        insertData
-                    );
+                        alternativeInsertData
+                    )
+                    .select();
 
+
+            data =
+                alternativeResult.data;
 
             error =
-                result.error;
+                alternativeResult.error;
+
+        }
+        else if (
+            error &&
+            tableStructure.keyColumn ===
+            "key"
+        ) {
+
+            const alternativeInsertData =
+                {
+                    setting_key:
+                        key,
+
+                    setting_value:
+                        value
+                };
+
+
+            const alternativeResult =
+                await client
+                    .from("site_settings")
+                    .insert(
+                        alternativeInsertData
+                    )
+                    .select();
+
+
+            data =
+                alternativeResult.data;
+
+            error =
+                alternativeResult.error;
 
         }
 
@@ -1122,6 +1350,19 @@ async function saveSetting(
         ) {
 
             throw error;
+
+        }
+
+
+        if (
+            !data ||
+            data.length === 0
+        ) {
+
+            throw new Error(
+                key +
+                " ayarı eklenemedi."
+            );
 
         }
 
@@ -1236,7 +1477,26 @@ function initializeLogout() {
                 client
             ) {
 
-                await client.auth.signOut();
+                const {
+                    error
+                } =
+                    await client
+                        .auth
+                        .signOut();
+
+
+                if (
+                    error
+                ) {
+
+                    console.error(
+                        "Çıkış hatası:",
+                        error
+                    );
+
+                    return;
+
+                }
 
             }
 
