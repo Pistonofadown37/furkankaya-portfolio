@@ -37,9 +37,9 @@ let logoRemovalRequested = false;
 function getSupabaseClient() {
 
     if (
-        typeof supabaseClient ===
+        typeof window.supabaseClient ===
         "undefined" ||
-        !supabaseClient
+        !window.supabaseClient
     ) {
 
         console.error(
@@ -51,7 +51,7 @@ function getSupabaseClient() {
     }
 
 
-    return supabaseClient;
+    return window.supabaseClient;
 
 }
 
@@ -73,29 +73,51 @@ async function checkAuthentication() {
     }
 
 
-    const {
-        data,
-        error
-    } =
-        await client.auth.getSession();
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await client.auth.getSession();
 
 
-    if (error) {
+        if (error) {
+
+            console.error(
+                "Oturum kontrol hatası:",
+                error
+            );
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+
+        if (
+            !data ||
+            !data.session
+        ) {
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+
+        return true;
+
+    } catch (error) {
 
         console.error(
-            "Oturum kontrol hatası:",
+            "Oturum kontrolü başarısız:",
             error
         );
-
-        return false;
-
-    }
-
-
-    if (
-        !data ||
-        !data.session
-    ) {
 
         window.location.href =
             "login.html";
@@ -103,9 +125,6 @@ async function checkAuthentication() {
         return false;
 
     }
-
-
-    return true;
 
 }
 
@@ -144,18 +163,57 @@ async function loadSettings() {
     }
 
 
-    const {
-        data,
-        error
-    } =
-        await client
-            .from("site_settings")
-            .select(
-                "id, setting_key, setting_value"
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from("site_settings")
+                .select(
+                    "setting_key, setting_value"
+                );
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        const settings = {};
+
+
+        if (Array.isArray(data)) {
+
+            data.forEach(
+                function (item) {
+
+                    if (
+                        item.setting_key
+                    ) {
+
+                        settings[
+                            item.setting_key
+                        ] =
+                            item.setting_value ?? "";
+
+                    }
+
+                }
             );
 
+        }
 
-    if (error) {
+
+        fillSettingsForm(
+            settings
+        );
+
+
+    } catch (error) {
 
         console.error(
             "Ayarlar yüklenirken hata:",
@@ -165,49 +223,20 @@ async function loadSettings() {
 
         showSettingsMessage(
             "Ayarlar yüklenemedi: " +
-            error.message,
+            (
+                error.message ||
+                "Bilinmeyen hata"
+            ),
             "error"
         );
 
-        return;
-
     }
-
-
-    const settings = {};
-
-
-    if (data) {
-
-        data.forEach(
-            function (item) {
-
-                if (
-                    item.setting_key
-                ) {
-
-                    settings[
-                        item.setting_key
-                    ] =
-                        item.setting_value ?? "";
-
-                }
-
-            }
-        );
-
-    }
-
-
-    fillSettingsForm(
-        settings
-    );
 
 }
 
 
 /* =========================================
-   FILL FORM
+   FILL SETTINGS FORM
 ========================================= */
 
 function fillSettingsForm(
@@ -306,7 +335,7 @@ function setInputValue(
 
 
 /* =========================================
-   LOGO UPLOAD
+   LOGO UPLOAD INITIALIZE
 ========================================= */
 
 function initializeLogoUpload() {
@@ -459,7 +488,7 @@ function setLogoPreview(
 
 
 /* =========================================
-   REMOVE LOGO
+   REMOVE LOGO PREVIEW
 ========================================= */
 
 function removeLogoPreview() {
@@ -591,6 +620,12 @@ async function saveSettings() {
         );
 
 
+    const originalButtonText =
+        saveButton
+            ? saveButton.textContent
+            : "Ayarları Kaydet";
+
+
     if (saveButton) {
 
         saveButton.disabled =
@@ -622,7 +657,8 @@ async function saveSettings() {
 
         if (logoRemovalRequested) {
 
-            logoUrl = "";
+            logoUrl =
+                "";
 
         }
 
@@ -717,18 +753,19 @@ async function saveSettings() {
 
         if (logoFile) {
 
-            logoFile.value = "";
+            logoFile.value =
+                "";
 
         }
-
-
-        await loadSettings();
 
 
         showSettingsMessage(
             "Ayarlar başarıyla kaydedildi.",
             "success"
         );
+
+
+        await loadSettings();
 
 
         window.dispatchEvent(
@@ -746,24 +783,13 @@ async function saveSettings() {
         );
 
 
-        let errorMessage =
-            "Ayarlar kaydedilemedi.";
-
-
-        if (
-            error &&
-            error.message
-        ) {
-
-            errorMessage =
-                error.message;
-
-        }
-
-
         showSettingsMessage(
-            "Hata: " +
-            errorMessage,
+            "Kaydetme hatası: " +
+            (
+                error.message ||
+                error.code ||
+                "Bilinmeyen hata"
+            ),
             "error"
         );
 
@@ -776,7 +802,7 @@ async function saveSettings() {
                 false;
 
             saveButton.textContent =
-                "Ayarları Kaydet";
+                originalButtonText;
 
         }
 
@@ -787,10 +813,6 @@ async function saveSettings() {
 
 /* =========================================
    SAVE SINGLE SETTING
-
-   TABLO YAPISI:
-   setting_key
-   setting_value
 ========================================= */
 
 async function saveSetting(
@@ -811,18 +833,14 @@ async function saveSetting(
     }
 
 
-    /*
-       Önce mevcut kaydı arıyoruz.
-    */
-
     const {
         data: existingData,
-        error: selectError
+        error: existingError
     } =
         await client
             .from("site_settings")
             .select(
-                "id, setting_key"
+                "setting_key"
             )
             .eq(
                 "setting_key",
@@ -831,26 +849,20 @@ async function saveSetting(
             .maybeSingle();
 
 
-    if (selectError) {
+    if (existingError) {
 
-        console.error(
-            "Ayar aranırken hata:",
-            selectError
-        );
-
-        throw selectError;
+        throw existingError;
 
     }
 
 
     /*
-       Kayıt varsa UPDATE
+       Kayıt zaten varsa güncelle.
     */
 
     if (existingData) {
 
         const {
-            data: updatedData,
             error: updateError
         } =
             await client
@@ -862,36 +874,14 @@ async function saveSetting(
                     }
                 )
                 .eq(
-                    "id",
-                    existingData.id
-                )
-                .select(
-                    "id, setting_key, setting_value"
+                    "setting_key",
+                    settingKey
                 );
 
 
         if (updateError) {
 
-            console.error(
-                "Ayar güncellenirken hata:",
-                updateError
-            );
-
             throw updateError;
-
-        }
-
-
-        if (
-            !updatedData ||
-            updatedData.length === 0
-        ) {
-
-            throw new Error(
-                settingKey +
-                " ayarı güncellenemedi. " +
-                "Supabase UPDATE izni veya RLS politikası kontrol edilmelidir."
-            );
 
         }
 
@@ -902,17 +892,16 @@ async function saveSetting(
 
 
     /*
-       Kayıt yoksa INSERT
+       Kayıt yoksa ekle.
 
-       Burada sadece:
-       setting_key
-       setting_value
+       Bu dosyada kesinlikle:
+       key
+       value
 
-       kullanılır.
+       kolonları kullanılmaz.
     */
 
     const {
-        data: insertedData,
         error: insertError
     } =
         await client
@@ -925,34 +914,12 @@ async function saveSetting(
                     setting_value:
                         settingValue
                 }
-            )
-            .select(
-                "id, setting_key, setting_value"
             );
 
 
     if (insertError) {
 
-        console.error(
-            "Yeni ayar eklenirken hata:",
-            insertError
-        );
-
         throw insertError;
-
-    }
-
-
-    if (
-        !insertedData ||
-        insertedData.length === 0
-    ) {
-
-        throw new Error(
-            settingKey +
-            " ayarı eklenemedi. " +
-            "Supabase INSERT izni veya RLS politikası kontrol edilmelidir."
-        );
 
     }
 
@@ -980,7 +947,7 @@ async function uploadLogo(
     }
 
 
-    const fileExtension =
+    const extension =
         file.name
             .split(".")
             .pop()
@@ -995,7 +962,7 @@ async function uploadLogo(
             .toString(36)
             .substring(2, 10) +
         "." +
-        fileExtension;
+        extension;
 
 
     const {
@@ -1018,11 +985,6 @@ async function uploadLogo(
 
 
     if (uploadError) {
-
-        console.error(
-            "Logo yükleme hatası:",
-            uploadError
-        );
 
         throw uploadError;
 
@@ -1084,7 +1046,7 @@ function getInputValue(
 
 
 /* =========================================
-   MESSAGE
+   SHOW MESSAGE
 ========================================= */
 
 function showSettingsMessage(
@@ -1151,30 +1113,45 @@ function initializeLogout() {
                 getSupabaseClient();
 
 
-            if (client) {
+            try {
 
-                const {
-                    error
-                } =
-                    await client
-                        .auth
-                        .signOut();
+                if (client) {
 
-
-                if (error) {
-
-                    console.error(
-                        "Çıkış hatası:",
+                    const {
                         error
-                    );
+                    } =
+                        await client
+                            .auth
+                            .signOut();
+
+
+                    if (error) {
+
+                        throw error;
+
+                    }
 
                 }
 
+
+                window.location.href =
+                    "login.html";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Çıkış hatası:",
+                    error
+                );
+
+
+                showSettingsMessage(
+                    "Çıkış yapılırken hata oluştu.",
+                    "error"
+                );
+
             }
-
-
-            window.location.href =
-                "login.html";
 
         }
     );
