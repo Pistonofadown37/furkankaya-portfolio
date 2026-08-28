@@ -85,6 +85,9 @@ async function checkAuthentication() {
             error
         );
 
+        window.location.href =
+            "login.html";
+
         return false;
 
     }
@@ -155,10 +158,14 @@ async function loadSettings() {
         data.forEach(
             function (item) {
 
-                settings[
-                    item.setting_key
-                ] =
-                    item.setting_value ?? "";
+                if (item.setting_key) {
+
+                    settings[
+                        item.setting_key
+                    ] =
+                        item.setting_value ?? "";
+
+                }
 
             }
         );
@@ -310,7 +317,9 @@ function initializeLogoUpload() {
                     false;
 
                 const imageUrl =
-                    URL.createObjectURL(file);
+                    URL.createObjectURL(
+                        file
+                    );
 
                 setLogoPreview(
                     imageUrl
@@ -393,7 +402,7 @@ function setLogoPreview(
 
 
 /* =========================================
-   REMOVE LOGO PREVIEW
+   REMOVE LOGO
 ========================================= */
 
 function removeLogoPreview() {
@@ -516,7 +525,8 @@ async function saveSettings() {
 
         if (saveButton) {
 
-            saveButton.disabled = true;
+            saveButton.disabled =
+                true;
 
             saveButton.textContent =
                 "Kaydediliyor...";
@@ -561,51 +571,61 @@ async function saveSettings() {
 
 
         const settings = [
+
             {
                 setting_key: "site_name",
                 setting_value:
                     getInputValue("siteName")
             },
+
             {
                 setting_key: "site_subtitle",
                 setting_value:
                     getInputValue("siteSubtitle")
             },
+
             {
                 setting_key: "hero_title",
                 setting_value:
                     getInputValue("heroTitle")
             },
+
             {
                 setting_key: "hero_description",
                 setting_value:
                     getInputValue("heroDescription")
             },
+
             {
                 setting_key: "about_text",
                 setting_value:
                     getInputValue("aboutText")
             },
+
             {
                 setting_key: "email",
                 setting_value:
                     getInputValue("email")
             },
+
             {
                 setting_key: "whatsapp",
                 setting_value:
                     getInputValue("whatsapp")
             },
+
             {
                 setting_key: "instagram",
                 setting_value:
                     getInputValue("instagram")
             },
+
             {
                 setting_key: "logo_url",
                 setting_value:
                     logoUrl
             }
+
         ];
 
 
@@ -640,7 +660,7 @@ async function saveSettings() {
         ) {
 
             throw new Error(
-                "Supabase kayıt sonucunu döndürmedi."
+                "Ayarlar kaydedildi ancak Supabase kayıt sonucunu döndürmedi."
             );
 
         }
@@ -666,16 +686,16 @@ async function saveSettings() {
         );
 
 
+        console.log(
+            "Kayıt başarılı:",
+            data
+        );
+
+
         window.dispatchEvent(
             new Event(
                 "settingsUpdated"
             )
-        );
-
-
-        console.log(
-            "Kayıt başarılı:",
-            data
         );
 
 
@@ -685,6 +705,7 @@ async function saveSettings() {
             "Ayarlar kaydedilirken hata:",
             error
         );
+
 
         showSettingsMessage(
             "Kaydetme hatası: " +
@@ -700,7 +721,8 @@ async function saveSettings() {
 
         if (saveButton) {
 
-            saveButton.disabled = false;
+            saveButton.disabled =
+                false;
 
             saveButton.textContent =
                 originalButtonText;
@@ -750,7 +772,7 @@ async function uploadLogo(
 
 
     const {
-        error: uploadError
+        error
     } =
         await client
             .storage
@@ -765,9 +787,9 @@ async function uploadLogo(
             );
 
 
-    if (uploadError) {
+    if (error) {
 
-        throw uploadError;
+        throw error;
 
     }
 
@@ -793,7 +815,6 @@ async function uploadLogo(
         );
 
     }
-
 
     return data.publicUrl;
 
@@ -883,7 +904,19 @@ function initializeLogout() {
 
             if (client) {
 
-                await client.auth.signOut();
+                const {
+                    error
+                } =
+                    await client.auth.signOut();
+
+                if (error) {
+
+                    console.error(
+                        "Çıkış hatası:",
+                        error
+                    );
+
+                }
 
             }
 
