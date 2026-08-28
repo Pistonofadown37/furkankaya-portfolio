@@ -3,14 +3,20 @@
    MAIN JAVASCRIPT
 ========================================= */
 
-document.addEventListener("DOMContentLoaded", async function () {
-    initializeCurrentYear();
-    initializeNavigation();
-    initializeMobileMenu();
-    initializeLightbox();
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+        initializeCurrentYear();
+        initializeNavigation();
+        initializeMobileMenu();
+        initializeLightbox();
 
-    await initializePortfolio();
-});
+        await Promise.all([
+            initializeSiteSettings(),
+            initializePortfolio()
+        ]);
+    }
+);
 
 
 /* =========================================
@@ -18,13 +24,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 ========================================= */
 
 function initializeCurrentYear() {
-    const currentYear = document.getElementById("currentYear");
+    const element =
+        document.getElementById("currentYear");
 
-    if (!currentYear) {
-        return;
+    if (element) {
+        element.textContent =
+            new Date().getFullYear();
     }
-
-    currentYear.textContent = new Date().getFullYear();
 }
 
 
@@ -33,47 +39,60 @@ function initializeCurrentYear() {
 ========================================= */
 
 function initializeNavigation() {
-    const navLinks = document.querySelectorAll(".nav-link");
-    const sections = document.querySelectorAll("section[id]");
+    const links =
+        document.querySelectorAll(".nav-link");
 
-    navLinks.forEach(function (link) {
-        link.addEventListener("click", function () {
-            navLinks.forEach(function (item) {
-                item.classList.remove("active");
-            });
+    const sections =
+        document.querySelectorAll("section[id]");
 
-            link.classList.add("active");
-        });
+    links.forEach(function (link) {
+        link.addEventListener(
+            "click",
+            function () {
+                links.forEach(function (item) {
+                    item.classList.remove("active");
+                });
+
+                link.classList.add("active");
+            }
+        );
     });
 
     if (!sections.length) {
         return;
     }
 
-    window.addEventListener("scroll", function () {
-        let currentSection = "";
+    window.addEventListener(
+        "scroll",
+        function () {
+            let current = "";
 
-        sections.forEach(function (section) {
-            const sectionTop = section.offsetTop - 150;
-            const sectionHeight = section.offsetHeight;
+            sections.forEach(function (section) {
+                const top =
+                    section.offsetTop - 150;
 
-            if (
-                window.scrollY >= sectionTop &&
-                window.scrollY < sectionTop + sectionHeight
-            ) {
-                currentSection = section.getAttribute("id");
-            }
-        });
+                const height =
+                    section.offsetHeight;
 
-        navLinks.forEach(function (link) {
-            const href = link.getAttribute("href");
+                if (
+                    window.scrollY >= top &&
+                    window.scrollY <
+                        top + height
+                ) {
+                    current =
+                        section.id;
+                }
+            });
 
-            link.classList.toggle(
-                "active",
-                href === "#" + currentSection
-            );
-        });
-    });
+            links.forEach(function (link) {
+                link.classList.toggle(
+                    "active",
+                    link.getAttribute("href") ===
+                        "#" + current
+                );
+            });
+        }
+    );
 }
 
 
@@ -82,541 +101,486 @@ function initializeNavigation() {
 ========================================= */
 
 function initializeMobileMenu() {
-    const button = document.getElementById("mobileMenuButton");
-    const menu = document.getElementById("mobileMenu");
+    const button =
+        document.getElementById(
+            "mobileMenuButton"
+        );
+
+    const menu =
+        document.getElementById(
+            "mobileMenu"
+        );
 
     if (!button || !menu) {
         return;
     }
 
-    button.addEventListener("click", function () {
-        const isOpen = menu.classList.toggle("open");
-
-        button.setAttribute(
-            "aria-expanded",
-            isOpen ? "true" : "false"
-        );
-    });
-
-    const mobileLinks = menu.querySelectorAll(".mobile-nav-link");
-
-    mobileLinks.forEach(function (link) {
-        link.addEventListener("click", function () {
-            menu.classList.remove("open");
+    button.addEventListener(
+        "click",
+        function () {
+            const isOpen =
+                menu.classList.toggle("open");
 
             button.setAttribute(
                 "aria-expanded",
-                "false"
+                isOpen ? "true" : "false"
+            );
+        }
+    );
+
+    menu
+        .querySelectorAll(".mobile-nav-link")
+        .forEach(function (link) {
+            link.addEventListener(
+                "click",
+                function () {
+                    menu.classList.remove("open");
+
+                    button.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+                }
             );
         });
-    });
 }
 
 
 /* =========================================
-   PORTFOLIO INITIALIZE
+   SITE SETTINGS
 ========================================= */
 
-async function initializePortfolio() {
-    const portfolioSlider =
-        document.getElementById("portfolioSlider");
+async function initializeSiteSettings() {
+    const client =
+        window.supabaseClient;
 
-    const portfolioPrev =
-        document.getElementById("portfolioPrev");
-
-    const portfolioNext =
-        document.getElementById("portfolioNext");
-
-    const portfolioDots =
-        document.getElementById("portfolioDots");
-
-    if (!portfolioSlider) {
+    if (!client) {
+        console.warn(
+            "Supabase bağlantısı bulunamadı."
+        );
         return;
     }
 
-    portfolioSlider.innerHTML = `
-        <div class="portfolio-loading">
-            Çalışmalar yükleniyor...
-        </div>
-    `;
+    try {
+        const {
+            data,
+            error
+        } =
+            await client
+                .from("site_settings")
+                .select("*");
+
+        if (error) {
+            throw error;
+        }
+
+        const settings = {};
+
+        (data || []).forEach(
+            function (item) {
+                const key =
+                    item.setting_key ??
+                    item.key;
+
+                const value =
+                    item.setting_value ??
+                    item.value ??
+                    "";
+
+                if (key) {
+                    settings[key] = value;
+                }
+            }
+        );
+
+        applySiteSettings(settings);
+
+    } catch (error) {
+        console.error(
+            "Site ayarları yüklenirken hata:",
+            error
+        );
+    }
+}
+
+
+function applySiteSettings(settings) {
+
+    const siteTitle =
+        settings.site_title ||
+        settings.site_name ||
+        "";
+
+    const heroTitle =
+        settings.hero_title || "";
+
+    const heroText =
+        settings.hero_text ||
+        settings.hero_description ||
+        "";
+
+    const instagram =
+        settings.instagram_link ||
+        settings.instagram ||
+        "";
+
+    const email =
+        settings.contact_email ||
+        settings.email_address ||
+        settings.email ||
+        "";
+
+    const phone =
+        settings.contact_phone ||
+        settings.whatsapp ||
+        "";
+
+    /* SITE TITLE */
+
+    if (siteTitle) {
+        document.title =
+            siteTitle +
+            " | Grafik Tasarım";
+
+        document
+            .querySelectorAll(
+                ".site-logo strong"
+            )
+            .forEach(
+                function (element) {
+                    const words =
+                        siteTitle
+                            .trim()
+                            .split(/\s+/);
+
+                    element.textContent =
+                        words[0] || siteTitle;
+                }
+            );
+
+        document
+            .querySelectorAll(
+                ".site-logo span"
+            )
+            .forEach(
+                function (element) {
+                    const words =
+                        siteTitle
+                            .trim()
+                            .split(/\s+/);
+
+                    if (words.length > 1) {
+                        element.textContent =
+                            words
+                                .slice(1)
+                                .join(" ") + ".";
+                    }
+                }
+            );
+    }
+
+    /* HERO TITLE */
+
+    if (heroTitle) {
+        const element =
+            document.querySelector(
+                ".hero-title"
+            );
+
+        if (element) {
+            element.textContent =
+                heroTitle;
+        }
+    }
+
+    /* HERO TEXT */
+
+    if (heroText) {
+        const element =
+            document.querySelector(
+                ".hero-description"
+            );
+
+        if (element) {
+            element.textContent =
+                heroText;
+        }
+    }
+
+    /* EMAIL */
+
+    if (email) {
+        const emailLink =
+            document.getElementById(
+                "contactEmail"
+            );
+
+        const emailText =
+            document.getElementById(
+                "contactEmailText"
+            );
+
+        if (emailLink) {
+            emailLink.href =
+                "mailto:" + email;
+        }
+
+        if (emailText) {
+            emailText.textContent =
+                email;
+        }
+    }
+
+    /* PHONE / WHATSAPP */
+
+    if (phone) {
+        const whatsappLink =
+            document.getElementById(
+                "contactWhatsapp"
+            );
+
+        const whatsappText =
+            document.getElementById(
+                "contactWhatsappText"
+            );
+
+        const cleanPhone =
+            phone.replace(/\D/g, "");
+
+        if (whatsappLink) {
+            whatsappLink.href =
+                "https://wa.me/" +
+                cleanPhone;
+        }
+
+        if (whatsappText) {
+            whatsappText.textContent =
+                phone;
+        }
+    }
+
+    /* INSTAGRAM */
+
+    if (instagram) {
+        const instagramLink =
+            document.getElementById(
+                "contactInstagram"
+            );
+
+        const instagramText =
+            document.getElementById(
+                "contactInstagramText"
+            );
+
+        if (instagramLink) {
+            instagramLink.href =
+                instagram;
+        }
+
+        if (instagramText) {
+            try {
+                const url =
+                    new URL(instagram);
+
+                instagramText.textContent =
+                    url.pathname
+                        .replace(/\//g, "") ||
+                    instagram;
+
+            } catch (error) {
+                instagramText.textContent =
+                    instagram;
+            }
+        }
+    }
+}
+
+
+/* =========================================
+   PORTFOLIO
+========================================= */
+
+async function initializePortfolio() {
+    const slider =
+        document.getElementById(
+            "portfolioSlider"
+        );
+
+    if (!slider) {
+        return;
+    }
+
+    const previous =
+        document.getElementById(
+            "portfolioPrev"
+        );
+
+    const next =
+        document.getElementById(
+            "portfolioNext"
+        );
+
+    const dots =
+        document.getElementById(
+            "portfolioDots"
+        );
+
+    slider.innerHTML =
+        "<div class=\"portfolio-loading\">Çalışmalar yükleniyor...</div>";
 
     try {
         const portfolios =
-            await getPortfoliosFromSupabase();
+            await getPortfolios();
 
         if (!portfolios.length) {
-            portfolioSlider.innerHTML = `
-                <div class="portfolio-loading">
-                    Henüz portföy çalışması eklenmedi.
-                </div>
-            `;
+            slider.innerHTML =
+                "<div class=\"portfolio-loading\">Henüz portföy çalışması bulunmuyor.</div>";
 
-            if (portfolioPrev) {
-                portfolioPrev.style.display = "none";
+            if (previous) {
+                previous.style.display = "none";
             }
 
-            if (portfolioNext) {
-                portfolioNext.style.display = "none";
+            if (next) {
+                next.style.display = "none";
             }
 
-            if (portfolioDots) {
-                portfolioDots.innerHTML = "";
+            if (dots) {
+                dots.innerHTML = "";
             }
 
             return;
         }
 
-        renderPortfolios(
-            portfolioSlider,
-            portfolios
+        slider.innerHTML = "";
+
+        portfolios.forEach(
+            function (portfolio) {
+                slider.appendChild(
+                    createPortfolioCard(
+                        portfolio
+                    )
+                );
+            }
         );
 
         initializePortfolioSlider(
-            portfolioSlider,
-            portfolioPrev,
-            portfolioNext,
-            portfolioDots
+            slider,
+            previous,
+            next,
+            dots
         );
 
     } catch (error) {
-        console.error(
-            "Portföyler yüklenirken hata oluştu:",
-            error
-        );
+        console.error(error);
 
-        portfolioSlider.innerHTML = `
-            <div class="portfolio-loading">
-                Portföy çalışmaları yüklenemedi.
-            </div>
-        `;
-
-        if (portfolioPrev) {
-            portfolioPrev.style.display = "none";
-        }
-
-        if (portfolioNext) {
-            portfolioNext.style.display = "none";
-        }
-
-        if (portfolioDots) {
-            portfolioDots.innerHTML = "";
-        }
+        slider.innerHTML =
+            "<div class=\"portfolio-loading\">Portföyler yüklenemedi.</div>";
     }
 }
 
 
-/* =========================================
-   GET PORTFOLIOS FROM SUPABASE
-========================================= */
-
-async function getPortfoliosFromSupabase() {
+async function getPortfolios() {
     const client =
         window.supabaseClient;
 
     if (!client) {
         throw new Error(
-            "Supabase bağlantısı bulunamadı. supabase.js dosyasını kontrol edin."
+            "Supabase bağlantısı bulunamadı."
         );
     }
 
-    const response = await client
-        .from("portfolios")
-        .select("*");
+    let result =
+        await client
+            .from("portfolios")
+            .select("*")
+            .order(
+                "created_at",
+                { ascending: false }
+            );
 
-    if (response.error) {
-        throw response.error;
+    if (result.error) {
+        result =
+            await client
+                .from("portfolios")
+                .select("*");
     }
 
-    const portfolios = Array.isArray(response.data)
-        ? response.data
-        : [];
+    if (result.error) {
+        throw result.error;
+    }
 
-    return portfolios
-        .filter(function (portfolio) {
-            return isPortfolioActive(portfolio);
-        })
-        .sort(function (a, b) {
-            return getPortfolioSortValue(b) -
-                getPortfolioSortValue(a);
+    return (result.data || [])
+        .filter(function (item) {
+            return (
+                !item.status ||
+                item.status === "active" ||
+                item.status === "aktif"
+            );
         });
 }
 
 
-/* =========================================
-   PORTFOLIO STATUS
-========================================= */
-
-function isPortfolioActive(portfolio) {
-    const status = portfolio.status;
-
-    if (
-        status === undefined ||
-        status === null ||
-        status === ""
-    ) {
-        return true;
-    }
-
-    if (status === true || status === 1) {
-        return true;
-    }
-
-    const normalizedStatus =
-        String(status)
-            .trim()
-            .toLowerCase();
-
-    return (
-        normalizedStatus === "active" ||
-        normalizedStatus === "aktif" ||
-        normalizedStatus === "published" ||
-        normalizedStatus === "true" ||
-        normalizedStatus === "1"
-    );
-}
-
-
-/* =========================================
-   PORTFOLIO SORT
-========================================= */
-
-function getPortfolioSortValue(portfolio) {
-    const possibleDateFields = [
-        "created_at",
-        "updated_at",
-        "date"
-    ];
-
-    for (let i = 0; i < possibleDateFields.length; i++) {
-        const value =
-            portfolio[possibleDateFields[i]];
-
-        if (value) {
-            const time =
-                new Date(value).getTime();
-
-            if (!Number.isNaN(time)) {
-                return time;
-            }
-        }
-    }
-
-    const numericId =
-        Number(portfolio.id);
-
-    if (!Number.isNaN(numericId)) {
-        return numericId;
-    }
-
-    return 0;
-}
-
-
-/* =========================================
-   RENDER PORTFOLIOS
-========================================= */
-
-function renderPortfolios(
-    portfolioSlider,
-    portfolios
-) {
-    portfolioSlider.innerHTML = "";
-
-    portfolios.forEach(function (
-        portfolio,
-        index
-    ) {
-        const card =
-            createPortfolioCard(
-                portfolio,
-                index
-            );
-
-        portfolioSlider.appendChild(card);
-    });
-}
-
-
-/* =========================================
-   CREATE PORTFOLIO CARD
-========================================= */
-
-function createPortfolioCard(
-    portfolio,
-    index
-) {
-    const article =
+function createPortfolioCard(portfolio) {
+    const card =
         document.createElement("article");
 
-    article.className =
+    card.className =
         "portfolio-card";
 
-    article.setAttribute(
-        "tabindex",
-        "0"
-    );
+    const image =
+        portfolio.image_url || "";
 
     const title =
-        getPortfolioValue(
-            portfolio,
-            [
-                "title",
-                "name",
-                "baslik"
-            ],
-            "İsimsiz Çalışma"
-        );
-
-    const description =
-        getPortfolioValue(
-            portfolio,
-            [
-                "description",
-                "content",
-                "aciklama"
-            ],
-            ""
-        );
+        portfolio.title ||
+        "İsimsiz Çalışma";
 
     const category =
-        getPortfolioValue(
-            portfolio,
-            [
-                "category",
-                "type",
-                "kategori"
-            ],
-            "TASARIM"
-        );
+        portfolio.category ||
+        "TASARIM";
 
-    const image =
-        getPortfolioImage(portfolio);
+    const description =
+        portfolio.description || "";
 
-    const imageContainer =
-        document.createElement("div");
+    card.innerHTML = `
+        <div class="portfolio-image">
+            ${
+                image
+                    ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy">`
+                    : `<div class="portfolio-placeholder"><span>${escapeHtml(category)}</span></div>`
+            }
+        </div>
 
-    imageContainer.className =
-        "portfolio-image";
+        <div class="portfolio-info">
+            <span class="portfolio-category">
+                ${escapeHtml(category)}
+            </span>
+
+            <h3>
+                ${escapeHtml(title)}
+            </h3>
+
+            ${
+                description
+                    ? `<p>${escapeHtml(description)}</p>`
+                    : ""
+            }
+        </div>
+    `;
 
     if (image) {
-        const img =
-            document.createElement("img");
-
-        img.src = image;
-        img.alt = title;
-        img.loading = "lazy";
-
-        img.addEventListener(
-            "error",
+        card.addEventListener(
+            "click",
             function () {
-                imageContainer.innerHTML = "";
-
-                const placeholder =
-                    createPortfolioPlaceholder(
-                        category,
-                        index
-                    );
-
-                imageContainer.appendChild(
-                    placeholder
+                openPortfolioLightbox(
+                    image,
+                    title,
+                    description
                 );
             }
         );
-
-        imageContainer.appendChild(img);
-
-    } else {
-        const placeholder =
-            createPortfolioPlaceholder(
-                category,
-                index
-            );
-
-        imageContainer.appendChild(
-            placeholder
-        );
     }
 
-    const info =
-        document.createElement("div");
-
-    info.className =
-        "portfolio-info";
-
-    const categoryElement =
-        document.createElement("span");
-
-    categoryElement.className =
-        "portfolio-category";
-
-    categoryElement.textContent =
-        category;
-
-    const heading =
-        document.createElement("h3");
-
-    heading.textContent =
-        title;
-
-    info.appendChild(categoryElement);
-    info.appendChild(heading);
-
-    if (description) {
-        const paragraph =
-            document.createElement("p");
-
-        paragraph.textContent =
-            description;
-
-        info.appendChild(paragraph);
-    }
-
-    article.appendChild(imageContainer);
-    article.appendChild(info);
-
-    function openCard() {
-        if (!image) {
-            return;
-        }
-
-        openPortfolioLightbox(
-            image,
-            title,
-            description
-        );
-    }
-
-    article.addEventListener(
-        "click",
-        openCard
-    );
-
-    article.addEventListener(
-        "keydown",
-        function (event) {
-            if (
-                event.key === "Enter" ||
-                event.key === " "
-            ) {
-                event.preventDefault();
-
-                openCard();
-            }
-        }
-    );
-
-    return article;
-}
-
-
-/* =========================================
-   PORTFOLIO PLACEHOLDER
-========================================= */
-
-function createPortfolioPlaceholder(
-    category,
-    index
-) {
-    const placeholder =
-        document.createElement("div");
-
-    placeholder.className =
-        "portfolio-placeholder";
-
-    const categoryText =
-        document.createElement("span");
-
-    categoryText.textContent =
-        category;
-
-    const number =
-        document.createElement("strong");
-
-    number.textContent =
-        String(index + 1).padStart(
-            2,
-            "0"
-        );
-
-    placeholder.appendChild(categoryText);
-    placeholder.appendChild(number);
-
-    return placeholder;
-}
-
-
-/* =========================================
-   GET PORTFOLIO VALUE
-========================================= */
-
-function getPortfolioValue(
-    portfolio,
-    possibleKeys,
-    defaultValue
-) {
-    for (
-        let i = 0;
-        i < possibleKeys.length;
-        i++
-    ) {
-        const key =
-            possibleKeys[i];
-
-        const value =
-            portfolio[key];
-
-        if (
-            value !== undefined &&
-            value !== null &&
-            value !== ""
-        ) {
-            return String(value);
-        }
-    }
-
-    return defaultValue;
-}
-
-
-/* =========================================
-   GET PORTFOLIO IMAGE
-========================================= */
-
-function getPortfolioImage(
-    portfolio
-) {
-    const possibleKeys = [
-        "image_url",
-        "image",
-        "imageUrl",
-        "image_data",
-        "imageData",
-        "thumbnail",
-        "thumbnailUrl",
-        "cover"
-    ];
-
-    for (
-        let i = 0;
-        i < possibleKeys.length;
-        i++
-    ) {
-        const key =
-            possibleKeys[i];
-
-        const value =
-            portfolio[key];
-
-        if (
-            value !== undefined &&
-            value !== null &&
-            String(value).trim() !== ""
-        ) {
-            return String(value);
-        }
-    }
-
-    return "";
+    return card;
 }
 
 
@@ -625,25 +589,21 @@ function getPortfolioImage(
 ========================================= */
 
 function initializePortfolioSlider(
-    portfolioSlider,
-    portfolioPrev,
-    portfolioNext,
-    portfolioDots
+    slider,
+    previous,
+    next,
+    dotsContainer
 ) {
     const cards =
         Array.from(
-            portfolioSlider.querySelectorAll(
+            slider.querySelectorAll(
                 ".portfolio-card"
             )
         );
 
-    if (!cards.length) {
-        return;
-    }
-
     let currentPage = 0;
 
-    function getCardsPerPage() {
+    function cardsPerPage() {
         if (window.innerWidth <= 800) {
             return 1;
         }
@@ -655,318 +615,150 @@ function initializePortfolioSlider(
         return 4;
     }
 
-    function getTotalPages() {
+    function totalPages() {
         return Math.max(
             1,
             Math.ceil(
                 cards.length /
-                getCardsPerPage()
+                cardsPerPage()
             )
         );
     }
 
-    function createDots() {
-        if (!portfolioDots) {
+    function renderDots() {
+        if (!dotsContainer) {
             return;
         }
 
-        portfolioDots.innerHTML = "";
-
-        const totalPages =
-            getTotalPages();
+        dotsContainer.innerHTML = "";
 
         for (
             let i = 0;
-            i < totalPages;
+            i < totalPages();
             i++
         ) {
             const dot =
-                document.createElement("button");
+                document.createElement(
+                    "button"
+                );
 
             dot.type = "button";
-
             dot.className =
                 "portfolio-dot";
-
-            dot.setAttribute(
-                "aria-label",
-                (i + 1) +
-                ". sayfaya git"
-            );
 
             dot.addEventListener(
                 "click",
                 function () {
                     currentPage = i;
-
-                    updateSlider();
+                    update();
                 }
             );
 
-            portfolioDots.appendChild(dot);
+            dotsContainer.appendChild(dot);
         }
     }
 
-    function updateSlider() {
-        const cardsPerPage =
-            getCardsPerPage();
+    function update() {
+        const perPage =
+            cardsPerPage();
 
-        const totalPages =
-            getTotalPages();
+        const pages =
+            totalPages();
 
-        if (currentPage >= totalPages) {
-            currentPage =
-                totalPages - 1;
+        if (currentPage >= pages) {
+            currentPage = pages - 1;
         }
 
-        if (currentPage < 0) {
-            currentPage = 0;
-        }
+        cards.forEach(
+            function (card, index) {
+                const start =
+                    currentPage * perPage;
 
-        const start =
-            currentPage *
-            cardsPerPage;
+                const end =
+                    start + perPage;
 
-        const end =
-            start +
-            cardsPerPage;
+                card.style.display =
+                    index >= start &&
+                    index < end
+                        ? "block"
+                        : "none";
+            }
+        );
 
-        cards.forEach(function (
-            card,
-            index
-        ) {
-            const visible =
-                index >= start &&
-                index < end;
-
-            card.style.display =
-                visible
-                    ? "block"
-                    : "none";
-        });
-
-        if (portfolioDots) {
-            const dots =
-                portfolioDots.querySelectorAll(
+        if (dotsContainer) {
+            dotsContainer
+                .querySelectorAll(
                     ".portfolio-dot"
+                )
+                .forEach(
+                    function (dot, index) {
+                        dot.classList.toggle(
+                            "active",
+                            index === currentPage
+                        );
+                    }
                 );
-
-            dots.forEach(function (
-                dot,
-                index
-            ) {
-                dot.classList.toggle(
-                    "active",
-                    index === currentPage
-                );
-            });
         }
 
-        const showNavigation =
-            totalPages > 1;
+        const show =
+            pages > 1;
 
-        if (portfolioPrev) {
-            portfolioPrev.style.display =
-                showNavigation
-                    ? "flex"
-                    : "none";
+        if (previous) {
+            previous.style.display =
+                show ? "flex" : "none";
         }
 
-        if (portfolioNext) {
-            portfolioNext.style.display =
-                showNavigation
-                    ? "flex"
-                    : "none";
+        if (next) {
+            next.style.display =
+                show ? "flex" : "none";
         }
     }
 
-    function nextPage() {
-        currentPage++;
+    if (previous) {
+        previous.onclick =
+            function () {
+                currentPage--;
 
-        if (
-            currentPage >=
-            getTotalPages()
-        ) {
-            currentPage = 0;
-        }
+                if (currentPage < 0) {
+                    currentPage =
+                        totalPages() - 1;
+                }
 
-        updateSlider();
+                update();
+            };
     }
 
-    function previousPage() {
-        currentPage--;
+    if (next) {
+        next.onclick =
+            function () {
+                currentPage++;
 
-        if (currentPage < 0) {
-            currentPage =
-                getTotalPages() - 1;
-        }
+                if (
+                    currentPage >=
+                    totalPages()
+                ) {
+                    currentPage = 0;
+                }
 
-        updateSlider();
+                update();
+            };
     }
-
-    if (portfolioNext) {
-        portfolioNext.addEventListener(
-            "click",
-            nextPage
-        );
-    }
-
-    if (portfolioPrev) {
-        portfolioPrev.addEventListener(
-            "click",
-            previousPage
-        );
-    }
-
-    let touchStartX = 0;
-
-    portfolioSlider.addEventListener(
-        "touchstart",
-        function (event) {
-            if (
-                !event.changedTouches ||
-                !event.changedTouches.length
-            ) {
-                return;
-            }
-
-            touchStartX =
-                event.changedTouches[0].screenX;
-        },
-        {
-            passive: true
-        }
-    );
-
-    portfolioSlider.addEventListener(
-        "touchend",
-        function (event) {
-            if (
-                !event.changedTouches ||
-                !event.changedTouches.length
-            ) {
-                return;
-            }
-
-            const touchEndX =
-                event.changedTouches[0].screenX;
-
-            const distance =
-                touchEndX -
-                touchStartX;
-
-            if (Math.abs(distance) <= 50) {
-                return;
-            }
-
-            if (distance < 0) {
-                nextPage();
-            } else {
-                previousPage();
-            }
-        },
-        {
-            passive: true
-        }
-    );
-
-    let resizeTimer = null;
 
     window.addEventListener(
         "resize",
         function () {
-            clearTimeout(resizeTimer);
-
-            resizeTimer =
-                setTimeout(
-                    function () {
-                        const totalPages =
-                            getTotalPages();
-
-                        if (
-                            currentPage >=
-                            totalPages
-                        ) {
-                            currentPage =
-                                totalPages - 1;
-                        }
-
-                        createDots();
-                        updateSlider();
-                    },
-                    150
-                );
+            renderDots();
+            update();
         }
     );
 
-    createDots();
-    updateSlider();
+    renderDots();
+    update();
 }
 
 
 /* =========================================
    LIGHTBOX
-========================================= */
-
-function openPortfolioLightbox(
-    image,
-    title,
-    description
-) {
-    const lightbox =
-        document.getElementById(
-            "lightbox"
-        );
-
-    const lightboxImage =
-        document.getElementById(
-            "lightboxImage"
-        );
-
-    const lightboxTitle =
-        document.getElementById(
-            "lightboxTitle"
-        );
-
-    const lightboxDescription =
-        document.getElementById(
-            "lightboxDescription"
-        );
-
-    if (
-        !lightbox ||
-        !lightboxImage
-    ) {
-        return;
-    }
-
-    lightboxImage.src = image;
-    lightboxImage.alt = title || "";
-
-    if (lightboxTitle) {
-        lightboxTitle.textContent =
-            title || "";
-    }
-
-    if (lightboxDescription) {
-        lightboxDescription.textContent =
-            description || "";
-    }
-
-    lightbox.classList.add("active");
-
-    lightbox.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-    document.body.style.overflow =
-        "hidden";
-}
-
-
-/* =========================================
-   LIGHTBOX CLOSE
 ========================================= */
 
 function initializeLightbox() {
@@ -975,7 +767,7 @@ function initializeLightbox() {
             "lightbox"
         );
 
-    const closeButton =
+    const close =
         document.getElementById(
             "lightboxClose"
         );
@@ -985,7 +777,9 @@ function initializeLightbox() {
     }
 
     function closeLightbox() {
-        lightbox.classList.remove("active");
+        lightbox.classList.remove(
+            "active"
+        );
 
         lightbox.setAttribute(
             "aria-hidden",
@@ -996,8 +790,8 @@ function initializeLightbox() {
             "";
     }
 
-    if (closeButton) {
-        closeButton.addEventListener(
+    if (close) {
+        close.addEventListener(
             "click",
             closeLightbox
         );
@@ -1018,10 +812,7 @@ function initializeLightbox() {
         "keydown",
         function (event) {
             if (
-                event.key === "Escape" &&
-                lightbox.classList.contains(
-                    "active"
-                )
+                event.key === "Escape"
             ) {
                 closeLightbox();
             }
@@ -1030,55 +821,69 @@ function initializeLightbox() {
 }
 
 
-/* =========================================
-   OPTIONAL REALTIME PORTFOLIO REFRESH
-========================================= */
+function openPortfolioLightbox(
+    image,
+    title,
+    description
+) {
+    const lightbox =
+        document.getElementById(
+            "lightbox"
+        );
 
-function initializePortfolioRealtime() {
-    const client =
-        window.supabaseClient;
+    const imageElement =
+        document.getElementById(
+            "lightboxImage"
+        );
 
-    if (
-        !client ||
-        typeof client.channel !== "function"
-    ) {
+    const titleElement =
+        document.getElementById(
+            "lightboxTitle"
+        );
+
+    const descriptionElement =
+        document.getElementById(
+            "lightboxDescription"
+        );
+
+    if (!lightbox || !imageElement) {
         return;
     }
 
-    try {
-        client
-            .channel(
-                "portfolio-realtime-channel"
-            )
-            .on(
-                "postgres_changes",
-                {
-                    event: "*",
-                    schema: "public",
-                    table: "portfolios"
-                },
-                function () {
-                    initializePortfolio();
-                }
-            )
-            .subscribe();
+    imageElement.src = image;
+    imageElement.alt = title || "";
 
-    } catch (error) {
-        console.warn(
-            "Portföy gerçek zamanlı yenileme başlatılamadı:",
-            error
-        );
+    if (titleElement) {
+        titleElement.textContent =
+            title || "";
     }
+
+    if (descriptionElement) {
+        descriptionElement.textContent =
+            description || "";
+    }
+
+    lightbox.classList.add("active");
+
+    lightbox.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+    document.body.style.overflow =
+        "hidden";
 }
 
 
 /* =========================================
-   START REALTIME AFTER PAGE LOAD
+   ESCAPE
 ========================================= */
 
-window.addEventListener(
-    "load",
-    function () {
-        initializePortfolioRealtime();
-    }
-);
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
