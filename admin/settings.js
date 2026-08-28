@@ -22,6 +22,15 @@ document.addEventListener(
 
 
 /* =========================================
+   SETTINGS STATE
+========================================= */
+
+let currentLogoUrl = "";
+
+let logoRemovalRequested = false;
+
+
+/* =========================================
    SUPABASE
 ========================================= */
 
@@ -119,17 +128,6 @@ async function initializeSettings() {
 
 
 /* =========================================
-   SETTINGS STATE
-========================================= */
-
-let currentLogoUrl =
-    "";
-
-let logoRemovalRequested =
-    false;
-
-
-/* =========================================
    LOAD SETTINGS
 ========================================= */
 
@@ -176,35 +174,29 @@ async function loadSettings() {
     }
 
 
-    if (
-        !data ||
-        data.length === 0
-    ) {
-
-        return;
-
-    }
-
-
     const settings = {};
 
 
-    data.forEach(
-        function (item) {
+    if (data) {
 
-            if (
-                item.setting_key
-            ) {
+        data.forEach(
+            function (item) {
 
-                settings[
+                if (
                     item.setting_key
-                ] =
-                    item.setting_value ?? "";
+                ) {
+
+                    settings[
+                        item.setting_key
+                    ] =
+                        item.setting_value ?? "";
+
+                }
 
             }
+        );
 
-        }
-    );
+    }
 
 
     fillSettingsForm(
@@ -215,7 +207,7 @@ async function loadSettings() {
 
 
 /* =========================================
-   FILL SETTINGS FORM
+   FILL FORM
 ========================================= */
 
 function fillSettingsForm(
@@ -271,12 +263,10 @@ function fillSettingsForm(
 
 
     currentLogoUrl =
-        settings.logo_url || "";
+        settings.logo_url ?? "";
 
 
-    if (
-        currentLogoUrl
-    ) {
+    if (currentLogoUrl) {
 
         setLogoPreview(
             currentLogoUrl
@@ -316,7 +306,7 @@ function setInputValue(
 
 
 /* =========================================
-   LOGO UPLOAD INITIALIZE
+   LOGO UPLOAD
 ========================================= */
 
 function initializeLogoUpload() {
@@ -412,6 +402,7 @@ function initializeLogoUpload() {
 
                 event.preventDefault();
 
+
                 logoRemovalRequested =
                     true;
 
@@ -468,7 +459,7 @@ function setLogoPreview(
 
 
 /* =========================================
-   REMOVE LOGO PREVIEW
+   REMOVE LOGO
 ========================================= */
 
 function removeLogoPreview() {
@@ -629,12 +620,9 @@ async function saveSettings() {
             );
 
 
-        if (
-            logoRemovalRequested
-        ) {
+        if (logoRemovalRequested) {
 
-            logoUrl =
-                "";
+            logoUrl = "";
 
         }
 
@@ -729,8 +717,7 @@ async function saveSettings() {
 
         if (logoFile) {
 
-            logoFile.value =
-                "";
+            logoFile.value = "";
 
         }
 
@@ -759,12 +746,24 @@ async function saveSettings() {
         );
 
 
+        let errorMessage =
+            "Ayarlar kaydedilemedi.";
+
+
+        if (
+            error &&
+            error.message
+        ) {
+
+            errorMessage =
+                error.message;
+
+        }
+
+
         showSettingsMessage(
             "Hata: " +
-            (
-                error.message ||
-                "Ayarlar kaydedilemedi."
-            ),
+            errorMessage,
             "error"
         );
 
@@ -788,6 +787,10 @@ async function saveSettings() {
 
 /* =========================================
    SAVE SINGLE SETTING
+
+   TABLO YAPISI:
+   setting_key
+   setting_value
 ========================================= */
 
 async function saveSetting(
@@ -809,11 +812,7 @@ async function saveSetting(
 
 
     /*
-       Önce sadece setting_key ile
-       mevcut kayıt aranır.
-
-       Burada kesinlikle "key"
-       kolonu kullanılmaz.
+       Önce mevcut kaydı arıyoruz.
     */
 
     const {
@@ -823,7 +822,7 @@ async function saveSetting(
         await client
             .from("site_settings")
             .select(
-                "id, setting_key, setting_value"
+                "id, setting_key"
             )
             .eq(
                 "setting_key",
@@ -834,13 +833,18 @@ async function saveSetting(
 
     if (selectError) {
 
+        console.error(
+            "Ayar aranırken hata:",
+            selectError
+        );
+
         throw selectError;
 
     }
 
 
     /*
-       Kayıt varsa güncelle
+       Kayıt varsa UPDATE
     */
 
     if (existingData) {
@@ -868,6 +872,11 @@ async function saveSetting(
 
         if (updateError) {
 
+            console.error(
+                "Ayar güncellenirken hata:",
+                updateError
+            );
+
             throw updateError;
 
         }
@@ -880,7 +889,8 @@ async function saveSetting(
 
             throw new Error(
                 settingKey +
-                " ayarı güncellenemedi."
+                " ayarı güncellenemedi. " +
+                "Supabase UPDATE izni veya RLS politikası kontrol edilmelidir."
             );
 
         }
@@ -892,7 +902,13 @@ async function saveSetting(
 
 
     /*
-       Kayıt yoksa yeni kayıt ekle
+       Kayıt yoksa INSERT
+
+       Burada sadece:
+       setting_key
+       setting_value
+
+       kullanılır.
     */
 
     const {
@@ -917,6 +933,11 @@ async function saveSetting(
 
     if (insertError) {
 
+        console.error(
+            "Yeni ayar eklenirken hata:",
+            insertError
+        );
+
         throw insertError;
 
     }
@@ -929,7 +950,8 @@ async function saveSetting(
 
         throw new Error(
             settingKey +
-            " ayarı eklenemedi."
+            " ayarı eklenemedi. " +
+            "Supabase INSERT izni veya RLS politikası kontrol edilmelidir."
         );
 
     }
@@ -968,6 +990,10 @@ async function uploadLogo(
     const fileName =
         "site-logo-" +
         Date.now() +
+        "-" +
+        Math.random()
+            .toString(36)
+            .substring(2, 10) +
         "." +
         fileExtension;
 
@@ -992,6 +1018,11 @@ async function uploadLogo(
 
 
     if (uploadError) {
+
+        console.error(
+            "Logo yükleme hatası:",
+            uploadError
+        );
 
         throw uploadError;
 
@@ -1053,7 +1084,7 @@ function getInputValue(
 
 
 /* =========================================
-   SHOW MESSAGE
+   MESSAGE
 ========================================= */
 
 function showSettingsMessage(
@@ -1136,8 +1167,6 @@ function initializeLogout() {
                         "Çıkış hatası:",
                         error
                     );
-
-                    return;
 
                 }
 
