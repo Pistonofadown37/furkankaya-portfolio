@@ -15,7 +15,11 @@ document.addEventListener(
 
         }
 
-        await initializeSettings();
+        initializeLogoUpload();
+        initializeSettingsForm();
+        initializeLogout();
+
+        await loadSettings();
 
     }
 );
@@ -26,7 +30,6 @@ document.addEventListener(
 ========================================= */
 
 let currentLogoUrl = "";
-
 let logoRemovalRequested = false;
 
 
@@ -37,9 +40,8 @@ let logoRemovalRequested = false;
 function getSupabaseClient() {
 
     if (
-        typeof window.supabaseClient ===
-        "undefined" ||
-        !window.supabaseClient
+        typeof supabaseClient === "undefined" ||
+        !supabaseClient
     ) {
 
         console.error(
@@ -50,8 +52,7 @@ function getSupabaseClient() {
 
     }
 
-
-    return window.supabaseClient;
+    return supabaseClient;
 
 }
 
@@ -65,59 +66,33 @@ async function checkAuthentication() {
     const client =
         getSupabaseClient();
 
-
     if (!client) {
 
         return false;
 
     }
 
+    const {
+        data,
+        error
+    } =
+        await client.auth.getSession();
 
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await client.auth.getSession();
-
-
-        if (error) {
-
-            console.error(
-                "Oturum kontrol hatası:",
-                error
-            );
-
-            window.location.href =
-                "login.html";
-
-            return false;
-
-        }
-
-
-        if (
-            !data ||
-            !data.session
-        ) {
-
-            window.location.href =
-                "login.html";
-
-            return false;
-
-        }
-
-
-        return true;
-
-    } catch (error) {
+    if (error) {
 
         console.error(
-            "Oturum kontrolü başarısız:",
+            "Oturum kontrol hatası:",
             error
         );
+
+        return false;
+
+    }
+
+    if (
+        !data ||
+        !data.session
+    ) {
 
         window.location.href =
             "login.html";
@@ -126,22 +101,7 @@ async function checkAuthentication() {
 
     }
 
-}
-
-
-/* =========================================
-   INITIALIZE
-========================================= */
-
-async function initializeSettings() {
-
-    initializeLogoUpload();
-
-    initializeSettingsForm();
-
-    initializeLogout();
-
-    await loadSettings();
+    return true;
 
 }
 
@@ -155,88 +115,65 @@ async function loadSettings() {
     const client =
         getSupabaseClient();
 
-
     if (!client) {
 
         return;
 
     }
 
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await client
-                .from("site_settings")
-                .select(
-                    "setting_key, setting_value"
-                );
-
-
-        if (error) {
-
-            throw error;
-
-        }
-
-
-        const settings = {};
-
-
-        if (Array.isArray(data)) {
-
-            data.forEach(
-                function (item) {
-
-                    if (
-                        item.setting_key
-                    ) {
-
-                        settings[
-                            item.setting_key
-                        ] =
-                            item.setting_value ?? "";
-
-                    }
-
-                }
+    const {
+        data,
+        error
+    } =
+        await client
+            .from("site_settings")
+            .select(
+                "setting_key, setting_value"
             );
 
-        }
-
-
-        fillSettingsForm(
-            settings
-        );
-
-
-    } catch (error) {
+    if (error) {
 
         console.error(
             "Ayarlar yüklenirken hata:",
             error
         );
 
-
         showSettingsMessage(
             "Ayarlar yüklenemedi: " +
-            (
-                error.message ||
-                "Bilinmeyen hata"
-            ),
+            error.message,
             "error"
         );
 
+        return;
+
     }
+
+    const settings = {};
+
+    if (data) {
+
+        data.forEach(
+            function (item) {
+
+                settings[
+                    item.setting_key
+                ] =
+                    item.setting_value ?? "";
+
+            }
+        );
+
+    }
+
+    fillSettingsForm(
+        settings
+    );
 
 }
 
 
 /* =========================================
-   FILL SETTINGS FORM
+   FILL FORM
 ========================================= */
 
 function fillSettingsForm(
@@ -248,52 +185,43 @@ function fillSettingsForm(
         settings.site_name
     );
 
-
     setInputValue(
         "siteSubtitle",
         settings.site_subtitle
     );
-
 
     setInputValue(
         "heroTitle",
         settings.hero_title
     );
 
-
     setInputValue(
         "heroDescription",
         settings.hero_description
     );
-
 
     setInputValue(
         "aboutText",
         settings.about_text
     );
 
-
     setInputValue(
         "email",
         settings.email
     );
-
 
     setInputValue(
         "whatsapp",
         settings.whatsapp
     );
 
-
     setInputValue(
         "instagram",
         settings.instagram
     );
 
-
     currentLogoUrl =
         settings.logo_url ?? "";
-
 
     if (currentLogoUrl) {
 
@@ -316,17 +244,13 @@ function setInputValue(
 ) {
 
     const element =
-        document.getElementById(
-            id
-        );
-
+        document.getElementById(id);
 
     if (!element) {
 
         return;
 
     }
-
 
     element.value =
         value ?? "";
@@ -335,7 +259,7 @@ function setInputValue(
 
 
 /* =========================================
-   LOGO UPLOAD INITIALIZE
+   LOGO UPLOAD
 ========================================= */
 
 function initializeLogoUpload() {
@@ -345,12 +269,10 @@ function initializeLogoUpload() {
             "logoFile"
         );
 
-
     const removeLogoButton =
         document.getElementById(
             "removeLogoButton"
         );
-
 
     if (logoFile) {
 
@@ -361,13 +283,11 @@ function initializeLogoUpload() {
                 const file =
                     logoFile.files[0];
 
-
                 if (!file) {
 
                     return;
 
                 }
-
 
                 if (
                     !file.type.startsWith(
@@ -380,35 +300,26 @@ function initializeLogoUpload() {
                         "error"
                     );
 
-
-                    logoFile.value =
-                        "";
+                    logoFile.value = "";
 
                     return;
 
                 }
 
-
                 logoRemovalRequested =
                     false;
 
-
                 const imageUrl =
-                    URL.createObjectURL(
-                        file
-                    );
-
+                    URL.createObjectURL(file);
 
                 setLogoPreview(
                     imageUrl
                 );
 
-
                 const selectedLogoName =
                     document.getElementById(
                         "selectedLogoName"
                     );
-
 
                 if (selectedLogoName) {
 
@@ -422,7 +333,6 @@ function initializeLogoUpload() {
 
     }
 
-
     if (removeLogoButton) {
 
         removeLogoButton.addEventListener(
@@ -431,10 +341,8 @@ function initializeLogoUpload() {
 
                 event.preventDefault();
 
-
                 logoRemovalRequested =
                     true;
-
 
                 removeLogoPreview();
 
@@ -459,12 +367,10 @@ function setLogoPreview(
             "logoPreviewImage"
         );
 
-
     const placeholder =
         document.getElementById(
             "logoPlaceholder"
         );
-
 
     if (previewImage) {
 
@@ -475,7 +381,6 @@ function setLogoPreview(
             "block";
 
     }
-
 
     if (placeholder) {
 
@@ -498,24 +403,20 @@ function removeLogoPreview() {
             "logoPreviewImage"
         );
 
-
     const placeholder =
         document.getElementById(
             "logoPlaceholder"
         );
-
 
     const logoFile =
         document.getElementById(
             "logoFile"
         );
 
-
     const selectedLogoName =
         document.getElementById(
             "selectedLogoName"
         );
-
 
     if (previewImage) {
 
@@ -528,7 +429,6 @@ function removeLogoPreview() {
 
     }
 
-
     if (placeholder) {
 
         placeholder.style.display =
@@ -536,14 +436,11 @@ function removeLogoPreview() {
 
     }
 
-
     if (logoFile) {
 
-        logoFile.value =
-            "";
+        logoFile.value = "";
 
     }
-
 
     if (selectedLogoName) {
 
@@ -566,7 +463,6 @@ function initializeSettingsForm() {
             "settingsForm"
         );
 
-
     if (!settingsForm) {
 
         console.error(
@@ -576,7 +472,6 @@ function initializeSettingsForm() {
         return;
 
     }
-
 
     settingsForm.addEventListener(
         "submit",
@@ -601,49 +496,38 @@ async function saveSettings() {
     const client =
         getSupabaseClient();
 
-
     if (!client) {
-
-        showSettingsMessage(
-            "Supabase bağlantısı bulunamadı.",
-            "error"
-        );
 
         return;
 
     }
-
 
     const saveButton =
         document.getElementById(
             "saveSettingsButton"
         );
 
-
     const originalButtonText =
         saveButton
             ? saveButton.textContent
             : "Ayarları Kaydet";
 
-
-    if (saveButton) {
-
-        saveButton.disabled =
-            true;
-
-        saveButton.textContent =
-            "Kaydediliyor...";
-
-    }
-
-
-    showSettingsMessage(
-        "",
-        ""
-    );
-
-
     try {
+
+        if (saveButton) {
+
+            saveButton.disabled = true;
+
+            saveButton.textContent =
+                "Kaydediliyor...";
+
+        }
+
+        showSettingsMessage(
+            "",
+            ""
+        );
+
 
         let logoUrl =
             currentLogoUrl;
@@ -657,8 +541,7 @@ async function saveSettings() {
 
         if (logoRemovalRequested) {
 
-            logoUrl =
-                "";
+            logoUrl = "";
 
         }
 
@@ -677,67 +560,87 @@ async function saveSettings() {
         }
 
 
-        const settings = {
+        const settings = [
+            {
+                setting_key: "site_name",
+                setting_value:
+                    getInputValue("siteName")
+            },
+            {
+                setting_key: "site_subtitle",
+                setting_value:
+                    getInputValue("siteSubtitle")
+            },
+            {
+                setting_key: "hero_title",
+                setting_value:
+                    getInputValue("heroTitle")
+            },
+            {
+                setting_key: "hero_description",
+                setting_value:
+                    getInputValue("heroDescription")
+            },
+            {
+                setting_key: "about_text",
+                setting_value:
+                    getInputValue("aboutText")
+            },
+            {
+                setting_key: "email",
+                setting_value:
+                    getInputValue("email")
+            },
+            {
+                setting_key: "whatsapp",
+                setting_value:
+                    getInputValue("whatsapp")
+            },
+            {
+                setting_key: "instagram",
+                setting_value:
+                    getInputValue("instagram")
+            },
+            {
+                setting_key: "logo_url",
+                setting_value:
+                    logoUrl
+            }
+        ];
 
-            site_name:
-                getInputValue(
-                    "siteName"
-                ),
 
-            site_subtitle:
-                getInputValue(
-                    "siteSubtitle"
-                ),
-
-            hero_title:
-                getInputValue(
-                    "heroTitle"
-                ),
-
-            hero_description:
-                getInputValue(
-                    "heroDescription"
-                ),
-
-            about_text:
-                getInputValue(
-                    "aboutText"
-                ),
-
-            email:
-                getInputValue(
-                    "email"
-                ),
-
-            whatsapp:
-                getInputValue(
-                    "whatsapp"
-                ),
-
-            instagram:
-                getInputValue(
-                    "instagram"
-                ),
-
-            logo_url:
-                logoUrl
-
-        };
+        const {
+            data,
+            error
+        } =
+            await client
+                .from("site_settings")
+                .upsert(
+                    settings,
+                    {
+                        onConflict:
+                            "setting_key"
+                    }
+                )
+                .select(
+                    "setting_key, setting_value"
+                );
 
 
-        for (
-            const [
-                settingKey,
-                settingValue
-            ]
-            of Object.entries(
-                settings
-            )
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        if (
+            !data ||
+            data.length === 0
         ) {
 
-            await saveSetting(
-                settingKey,
-                settingValue
+            throw new Error(
+                "Supabase kayıt sonucunu döndürmedi."
             );
 
         }
@@ -746,15 +649,13 @@ async function saveSettings() {
         currentLogoUrl =
             logoUrl;
 
-
         logoRemovalRequested =
             false;
 
 
         if (logoFile) {
 
-            logoFile.value =
-                "";
+            logoFile.value = "";
 
         }
 
@@ -765,13 +666,16 @@ async function saveSettings() {
         );
 
 
-        await loadSettings();
-
-
         window.dispatchEvent(
             new Event(
                 "settingsUpdated"
             )
+        );
+
+
+        console.log(
+            "Kayıt başarılı:",
+            data
         );
 
 
@@ -781,7 +685,6 @@ async function saveSettings() {
             "Ayarlar kaydedilirken hata:",
             error
         );
-
 
         showSettingsMessage(
             "Kaydetme hatası: " +
@@ -793,133 +696,16 @@ async function saveSettings() {
             "error"
         );
 
-
     } finally {
 
         if (saveButton) {
 
-            saveButton.disabled =
-                false;
+            saveButton.disabled = false;
 
             saveButton.textContent =
                 originalButtonText;
 
         }
-
-    }
-
-}
-
-
-/* =========================================
-   SAVE SINGLE SETTING
-========================================= */
-
-async function saveSetting(
-    settingKey,
-    settingValue
-) {
-
-    const client =
-        getSupabaseClient();
-
-
-    if (!client) {
-
-        throw new Error(
-            "Supabase bağlantısı bulunamadı."
-        );
-
-    }
-
-
-    const {
-        data: existingData,
-        error: existingError
-    } =
-        await client
-            .from("site_settings")
-            .select(
-                "setting_key"
-            )
-            .eq(
-                "setting_key",
-                settingKey
-            )
-            .maybeSingle();
-
-
-    if (existingError) {
-
-        throw existingError;
-
-    }
-
-
-    /*
-       Kayıt zaten varsa güncelle.
-    */
-
-    if (existingData) {
-
-        const {
-            error: updateError
-        } =
-            await client
-                .from("site_settings")
-                .update(
-                    {
-                        setting_value:
-                            settingValue
-                    }
-                )
-                .eq(
-                    "setting_key",
-                    settingKey
-                );
-
-
-        if (updateError) {
-
-            throw updateError;
-
-        }
-
-
-        return;
-
-    }
-
-
-    /*
-       Kayıt yoksa ekle.
-
-       Bu dosyada kesinlikle:
-       key
-       value
-
-       kolonları kullanılmaz.
-    */
-
-    const {
-        error: insertError
-    } =
-        await client
-            .from("site_settings")
-            .insert(
-                {
-                    setting_key:
-                        settingKey,
-
-                    setting_value:
-                        settingValue
-                }
-            );
-
-
-    if (insertError) {
-
-        throw insertError;
 
     }
 
@@ -937,7 +723,6 @@ async function uploadLogo(
     const client =
         getSupabaseClient();
 
-
     if (!client) {
 
         throw new Error(
@@ -945,7 +730,6 @@ async function uploadLogo(
         );
 
     }
-
 
     const extension =
         file.name
@@ -975,11 +759,8 @@ async function uploadLogo(
                 fileName,
                 file,
                 {
-                    cacheControl:
-                        "3600",
-
-                    upsert:
-                        false
+                    cacheControl: "3600",
+                    upsert: false
                 }
             );
 
@@ -1028,10 +809,7 @@ function getInputValue(
 ) {
 
     const element =
-        document.getElementById(
-            id
-        );
-
+        document.getElementById(id);
 
     if (!element) {
 
@@ -1039,14 +817,13 @@ function getInputValue(
 
     }
 
-
     return element.value.trim();
 
 }
 
 
 /* =========================================
-   SHOW MESSAGE
+   MESSAGE
 ========================================= */
 
 function showSettingsMessage(
@@ -1059,27 +836,21 @@ function showSettingsMessage(
             "settingsMessage"
         );
 
-
     if (!settingsMessage) {
 
         return;
 
     }
 
-
     settingsMessage.textContent =
         message;
-
 
     settingsMessage.className =
         "settings-message";
 
-
     if (type) {
 
-        settingsMessage.classList.add(
-            type
-        );
+        settingsMessage.classList.add(type);
 
     }
 
@@ -1097,13 +868,11 @@ function initializeLogout() {
             "logoutButton"
         );
 
-
     if (!logoutButton) {
 
         return;
 
     }
-
 
     logoutButton.addEventListener(
         "click",
@@ -1112,46 +881,14 @@ function initializeLogout() {
             const client =
                 getSupabaseClient();
 
+            if (client) {
 
-            try {
-
-                if (client) {
-
-                    const {
-                        error
-                    } =
-                        await client
-                            .auth
-                            .signOut();
-
-
-                    if (error) {
-
-                        throw error;
-
-                    }
-
-                }
-
-
-                window.location.href =
-                    "login.html";
-
-
-            } catch (error) {
-
-                console.error(
-                    "Çıkış hatası:",
-                    error
-                );
-
-
-                showSettingsMessage(
-                    "Çıkış yapılırken hata oluştu.",
-                    "error"
-                );
+                await client.auth.signOut();
 
             }
+
+            window.location.href =
+                "login.html";
 
         }
     );
