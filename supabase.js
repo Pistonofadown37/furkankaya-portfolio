@@ -7,7 +7,7 @@ const SUPABASE_URL =
     "https://fwlanmbmintingmruzty.supabase.co";
 
 const SUPABASE_ANON_KEY =
-    "sb_publishable__hwI8X5KQfD0VIMkc-j-Lw_k-_XG8Ie";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3bGFubWJtaW50aW5nbXJ1enR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3NzgxMDIsImV4cCI6MjEwMzM1NDEwMn0.y8aGhcHc6JfRihm2rokyKvIlwwPCKqEVB0JKSSiQx4E";
 
 if (!window.supabase) {
     console.error("Supabase kütüphanesi yüklenemedi.");
