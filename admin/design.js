@@ -14,6 +14,15 @@
     hero_gap:80,hero_content_max_width:700,hero_content_padding_top:70,hero_content_padding_bottom:110,hero_small_font_size:11,hero_small_letter_spacing:6,hero_title_font_size:100,hero_title_line_height:.98,hero_title_letter_spacing:-5,hero_description_font_size:17,hero_description_max_width:560,hero_description_line_height:1.8,hero_buttons_gap:16,hero_button_height:58,hero_button_padding:25,hero_button_gap:25,hero_button_radius:6,hero_button_font_size:13,hero_gold_glow_size:500,
     brand_letter_1:"F",brand_letter_2:"K",brand_name:"REKLAM",brand_font_size:330,brand_gap:10,brand_letter_spacing:-30,brand_name_font_size:70,brand_name_letter_spacing:18,brand_name_margin_top:30,brand_line_width:70,brand_line_height:2,brand_line_margin_top:38,brand_glow_size:480,brand_glow_blur:15,
     section_padding:115,section_heading_gap:60,section_heading_margin_bottom:55,section_title_font_size:64,section_title_letter_spacing:-2,portfolio_columns:4,portfolio_columns_tablet:2,portfolio_gap:20,portfolio_radius:10,portfolio_image_height:245,portfolio_info_padding:20,slider_arrow_size:48,about_gap:100,about_text_font_size:16,about_text_line_height:1.9,services_gap:20,service_card_padding:35,service_card_radius:12,service_icon_size:70,service_card_min_height:200,service_card_gap:25,service_columns:3,contact_padding:60,contact_gap:60,contact_radius:14,contact_link_height:140,contact_link_padding:28,contact_section_padding:120,contact_title_font_size:58,contact_text_font_size:14,footer_padding:32,brands_height:100,brands_gap:30,brands_font_size:16,brands_letter_spacing:2,brands_item_1:"DESIGN",brands_item_2:"BRANDING",brands_item_3:"GRAPHIC",brands_item_4:"CREATIVE",brands_item_5:"DIGITAL",brands_item_6:"ADVERTISING",scroll_down_symbol:"↓",scroll_down_size:30,
+    content_page_title:"Furkan Kaya | Grafik Tasarım",
+    content_meta_description:"Furkan Kaya - Grafik Tasarım ve Dijital Çözümler Portföyü",
+    content_logo_first:"FURKAN",content_logo_second:"KAYA.",content_nav_1:"Ana Sayfa",content_nav_2:"Portföy",content_nav_3:"Hakkımda",content_nav_4:"İletişim",content_header_contact:"İletişime Geç",
+    content_hero_small:"GRAFİK TASARIM & DİJİTAL ÇÖZÜMLER",content_hero_title_1:"Fikirleri",content_hero_title_highlight:"etkileyici",content_hero_title_2:"tasarımlara",content_hero_title_strong:"dönüştürüyorum.",content_hero_description:"Markalar, işletmeler ve projeler için modern, dikkat çekici ve özgün görsel çözümler üretiyorum.",content_hero_button_1:"Çalışmalarımı İncele",content_hero_button_2:"Benimle İletişime Geç",
+    content_portfolio_small:"PORTFÖY",content_portfolio_title:"Seçili Çalışmalar",content_portfolio_description:"Farklı sektörler ve markalar için hazırladığım tasarım çalışmalarından bazıları.",content_portfolio_loading:"Çalışmalar yükleniyor...",
+    content_about_small:"HAKKIMDA",content_about_title_1:"Tasarım sadece",content_about_title_2:"güzel görünmek değildir.",content_about_text:"Her projenin kendine ait bir hikayesi olduğuna inanıyorum. Bu nedenle tasarım sürecinde sadece estetik değil, markanın karakterini, hedef kitlesini ve vermek istediği mesajı da ön planda tutuyorum.",
+    content_stat_1_number:"01",content_stat_1_title:"Özgün Tasarım",content_stat_1_text:"Her projeye özel yaratıcı çözümler sunuyorum.",content_stat_2_number:"02",content_stat_2_title:"Modern Yaklaşım",content_stat_2_text:"Güncel trendleri takip ederek modern tasarımlar üretiyorum.",content_stat_3_number:"03",content_stat_3_title:"Dijital Çözümler",content_stat_3_text:"Dijital platformlar için etkili tasarımlar hazırlıyorum.",
+    content_services_small:"NELER YAPIYORUM?",content_services_title:"Tasarım Hizmetleri",content_service_1_title:"Grafik Tasarım",content_service_1_text:"Sosyal medya, reklam, broşür, afiş ve kurumsal tasarım çözümleri.",content_service_2_title:"Marka Tasarımı",content_service_2_text:"Logo, kurumsal kimlik ve markanızın görsel dünyasının oluşturulması.",content_service_3_title:"Dijital Tasarım",content_service_3_text:"Dijital platformlar için modern ve dikkat çekici tasarım çözümleri.",
+    content_contact_small:"BİRLİKTE ÇALIŞALIM",content_contact_title:"Yeni bir proje mi düşünüyorsunuz?",content_contact_text:"Projeniz, markanız veya tasarım ihtiyacınız hakkında benimle iletişime geçebilirsiniz.",content_email_label:"E-POSTA",content_whatsapp_label:"WHATSAPP",content_instagram_label:"INSTAGRAM",content_footer_text:"Furkan Kaya. Tüm hakları saklıdır.",
     mobile_hero_gap:0,mobile_header_height:82,mobile_side_padding:20,mobile_hero_title_size:52,mobile_hero_title_size_small:52,mobile_hero_description_size:14,mobile_hero_description_size_small:14,mobile_hero_visual_height:330,mobile_hero_padding_top:100,mobile_hero_padding_bottom:20,mobile_brand_size:180,mobile_brand_spacing:-18,mobile_brand_name_size:35,mobile_brand_name_spacing:9,mobile_section_padding:80,mobile_portfolio_image_height:300,mobile_portfolio_image_height_small:240,mobile_contact_padding:25,mobile_button_height:58,mobile_button_gap:16
   };
 
@@ -62,12 +71,62 @@
     });
   }
 
+  function setText(doc, selector, value){
+    doc.querySelectorAll(selector).forEach(el=>{ el.textContent = value ?? ""; });
+  }
+
+  function escapeHtml(value){
+    return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
+  }
+
+  function applyContent(doc){
+    if(settings.content_page_title) doc.title = settings.content_page_title;
+    const meta = doc.querySelector('meta[name="description"]');
+    if(meta && settings.content_meta_description) meta.setAttribute("content", settings.content_meta_description);
+    setText(doc,".site-logo strong",settings.content_logo_first);
+    setText(doc,".site-logo span",settings.content_logo_second);
+    const nav=[settings.content_nav_1,settings.content_nav_2,settings.content_nav_3,settings.content_nav_4];
+    doc.querySelectorAll(".main-nav .nav-link, .mobile-nav-link").forEach((el,i)=>{ if(nav[i%4]!==undefined) el.textContent=nav[i%4]; });
+    setText(doc,".header-contact-button",settings.content_header_contact);
+    setText(doc,".hero-small-text",settings.content_hero_small);
+    const hero=doc.querySelector(".hero-title");
+    if(hero){ hero.innerHTML=escapeHtml(settings.content_hero_title_1)+" <span>"+escapeHtml(settings.content_hero_title_highlight)+"</span> "+escapeHtml(settings.content_hero_title_2)+" <strong>"+escapeHtml(settings.content_hero_title_strong)+"</strong>"; }
+    setText(doc,".hero-description",settings.content_hero_description);
+    setText(doc,".primary-button span",settings.content_hero_button_1);
+    setText(doc,".secondary-button span",settings.content_hero_button_2);
+    setText(doc,".portfolio-section .section-small-title",settings.content_portfolio_small);
+    setText(doc,".portfolio-section .section-heading h2",settings.content_portfolio_title);
+    setText(doc,".portfolio-section .section-heading > p",settings.content_portfolio_description);
+    setText(doc,".portfolio-loading",settings.content_portfolio_loading);
+    setText(doc,".about-heading .section-small-title",settings.content_about_small);
+    const aboutTitle=doc.querySelector(".about-heading h2");
+    if(aboutTitle) aboutTitle.innerHTML=escapeHtml(settings.content_about_title_1)+"<br>"+escapeHtml(settings.content_about_title_2);
+    setText(doc,"#aboutText",settings.content_about_text);
+    const stats=[1,2,3];
+    stats.forEach(i=>{ setText(doc,`.about-stat:nth-child(${i}) strong`,settings[`content_stat_${i}_number`]); setText(doc,`.about-stat:nth-child(${i}) h3`,settings[`content_stat_${i}_title`]); setText(doc,`.about-stat:nth-child(${i}) p`,settings[`content_stat_${i}_text`]); });
+    setText(doc,".services-heading .section-small-title",settings.content_services_small);
+    setText(doc,".services-heading h2",settings.content_services_title);
+    stats.forEach(i=>{ setText(doc,`.service-card:nth-child(${i}) h3`,settings[`content_service_${i}_title`]); setText(doc,`.service-card:nth-child(${i}) p`,settings[`content_service_${i}_text`]); });
+    setText(doc,".contact-small-title",settings.content_contact_small);
+    setText(doc,".contact-content h2",settings.content_contact_title);
+    setText(doc,".contact-content p",settings.content_contact_text);
+    setText(doc,".contact-link-label",settings.content_email_label);
+    const labels=[settings.content_email_label,settings.content_whatsapp_label,settings.content_instagram_label];
+    doc.querySelectorAll(".contact-link-label").forEach((el,i)=>{el.textContent=labels[i]||"";});
+    const footer=doc.querySelector(".site-footer p");
+    if(footer) footer.innerHTML="© <span id=\"currentYear\"></span> "+escapeHtml(settings.content_footer_text);
+    const year=doc.querySelector("#currentYear");
+    if(year) year.textContent=new Date().getFullYear();
+  }
+
   function renderPreview(){
     if(!iframe || !iframe.contentDocument)return;
     const doc=iframe.contentDocument;
     const root=doc.documentElement;
     const body=doc.body;
     if(!body)return;
+
+    applyContent(doc);
 
     const q=s=>doc.querySelector(s);
     const all=s=>doc.querySelectorAll(s);
@@ -194,9 +253,17 @@
     const session=await client.auth.getSession();
     if(session.error||!session.data?.session){location.href="login.html";return;}
     try{
-      const {data,error}=await client.from("site_settings").select("setting_key,setting_value").like("setting_key","design_%");
-      if(error)throw error;
-      (data||[]).forEach(row=>{const key=row.setting_key.replace(/^design_/,'');settings[key]=parse(row.setting_value);});
+      const [designResult,contentResult]=await Promise.all([
+        client.from("site_settings").select("setting_key,setting_value").like("setting_key","design_%"),
+        client.from("site_settings").select("setting_key,setting_value").like("setting_key","content_%")
+      ]);
+      if(designResult.error)throw designResult.error;
+      if(contentResult.error)throw contentResult.error;
+      [...(designResult.data||[]),...(contentResult.data||[])].forEach(row=>{
+        const key=row.setting_key.replace(/^(design_|content_)/,'');
+        const fullKey=row.setting_key.startsWith("content_") ? "content_"+key : key;
+        settings[fullKey]=parse(row.setting_value);
+      });
       fill();
       renderPreview();
     }catch(e){console.error(e);showMessage("Tasarım ayarları yüklenemedi: "+(e.message||e.code||"Bilinmeyen hata"),"error");}
@@ -219,7 +286,7 @@
 
     try{
       const rows=Object.entries(settings).map(([key,value])=>({
-        setting_key:"design_"+key,
+        setting_key:(key.startsWith("content_") ? key : "design_"+key),
         setting_value:String(value),
         updated_at:new Date().toISOString()
       }));

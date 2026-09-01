@@ -23,6 +23,14 @@
     </div>
 </header>
 
+<nav class="admin-navigation design-admin-navigation" aria-label="Yönetim paneli">
+    <a href="admin.html" class="admin-nav-button">⌂ Genel Bakış</a>
+    <a href="admin.html#portfolio" class="admin-nav-button">▣ Portföy</a>
+    <a href="settings.html" class="admin-nav-button">⚙ Site Ayarları</a>
+    <a href="design.html" class="admin-nav-button active admin-design-link">🎨 Tasarım</a>
+    <a href="admin.html#contact" class="admin-nav-button">✉ İletişim</a>
+</nav>
+
 <main class="design-main">
     <div class="design-heading">
         <div>
@@ -41,6 +49,7 @@
     <div class="design-layout">
         <aside class="design-sidebar">
             <button class="design-tab active" data-panel="brand">Marka</button>
+            <button class="design-tab" data-panel="content">İçerik</button>
             <button class="design-tab" data-panel="header">Header</button>
             <button class="design-tab" data-panel="hero">Hero</button>
             <button class="design-tab" data-panel="portfolio">Portföy</button>
@@ -69,6 +78,72 @@
                         <div class="control"><label>Çizgi kalınlığı <output data-output="brand_line_height"></output></label><input data-key="brand_line_height" type="range" min="1" max="8" step="1"></div>
                         <div class="control"><label>Glow boyutu <output data-output="brand_glow_size"></output></label><input data-key="brand_glow_size" type="range" min="100" max="800" step="1"></div>
                         <div class="control"><label>Glow blur <output data-output="brand_glow_blur"></output></label><input data-key="brand_glow_blur" type="range" min="0" max="50" step="1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="design-panel" data-panel-content="content">
+                <div class="design-card">
+                    <h2>Site İçerikleri</h2>
+                    <p>Web sitesinde görünen yazıları, başlıkları, menüleri, açıklamaları ve hizmet metinlerini buradan değiştirebilirsin. Mevcut yerleşim ve tasarım korunur.</p>
+                    <div class="control-grid">
+                        <div class="control text-control full"><label>Tarayıcı başlığı</label><input data-key="content_page_title" type="text"></div>
+                        <div class="control text-control full"><label>Site açıklaması</label><textarea data-key="content_meta_description" rows="2"></textarea></div>
+
+                        <div class="control text-control"><label>Logo sol</label><input data-key="content_logo_first" type="text"></div>
+                        <div class="control text-control"><label>Logo sağ</label><input data-key="content_logo_second" type="text"></div>
+                        <div class="control text-control"><label>Menü 1</label><input data-key="content_nav_1" type="text"></div>
+                        <div class="control text-control"><label>Menü 2</label><input data-key="content_nav_2" type="text"></div>
+                        <div class="control text-control"><label>Menü 3</label><input data-key="content_nav_3" type="text"></div>
+                        <div class="control text-control"><label>Menü 4</label><input data-key="content_nav_4" type="text"></div>
+                        <div class="control text-control full"><label>Header iletişim butonu</label><input data-key="content_header_contact" type="text"></div>
+
+                        <div class="control text-control full"><label>Hero küçük başlık</label><input data-key="content_hero_small" type="text"></div>
+                        <div class="control text-control"><label>Hero başlık 1. satır</label><input data-key="content_hero_title_1" type="text"></div>
+                        <div class="control text-control"><label>Hero vurgulu kelime</label><input data-key="content_hero_title_highlight" type="text"></div>
+                        <div class="control text-control"><label>Hero başlık 2. satır</label><input data-key="content_hero_title_2" type="text"></div>
+                        <div class="control text-control"><label>Hero güçlü kelime</label><input data-key="content_hero_title_strong" type="text"></div>
+                        <div class="control text-control full"><label>Hero açıklaması</label><textarea data-key="content_hero_description" rows="3"></textarea></div>
+                        <div class="control text-control"><label>Hero buton 1</label><input data-key="content_hero_button_1" type="text"></div>
+                        <div class="control text-control"><label>Hero buton 2</label><input data-key="content_hero_button_2" type="text"></div>
+
+                        <div class="control text-control"><label>Portföy küçük başlık</label><input data-key="content_portfolio_small" type="text"></div>
+                        <div class="control text-control"><label>Portföy başlığı</label><input data-key="content_portfolio_title" type="text"></div>
+                        <div class="control text-control full"><label>Portföy açıklaması</label><textarea data-key="content_portfolio_description" rows="2"></textarea></div>
+                        <div class="control text-control full"><label>Portföy yükleniyor yazısı</label><input data-key="content_portfolio_loading" type="text"></div>
+
+                        <div class="control text-control"><label>Hakkımda küçük başlık</label><input data-key="content_about_small" type="text"></div>
+                        <div class="control text-control"><label>Hakkımda başlık 1</label><input data-key="content_about_title_1" type="text"></div>
+                        <div class="control text-control"><label>Hakkımda başlık 2</label><input data-key="content_about_title_2" type="text"></div>
+                        <div class="control text-control full"><label>Hakkımda açıklaması</label><textarea data-key="content_about_text" rows="4"></textarea></div>
+
+                        <div class="control text-control"><label>Özellik 1 numara</label><input data-key="content_stat_1_number" type="text"></div>
+                        <div class="control text-control"><label>Özellik 1 başlık</label><input data-key="content_stat_1_title" type="text"></div>
+                        <div class="control text-control full"><label>Özellik 1 açıklama</label><textarea data-key="content_stat_1_text" rows="2"></textarea></div>
+                        <div class="control text-control"><label>Özellik 2 numara</label><input data-key="content_stat_2_number" type="text"></div>
+                        <div class="control text-control"><label>Özellik 2 başlık</label><input data-key="content_stat_2_title" type="text"></div>
+                        <div class="control text-control full"><label>Özellik 2 açıklama</label><textarea data-key="content_stat_2_text" rows="2"></textarea></div>
+                        <div class="control text-control"><label>Özellik 3 numara</label><input data-key="content_stat_3_number" type="text"></div>
+                        <div class="control text-control"><label>Özellik 3 başlık</label><input data-key="content_stat_3_title" type="text"></div>
+                        <div class="control text-control full"><label>Özellik 3 açıklama</label><textarea data-key="content_stat_3_text" rows="2"></textarea></div>
+
+                        <div class="control text-control"><label>Hizmetler küçük başlık</label><input data-key="content_services_small" type="text"></div>
+                        <div class="control text-control"><label>Hizmetler başlığı</label><input data-key="content_services_title" type="text"></div>
+                        <div class="control text-control"><label>Hizmet 1 başlık</label><input data-key="content_service_1_title" type="text"></div>
+                        <div class="control text-control full"><label>Hizmet 1 açıklama</label><textarea data-key="content_service_1_text" rows="2"></textarea></div>
+                        <div class="control text-control"><label>Hizmet 2 başlık</label><input data-key="content_service_2_title" type="text"></div>
+                        <div class="control text-control full"><label>Hizmet 2 açıklama</label><textarea data-key="content_service_2_text" rows="2"></textarea></div>
+                        <div class="control text-control"><label>Hizmet 3 başlık</label><input data-key="content_service_3_title" type="text"></div>
+                        <div class="control text-control full"><label>Hizmet 3 açıklama</label><textarea data-key="content_service_3_text" rows="2"></textarea></div>
+
+                        <div class="control text-control"><label>İletişim küçük başlık</label><input data-key="content_contact_small" type="text"></div>
+                        <div class="control text-control full"><label>İletişim başlığı</label><input data-key="content_contact_title" type="text"></div>
+                        <div class="control text-control full"><label>İletişim açıklaması</label><textarea data-key="content_contact_text" rows="3"></textarea></div>
+                        <div class="control text-control"><label>E-posta etiketi</label><input data-key="content_email_label" type="text"></div>
+                        <div class="control text-control"><label>WhatsApp etiketi</label><input data-key="content_whatsapp_label" type="text"></div>
+                        <div class="control text-control"><label>Instagram etiketi</label><input data-key="content_instagram_label" type="text"></div>
+
+                        <div class="control text-control full"><label>Footer metni</label><input data-key="content_footer_text" type="text"></div>
                     </div>
                 </div>
             </div>
