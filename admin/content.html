@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>İçerik Yönetimi | Furkan Kaya</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-page">
+    <header class="admin-header">
+        <div class="admin-header-container">
+            <a href="admin.html" class="admin-logo">FURKAN<span>KAYA</span></a>
+            <div class="admin-header-actions">
+                <a href="../index.html" target="_blank" class="admin-site-button">↗ Siteyi Görüntüle</a>
+                <button type="button" id="logoutButton" class="admin-logout-button">Çıkış Yap</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="admin-main">
+        <div class="admin-page-heading">
+            <h1>İçerik Yönetimi</h1>
+            <p>Sitedeki bütün sabit yazıları tek yerden düzenleyebilirsin.</p>
+        </div>
+
+        <nav class="admin-navigation">
+            <a href="admin.html" class="admin-nav-button">⌂ Genel Bakış</a>
+            <a href="admin.html" class="admin-nav-button">▣ Portföy</a>
+            <a href="admin.html" class="admin-nav-button">⚙ Site Ayarları</a>
+            <a href="design.html" class="admin-nav-button admin-design-link">🎨 Tasarım</a>
+            <a href="content.html" class="admin-nav-button active">✎ İçerik</a>
+            <a href="admin.html" class="admin-nav-button">✉ İletişim</a>
+        </nav>
+
+        <div id="contentMessage" class="admin-message"></div>
+
+        <form id="contentForm">
+            <section class="admin-section active">
+                <div class="admin-card">
+                    <h2 class="admin-card-title">Genel ve Menü</h2>
+                    <p class="admin-card-description">Site başlığı, logo ve menü yazıları.</p>
+                    <div class="admin-form-grid">
+                        <div class="admin-form-group full-width"><label>Tarayıcı Başlığı</label><input id="page_title" type="text"></div>
+                        <div class="admin-form-group full-width"><label>Meta Açıklaması</label><textarea id="meta_description"></textarea></div>
+                        <div class="admin-form-group"><label>Logo İlk Kısım</label><input id="logo_first" type="text"></div>
+                        <div class="admin-form-group"><label>Logo İkinci Kısım</label><input id="logo_second" type="text"></div>
+                        <div class="admin-form-group"><label>Ana Sayfa</label><input id="nav_home" type="text"></div>
+                        <div class="admin-form-group"><label>Portföy</label><input id="nav_portfolio" type="text"></div>
+                        <div class="admin-form-group"><label>Hakkımda</label><input id="nav_about" type="text"></div>
+                        <div class="admin-form-group"><label>İletişim</label><input id="nav_contact" type="text"></div>
+                        <div class="admin-form-group full-width"><label>Header İletişim Butonu</label><input id="header_contact" type="text"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-section active">
+                <div class="admin-card">
+                    <h2 class="admin-card-title">Hero / Ana Sayfa</h2>
+                    <p class="admin-card-description">Ana ekrandaki bütün yazılar ve marka alanı.</p>
+                    <div class="admin-form-grid">
+                        <div class="admin-form-group full-width"><label>Üst Başlık</label><input id="hero_small" type="text"></div>
+                        <div class="admin-form-group"><label>Başlık 1</label><input id="hero_title_1" type="text"></div>
+                        <div class="admin-form-group"><label>Vurgulu Başlık</label><input id="hero_title_highlight" type="text"></div>
+                        <div class="admin-form-group"><label>Başlık 2</label><input id="hero_title_2" type="text"></div>
+                        <div class="admin-form-group"><label>Kalın Başlık</label><input id="hero_title_strong" type="text"></div>
+                        <div class="admin-form-group full-width"><label>Açıklama</label><textarea id="hero_description"></textarea></div>
+                        <div class="admin-form-group"><label>1. Buton</label><input id="hero_button_1" type="text"></div>
+                        <div class="admin-form-group"><label>2. Buton</label><input id="hero_button_2" type="text"></div>
+                        <div class="admin-form-group"><label>Logo F</label><input id="brand_letter_1" type="text"></div>
+                        <div class="admin-form-group"><label>Logo K</label><input id="brand_letter_2" type="text"></div>
+                        <div class="admin-form-group full-width"><label>Logo Alt Yazısı</label><input id="brand_name" type="text"></div>
+                        <div class="admin-form-group"><label>Şerit 1</label><input id="brand_item_1" type="text"></div>
+                        <div class="admin-form-group"><label>Şerit 2</label><input id="brand_item_2" type="text"></div>
+                        <div class="admin-form-group"><label>Şerit 3</label><input id="brand_item_3" type="text"></div>
+                        <div class="admin-form-group"><label>Şerit 4</label><input id="brand_item_4" type="text"></div>
+                        <div class="admin-form-group"><label>Şerit 5</label><input id="brand_item_5" type="text"></div>
+                        <div class="admin-form-group"><label>Şerit 6</label><input id="brand_item_6" type="text"></div>
+                        <div class="admin-form-group"><label>Aşağı Ok</label><input id="scroll_down_symbol" type="text"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-section active">
+                <div class="admin-card">
+                    <h2 class="admin-card-title">Portföy Bölümü</h2>
+                    <div class="admin-form-grid">
+                        <div class="admin-form-group"><label>Küçük Başlık</label><input id="portfolio_small" type="text"></div>
+                        <div class="admin-form-group"><label>Bölüm Başlığı</label><input id="portfolio_title" type="text"></div>
+                        <div class="admin-form-group full-width"><label>Açıklama</label><textarea id="portfolio_description"></textarea></div>
+                        <div class="admin-form-group full-width"><label>Yükleniyor Yazısı</label><input id="portfolio_loading" type="text"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-section active">
+                <div class="admin-card">
+                    <h2 class="admin-card-title">Hakkımda</h2>
+                    <div class="admin-form-grid">
+                        <div class="admin-form-group"><label>Küçük Başlık</label><input id="about_small" type="text"></div>
+                        <div class="admin-form-group"><label>Başlık 1</label><input id="about_title_1" type="text"></div>
+                        <div class="admin-form-group full-width"><label>Başlık 2</label><input id="about_title_2" type="text"></div>
+                        <div class="admin-form-group full-width"><label>Açıklama</label><textarea id="about_text"></textarea></div>
+                        <div class="admin-form-group"><label>İstatistik 1 Sayı</label><input id="stat_1_number" type="text"></div>
+                        <div class="admin-form-group"><label>İstatistik 1 Başlık</label><input id="stat_1_title" type="text"></div>
+                        <div class="admin-form-group full-width"><label>İstatistik 1 Açıklama</label><textarea id="stat_1_text"></textarea></div>
+                        <div class="admin-form-group"><label>İstatistik 2 Sayı</label><input id="stat_2_number" type="text"></div>
+                        <div class="admin-form-group"><label>İstatistik 2 Başlık</label><input id="stat_2_title" type="text"></div>
+                        <div class="admin-form-group full-width"><label>İstatistik 2 Açıklama</label><textarea id="stat_2_text"></textarea></div>
+                        <div class="admin-form-group"><label>İstatistik 3 Sayı</label><input id="stat_3_number" type="text"></div>
+                        <div class="admin-form-group"><label>İstatistik 3 Başlık</label><input id="stat_3_title" type="text"></div>
+                        <div class="admin-form-group full-width"><label>İstatistik 3 Açıklama</label><textarea id="stat_3_text"></textarea></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-section active">
+                <div class="admin-card">
+                    <h2 class="admin-card-title">Hizmetler</h2>
+                    <div class="admin-form-grid">
+                        <div class="admin-form-group"><label>Küçük Başlık</label><input id="services_small" type="text"></div>
+                        <div class="admin-form-group"><label>Bölüm Başlığı</label><input id="services_title" type="text"></div>
+                        <div class="admin-form-group"><label>Hizmet 1 Başlık</label><input id="service_1_title" type="text"></div>
+                        <div class="admin-form-group"><label>Hizmet 2 Başlık</label><input id="service_2_title" type="text"></div>
+                        <div class="admin-form-group"><label>Hizmet 3 Başlık</label><input id="service_3_title" type="text"></div>
+                        <div class="admin-form-group full-width"><label>Hizmet 1 Açıklama</label><textarea id="service_1_text"></textarea></div>
+                        <div class="admin-form-group full-width"><label>Hizmet 2 Açıklama</label><textarea id="service_2_text"></textarea></div>
+                        <div class="admin-form-group full-width"><label>Hizmet 3 Açıklama</label><textarea id="service_3_text"></textarea></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-section active">
+                <div class="admin-card">
+                    <h2 class="admin-card-title">İletişim ve Footer</h2>
+                    <div class="admin-form-grid">
+                        <div class="admin-form-group"><label>Küçük Başlık</label><input id="contact_small" type="text"></div>
+                        <div class="admin-form-group"><label>Başlık</label><input id="contact_title" type="text"></div>
+                        <div class="admin-form-group full-width"><label>Açıklama</label><textarea id="contact_text"></textarea></div>
+                        <div class="admin-form-group"><label>E-posta Etiketi</label><input id="contact_email_label" type="text"></div>
+                        <div class="admin-form-group"><label>WhatsApp Etiketi</label><input id="contact_whatsapp_label" type="text"></div>
+                        <div class="admin-form-group"><label>Instagram Etiketi</label><input id="contact_instagram_label" type="text"></div>
+                        <div class="admin-form-group full-width"><label>Footer Yazısı</label><input id="footer_text" type="text"></div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="admin-card">
+                <div class="admin-form-actions">
+                    <button type="submit" id="saveContentButton" class="admin-primary-button">Tüm İçerikleri Kaydet</button>
+                    <a href="admin.html" class="admin-secondary-button">Yönetim Paneline Dön</a>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase.js"></script>
+    <script src="content.js"></script>
+</body>
+</html>
