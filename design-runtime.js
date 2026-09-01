@@ -327,10 +327,10 @@
 
                 .hero-title {
                     width: 100% !important;
-                    max-width: 100% !important;
+                    max-width: calc(100% - 4px) !important;
                     margin-left: auto !important;
                     margin-right: auto !important;
-                    font-size: min(${px(current.mobile_hero_title_size)}, 11vw) !important;
+                    font-size: min(${px(current.mobile_hero_title_size)}, 11vw, 44px) !important;
                     line-height: 0.98 !important;
                     letter-spacing: min(${px(current.hero_title_letter_spacing)}, -2px) !important;
                     overflow-wrap: normal !important;
@@ -418,7 +418,7 @@
                 }
 
                 .hero-title {
-                    font-size: min(${px(current.mobile_hero_title_size_small)}, 10.8vw) !important;
+                    font-size: min(${px(current.mobile_hero_title_size_small)}, 10.8vw, 42px) !important;
                     letter-spacing: min(${px(current.hero_title_letter_spacing)}, -2.5px) !important;
                 }
 
