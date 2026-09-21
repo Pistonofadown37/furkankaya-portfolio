@@ -24,7 +24,7 @@
         hero_buttons_gap:16, hero_button_height:58, hero_button_padding:25,
         hero_button_gap:25, hero_button_radius:6, hero_button_font_size:13,
         hero_gold_glow_size:500,
-        brand_letter_1:"F", brand_letter_2:"K", brand_name:"REKLAM",
+        brand_letter_1:"F", brand_letter_2:"G", brand_name:"REKLAM",
         brand_font_size:330, brand_gap:10, brand_letter_spacing:-30,
         brand_name_font_size:70, brand_name_letter_spacing:18, brand_name_margin_top:30,
         brand_line_width:70, brand_line_height:2, brand_line_margin_top:38,
@@ -598,6 +598,10 @@
 
                     settings[key] = parse(row.setting_value);
                 });
+
+            // Marka baş harfleri: site adı "FG Reklam" olarak kullanılmalı.
+            settings.brand_letter_1 = "F";
+            settings.brand_letter_2 = "G";
 
             apply(settings);
         } catch (error) {
