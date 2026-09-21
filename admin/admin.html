@@ -561,6 +561,212 @@
         </section>
 
 
+        <!-- ADMIN YÖNETİMİ -->
+
+        <section
+            id="adminUsersSection"
+            class="admin-section"
+            data-permission-section="admins"
+        >
+
+            <div class="admin-card">
+
+                <h2 class="admin-card-title">
+                    Admin Yönetimi
+                </h2>
+
+                <p class="admin-card-description">
+                    Yeni yönetici hesapları oluştur, hangi panellere erişebileceklerini belirle ve mevcut hesapları yönet.
+                </p>
+
+                <div
+                    id="adminUsersMessage"
+                    class="admin-users-message"
+                ></div>
+
+                <form id="adminUserForm">
+
+                    <h3
+                        id="adminUserFormTitle"
+                        class="admin-subtitle"
+                    >
+                        Yeni Admin Ekle
+                    </h3>
+
+                    <div class="admin-form-grid">
+
+                        <div class="admin-form-group">
+                            <label for="adminUserName">Ad Soyad</label>
+                            <input
+                                type="text"
+                                id="adminUserName"
+                                placeholder="Örn. Ahmet Yılmaz"
+                            >
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label for="adminUserEmail">E-posta</label>
+                            <input
+                                type="email"
+                                id="adminUserEmail"
+                                placeholder="admin@site.com"
+                                required
+                            >
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label for="adminUserPassword">
+                                Şifre
+                            </label>
+                            <input
+                                type="password"
+                                id="adminUserPassword"
+                                placeholder="En az 8 karakter"
+                                autocomplete="new-password"
+                            >
+                            <small class="admin-help-text">
+                                Yeni admin oluştururken zorunludur. Düzenlerken boş bırakırsanız şifre değişmez.
+                            </small>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="admin-check-row">
+                                <input
+                                    type="checkbox"
+                                    id="adminUserActive"
+                                    checked
+                                >
+                                <span>Hesap aktif</span>
+                            </label>
+
+                            <label class="admin-check-row">
+                                <input
+                                    type="checkbox"
+                                    id="adminUserSuper"
+                                >
+                                <span>Süper Admin — tüm panellere erişim</span>
+                            </label>
+                        </div>
+
+                        <div class="admin-form-group full-width">
+                            <label>
+                                Erişebileceği Paneller
+                            </label>
+
+                            <div class="admin-permission-grid">
+
+                                <label class="admin-permission-item">
+                                    <input
+                                        type="checkbox"
+                                        value="dashboard"
+                                        data-admin-permission
+                                    >
+                                    <span>⌂ Genel Bakış</span>
+                                </label>
+
+                                <label class="admin-permission-item">
+                                    <input
+                                        type="checkbox"
+                                        value="portfolio"
+                                        data-admin-permission
+                                    >
+                                    <span>▣ Portföy</span>
+                                </label>
+
+                                <label class="admin-permission-item">
+                                    <input
+                                        type="checkbox"
+                                        value="settings"
+                                        data-admin-permission
+                                    >
+                                    <span>⚙ Site Ayarları</span>
+                                </label>
+
+                                <label class="admin-permission-item">
+                                    <input
+                                        type="checkbox"
+                                        value="design"
+                                        data-admin-permission
+                                    >
+                                    <span>🎨 Tasarım</span>
+                                </label>
+
+                                <label class="admin-permission-item">
+                                    <input
+                                        type="checkbox"
+                                        value="contact"
+                                        data-admin-permission
+                                    >
+                                    <span>✉ İletişim</span>
+                                </label>
+
+                                <label class="admin-permission-item">
+                                    <input
+                                        type="checkbox"
+                                        value="shopier"
+                                        data-admin-permission
+                                    >
+                                    <span>🛍️ Online Ürünler</span>
+                                </label>
+
+                                <label class="admin-permission-item">
+                                    <input
+                                        type="checkbox"
+                                        value="admins"
+                                        data-admin-permission
+                                    >
+                                    <span>👤 Admin Yönetimi</span>
+                                </label>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="admin-form-actions">
+
+                        <button
+                            type="submit"
+                            class="admin-primary-button"
+                        >
+                            Admin Oluştur
+                        </button>
+
+                        <button
+                            type="button"
+                            id="cancelAdminUserButton"
+                            class="admin-secondary-button"
+                            style="display:none;"
+                        >
+                            İptal
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="admin-card">
+
+                <h2 class="admin-card-title">
+                    Mevcut Adminler
+                </h2>
+
+                <p class="admin-card-description">
+                    Hesapların durumunu ve panel erişimlerini buradan görebilirsin.
+                </p>
+
+                <div
+                    id="adminUsersList"
+                    class="admin-users-list"
+                ></div>
+
+            </div>
+
+        </section>
+
+
         <!-- İLETİŞİM -->
 
         <section
