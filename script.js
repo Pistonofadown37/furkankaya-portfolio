@@ -612,7 +612,7 @@ function initializePortfolioSlider(
             return 2;
         }
 
-        return 4;
+        return 3;
     }
 
     function totalPages() {
