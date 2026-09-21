@@ -97,7 +97,7 @@
     }
 
     .hero-title {
-        font-size: min(${px(s.mobile_hero_title_size)}, 11vw, 44px) !important;
+        font-size: ${px(s.mobile_hero_title_size)} !important;
         max-width: 100% !important;
         overflow-wrap: anywhere !important;
         word-break: normal !important;
@@ -105,7 +105,7 @@
     }
 
     .hero-description {
-        font-size: min(${px(s.mobile_hero_description_size)}, 4.2vw) !important;
+        font-size: ${px(s.mobile_hero_description_size)} !important;
         max-width: 100% !important;
         overflow-wrap: break-word !important;
     }
@@ -126,13 +126,13 @@
     }
 
     .hero-brand-main {
-        font-size: min(${px(s.mobile_brand_size)}, 40vw) !important;
+        font-size: ${px(s.mobile_brand_size)} !important;
         letter-spacing: ${px(s.mobile_brand_spacing)} !important;
     }
 
     .hero-brand-name {
-        font-size: min(${px(s.mobile_brand_name_size)}, 8vw) !important;
-        letter-spacing: min(${px(s.mobile_brand_name_spacing)}, 4px) !important;
+        font-size: ${px(s.mobile_brand_name_size)} !important;
+        letter-spacing: ${px(s.mobile_brand_name_spacing)} !important;
     }
 
     .portfolio-section,
@@ -145,7 +145,7 @@
     .section-heading h2,
     .about-heading h2,
     .services-heading h2 {
-        font-size: min(${px(s.mobile_section_title_size)}, 10vw) !important;
+        font-size: ${px(s.mobile_section_title_size)} !important;
         max-width: 100% !important;
     }
 
@@ -198,11 +198,11 @@
 
 @media (max-width: 500px) {
     .hero-title {
-        font-size: min(${px(s.mobile_hero_title_size_small)}, 10.8vw, 42px) !important;
+        font-size: ${px(s.mobile_hero_title_size_small)} !important;
     }
 
     .hero-description {
-        font-size: min(${px(s.mobile_hero_description_size_small)}, 4vw) !important;
+        font-size: ${px(s.mobile_hero_description_size_small)} !important;
     }
 
     .portfolio-image {
@@ -212,16 +212,24 @@
     .section-heading h2,
     .about-heading h2,
     .services-heading h2 {
-        font-size: min(${px(s.mobile_section_title_size_small)}, 9.5vw) !important;
+        font-size: ${px(s.mobile_section_title_size_small)} !important;
     }
 }
 `;
     }
 
-    async function loadSettings() {
+    async function loadSettings(attempt) {
+        attempt = attempt || 0;
+
         var client = window.supabaseClient;
         if (!client) {
-            installStyle();
+            if (attempt < 30) {
+                setTimeout(function () {
+                    loadSettings(attempt + 1);
+                }, 250);
+            } else {
+                installStyle();
+            }
             return;
         }
 
@@ -242,9 +250,23 @@
             });
 
             installStyle();
+
+            // Runtime stilini geç: Mobil paneli nihai otorite olsun.
+            if (document.head && document.getElementById(STYLE_ID)) {
+                document.head.appendChild(document.getElementById(STYLE_ID));
+            }
+
+            // Supabase/runtime sonradan yeniden stil yazarsa tekrar öne al.
+            setTimeout(function () {
+                var style = document.getElementById(STYLE_ID);
+                if (style && document.head) document.head.appendChild(style);
+            }, 700);
         } catch (error) {
             console.warn("Mobil tasarım ayarları yüklenemedi:", error);
             installStyle();
+            if (document.head && document.getElementById(STYLE_ID)) {
+                document.head.appendChild(document.getElementById(STYLE_ID));
+            }
         }
     }
 
