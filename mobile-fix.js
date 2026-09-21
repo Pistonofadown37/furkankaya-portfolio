@@ -344,7 +344,7 @@
     if (!document.getElementById("fkMobileSettingsScript")) {
         var script = document.createElement("script");
         script.id = "fkMobileSettingsScript";
-        script.src = "mobile-settings.js?v=2";
+        script.src = "mobile-settings.js?v=4";
         script.defer = true;
         document.head.appendChild(script);
     }
