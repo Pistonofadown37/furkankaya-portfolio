@@ -38,6 +38,11 @@
                 return;
             }
 
+            if (window.AdminAccess) {
+                const admin = await window.AdminAccess.load();
+                applyAdminPermissions(admin);
+            }
+
             initializeNavigation();
             initializeLogout(client);
 
@@ -66,6 +71,54 @@
     /* =========================================
        NAVIGATION
     ========================================= */
+
+    function applyAdminPermissions(admin) {
+        const allowed = function (permission) {
+            return !!admin && (
+                admin.is_super_admin ||
+                (Array.isArray(admin.permissions) && admin.permissions.includes(permission))
+            );
+        };
+
+        document.querySelectorAll("[data-permission]").forEach(function (element) {
+            if (!allowed(element.dataset.permission)) {
+                element.style.display = "none";
+            }
+        });
+
+        document.querySelectorAll("[data-permission-section]").forEach(function (section) {
+            const canAccess = allowed(section.dataset.permissionSection);
+            section.dataset.accessAllowed = canAccess ? "true" : "false";
+
+            if (!canAccess) {
+                section.classList.remove("active");
+                section.style.display = "none";
+            }
+        });
+
+        const activeButton = document.querySelector(".admin-nav-button.active[data-permission]");
+
+        if (!activeButton || activeButton.style.display === "none") {
+            document.querySelectorAll(".admin-nav-button").forEach(function (button) {
+                button.classList.remove("active");
+            });
+            document.querySelectorAll(".admin-section").forEach(function (section) {
+                section.classList.remove("active");
+            });
+
+            const firstAllowedButton = Array.from(
+                document.querySelectorAll(".admin-nav-button[data-permission]")
+            ).find(function (button) {
+                return button.style.display !== "none";
+            });
+
+            if (firstAllowedButton) {
+                firstAllowedButton.classList.add("active");
+                const target = document.getElementById(firstAllowedButton.dataset.target);
+                if (target) target.classList.add("active");
+            }
+        }
+    }
 
     function initializeNavigation() {
         const buttons =
