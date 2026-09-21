@@ -86,12 +86,15 @@
 
             return parsed
                 .filter(function (product) {
-                    return product;
+                    return product &&
+                        product.active !== false &&
+                        product.title &&
+                        product.shopier_url;
                 })
                 .map(function (product, index) {
                     return {
                         id: product.id || String(index + 1),
-                        title: String(product.title || "Ürün"),
+                        title: String(product.title || ""),
                         description: String(product.description || ""),
                         price: String(product.price || ""),
                         image_url: String(product.image_url || ""),
@@ -270,7 +273,7 @@
                 return 2;
             }
 
-            return 3;
+            return 4;
         }
 
         function pages() {
