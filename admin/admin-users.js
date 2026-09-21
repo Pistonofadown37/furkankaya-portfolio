@@ -22,9 +22,9 @@
         }
 
         try {
-            currentAdmin = await window.AdminAccess.requirePermission("admins");
+            currentAdmin = await window.AdminAccess.load();
 
-            if (!currentAdmin) {
+            if (!currentAdmin || !window.AdminAccess.hasPermission("admins")) {
                 return;
             }
 
