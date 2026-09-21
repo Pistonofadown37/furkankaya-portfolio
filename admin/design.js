@@ -12,7 +12,7 @@
     color_gold:"#f2ad16",color_gold_light:"#ffd35a",color_gold_dark:"#9a6307",color_black:"#030405",color_dark:"#07090b",color_dark_card:"#0d1013",color_dark_card_2:"#12161a",color_white:"#f4f4f4",color_text:"#e8e8e8",color_muted:"#8b9198",
     container_width:1280,side_padding:40,header_height:82,logo_font_size:21,logo_gap:7,nav_gap:40,nav_font_size:14,nav_padding_y:30,header_button_width:132,header_button_height:48,header_button_radius:6,header_button_font_size:13,
     hero_gap:80,hero_content_max_width:700,hero_content_padding_top:70,hero_content_padding_bottom:110,hero_small_font_size:11,hero_small_letter_spacing:6,hero_title_font_size:100,hero_title_line_height:.98,hero_title_letter_spacing:-5,hero_description_font_size:17,hero_description_max_width:560,hero_description_line_height:1.8,hero_buttons_gap:16,hero_button_height:58,hero_button_padding:25,hero_button_gap:25,hero_button_radius:6,hero_button_font_size:13,hero_gold_glow_size:500,
-    brand_letter_1:"F",brand_letter_2:"K",brand_name:"REKLAM",brand_font_size:330,brand_gap:10,brand_letter_spacing:-30,brand_name_font_size:70,brand_name_letter_spacing:18,brand_name_margin_top:30,brand_line_width:70,brand_line_height:2,brand_line_margin_top:38,brand_glow_size:480,brand_glow_blur:15,
+    brand_letter_1:"F",brand_letter_2:"G",brand_name:"REKLAM",brand_font_size:330,brand_gap:10,brand_letter_spacing:-30,brand_name_font_size:70,brand_name_letter_spacing:18,brand_name_margin_top:30,brand_line_width:70,brand_line_height:2,brand_line_margin_top:38,brand_glow_size:480,brand_glow_blur:15,
     section_padding:115,section_heading_gap:60,section_heading_margin_bottom:55,section_title_font_size:64,section_title_letter_spacing:-2,portfolio_columns:4,portfolio_columns_tablet:2,portfolio_gap:20,portfolio_radius:10,portfolio_image_height:245,portfolio_info_padding:20,slider_arrow_size:48,about_gap:100,about_text_font_size:16,about_text_line_height:1.9,services_gap:20,service_card_padding:35,service_card_radius:12,service_icon_size:70,service_card_min_height:200,service_card_gap:25,service_columns:3,contact_padding:60,contact_gap:60,contact_radius:14,contact_link_height:140,contact_link_padding:28,contact_section_padding:120,contact_title_font_size:58,contact_text_font_size:14,footer_padding:32,brands_height:100,brands_gap:30,brands_font_size:16,brands_letter_spacing:2,brands_item_1:"DESIGN",brands_item_2:"BRANDING",brands_item_3:"GRAPHIC",brands_item_4:"CREATIVE",brands_item_5:"DIGITAL",brands_item_6:"ADVERTISING",scroll_down_symbol:"↓",scroll_down_size:30,
     content_page_title:"Furkan Kaya | Grafik Tasarım",
     content_meta_description:"Furkan Kaya - Grafik Tasarım ve Dijital Çözümler Portföyü",
@@ -282,6 +282,11 @@
         const fullKey=row.setting_key.startsWith("content_") ? "content_"+key : key;
         settings[fullKey]=parse(row.setting_value);
       });
+
+      // Marka adı FG Reklam olarak kullanılmalı.
+      settings.brand_letter_1="F";
+      settings.brand_letter_2="G";
+
       fill();
       renderPreview();
     }catch(e){console.error(e);showMessage("Tasarım ayarları yüklenemedi: "+(e.message||e.code||"Bilinmeyen hata"),"error");}
