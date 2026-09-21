@@ -384,16 +384,9 @@
     startBrandSafety();
 
     /*
-     * Load the mobile settings controller after the structure fix.
-     * It reads the values saved from Yönetim Paneli > Tasarım > Mobil.
+     * mobile-settings.js is loaded once by index.html.
+     * Do not inject it again here; duplicate controllers can race and
+     * overwrite the mobile values with stale defaults.
      */
     install();
-
-    if (!document.getElementById("fkMobileSettingsScript")) {
-        var script = document.createElement("script");
-        script.id = "fkMobileSettingsScript";
-        script.src = "mobile-settings.js?v=5";
-        script.defer = true;
-        document.head.appendChild(script);
-    }
 })();
