@@ -273,7 +273,7 @@
                 return 2;
             }
 
-            return 3;
+            return 4;
         }
 
         function pages() {
