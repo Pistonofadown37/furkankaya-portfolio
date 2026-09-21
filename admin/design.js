@@ -458,6 +458,11 @@
   }
 
   async function init(){
+    if (window.AdminAccess) {
+      const allowed = await window.AdminAccess.requirePermission("design");
+      if (!allowed) return;
+    }
+
     controls();tabs();previewSizes();
     if(saveButton)saveButton.addEventListener("click",save);
     if(resetButton)resetButton.addEventListener("click",reset);
