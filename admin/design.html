@@ -24,11 +24,11 @@
 </header>
 
 <nav class="admin-navigation design-admin-navigation" aria-label="Yönetim paneli">
-    <a href="admin.html" class="admin-nav-button">⌂ Genel Bakış</a>
-    <a href="admin.html#portfolio" class="admin-nav-button">▣ Portföy</a>
-    <a href="settings.html" class="admin-nav-button">⚙ Site Ayarları</a>
-    <a href="design.html" class="admin-nav-button active admin-design-link">🎨 Tasarım</a>
-    <a href="admin.html#contact" class="admin-nav-button">✉ İletişim</a>
+    <a href="admin.html" class="admin-nav-button" data-permission="dashboard">⌂ Genel Bakış</a>
+    <a href="admin.html#portfolio" class="admin-nav-button" data-permission="portfolio">▣ Portföy</a>
+    <a href="admin.html" class="admin-nav-button" data-permission="settings">⚙ Site Ayarları</a>
+    <a href="design.html" class="admin-nav-button active admin-design-link" data-permission="design">🎨 Tasarım</a>
+    <a href="admin.html" class="admin-nav-button" data-permission="contact">✉ İletişim</a>
 </nav>
 
 <main class="design-main">
@@ -347,6 +347,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../supabase.js"></script>
-<script src="design.js"></script>
+<script src="admin-access.js?v=1"></script>
+<script src="design.js?v=1"></script>
 </body>
 </html>
