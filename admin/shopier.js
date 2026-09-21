@@ -16,6 +16,13 @@
     document.addEventListener("DOMContentLoaded", initialize);
 
     async function initialize() {
+        if (window.AdminAccess) {
+            const allowed = await window.AdminAccess.requirePermission("shopier");
+            if (!allowed) {
+                return;
+            }
+        }
+
         const client = window.supabaseClient;
 
         if (!client) {
