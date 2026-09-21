@@ -31,7 +31,7 @@
         brand_glow_size:480, brand_glow_blur:15,
         section_padding:115, section_heading_gap:60, section_heading_margin_bottom:55,
         section_title_font_size:64, section_title_letter_spacing:-2,
-        portfolio_columns:4, portfolio_columns_tablet:2, portfolio_gap:20,
+        portfolio_columns:3, portfolio_columns_tablet:2, portfolio_gap:20,
         portfolio_radius:10, portfolio_image_height:245, portfolio_info_padding:20,
         slider_arrow_size:48, about_gap:100, about_text_font_size:16,
         about_text_line_height:1.9, services_gap:20, service_card_padding:35,
