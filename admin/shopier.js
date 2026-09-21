@@ -12,6 +12,8 @@
 
     let products = [];
     let editingId = null;
+    let productPage = 1;
+    const PRODUCT_PAGE_SIZE = 50;
 
     document.addEventListener("DOMContentLoaded", initialize);
 
@@ -308,11 +310,19 @@
                     Henüz ürün eklenmedi. İlk ürününü yukarıdaki formdan ekleyebilirsin.
                 </div>
             `;
+            renderProductPager();
             return;
         }
 
-        container.innerHTML = products
-            .map(function (product, index) {
+        const totalPages = Math.max(1, Math.ceil(products.length / PRODUCT_PAGE_SIZE));
+        if (productPage > totalPages) productPage = totalPages;
+
+        const start = (productPage - 1) * PRODUCT_PAGE_SIZE;
+        const visibleProducts = products.slice(start, start + PRODUCT_PAGE_SIZE);
+
+        container.innerHTML = visibleProducts
+            .map(function (product, visibleIndex) {
+                const index = start + visibleIndex;
                 const image = product.image_url && isSafeUrl(product.image_url)
                     ? `
                         <img
@@ -328,52 +338,60 @@
 
                         <div>
                             <h3>${escapeHtml(product.title)}</h3>
-                            ${
-                                product.price
-                                    ? `<p>${escapeHtml(product.price)}</p>`
-                                    : ""
-                            }
-                            <p>
-                                ${product.active ? "Vitrinde aktif" : "Vitrinde gizli"}
-                            </p>
+                            ${product.price ? `<p>${escapeHtml(product.price)}</p>` : ""}
+                            <p>${product.active ? "Vitrinde aktif" : "Vitrinde gizli"}</p>
                             <small>${escapeHtml(product.shopier_url)}</small>
                         </div>
 
                         <div class="product-actions">
-                            <button
-                                type="button"
-                                class="secondary"
-                                data-action="up"
-                                data-index="${index}"
-                                ${index === 0 ? "disabled" : ""}
-                            >↑ Yukarı</button>
-
-                            <button
-                                type="button"
-                                class="secondary"
-                                data-action="down"
-                                data-index="${index}"
-                                ${index === products.length - 1 ? "disabled" : ""}
-                            >↓ Aşağı</button>
-
-                            <button
-                                type="button"
-                                class="secondary"
-                                data-action="edit"
-                                data-id="${escapeAttribute(product.id)}"
-                            >Düzenle</button>
-
-                            <button
-                                type="button"
-                                class="danger"
-                                data-action="delete"
-                                data-id="${escapeAttribute(product.id)}"
-                            >Sil</button>
+                            <button type="button" class="secondary" data-action="up" data-index="${index}" ${index === 0 ? "disabled" : ""}>↑ Yukarı</button>
+                            <button type="button" class="secondary" data-action="down" data-index="${index}" ${index === products.length - 1 ? "disabled" : ""}>↓ Aşağı</button>
+                            <button type="button" class="secondary" data-action="edit" data-id="${escapeAttribute(product.id)}">Düzenle</button>
+                            <button type="button" class="danger" data-action="delete" data-id="${escapeAttribute(product.id)}">Sil</button>
                         </div>
                     </article>
                 `;
             })
             .join("");
+
+        renderProductPager();
+    }
+
+    function renderProductPager() {
+        const container = document.getElementById("products");
+        if (!container) return;
+
+        let pager = document.getElementById("productPager");
+        if (!pager) {
+            pager = document.createElement("div");
+            pager.id = "productPager";
+            pager.className = "admin-list-pager";
+            container.parentNode.insertBefore(pager, container.nextSibling);
+        }
+
+        const totalPages = Math.max(1, Math.ceil(products.length / PRODUCT_PAGE_SIZE));
+
+        if (products.length <= PRODUCT_PAGE_SIZE) {
+            pager.innerHTML = "";
+            pager.style.display = "none";
+            return;
+        }
+
+        pager.style.display = "flex";
+        pager.innerHTML = `
+            <button type="button" class="secondary" data-page="prev" ${productPage <= 1 ? "disabled" : ""}>← Önceki 50</button>
+            <span>Sayfa ${productPage} / ${totalPages} · ${products.length} ürün</span>
+            <button type="button" class="secondary" data-page="next" ${productPage >= totalPages ? "disabled" : ""}>Sonraki 50 →</button>
+        `;
+
+        pager.onclick = function (event) {
+            const button = event.target.closest("button[data-page]");
+            if (!button || button.disabled) return;
+            if (button.dataset.page === "prev" && productPage > 1) productPage--;
+            if (button.dataset.page === "next" && productPage < totalPages) productPage++;
+            renderProducts();
+            container.scrollIntoView({ behavior: "smooth", block: "start" });
+        };
     }
 
     async function handleProductAction(event) {
