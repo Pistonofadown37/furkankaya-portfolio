@@ -95,6 +95,38 @@
         .message.show { display: block; }
         .message.error { border-color: rgba(255,80,80,.4); }
         .message.success { border-color: rgba(100,255,170,.3); }
+        .products {
+            max-height: 72vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 6px;
+            scrollbar-width: thin;
+        }
+
+        .admin-list-pager {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255,255,255,.025);
+        }
+
+        .admin-list-pager span {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .admin-list-pager button:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
         .products { display: grid; gap: 12px; }
         .product {
             display: grid;
