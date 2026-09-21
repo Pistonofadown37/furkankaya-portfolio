@@ -389,6 +389,41 @@
 
     runFinalBrandIconFix();
 
+    /* Keep the hero brand synchronized if design-runtime applies the saved value later. */
+    (function watchHeroBrand() {
+        var tries = 0;
+        var timer = setInterval(function () {
+            var el = document.querySelector(".brand-k");
+            if (el) {
+                var value = el.textContent.trim().toUpperCase();
+                if (!value || value === "C" || value === "K") {
+                    el.textContent = "G";
+                }
+            }
+
+            tries++;
+            if (tries >= 20) {
+                clearInterval(timer);
+            }
+        }, 500);
+
+        var brand = document.querySelector(".hero-brand-main");
+        if (brand && window.MutationObserver) {
+            var observer = new MutationObserver(function () {
+                var el = document.querySelector(".brand-k");
+                if (!el) return;
+                var value = el.textContent.trim().toUpperCase();
+                if (!value || value === "C" || value === "K") {
+                    el.textContent = "G";
+                }
+            });
+            observer.observe(brand, { childList: true, subtree: true, characterData: true });
+            setTimeout(function () {
+                observer.disconnect();
+            }, 12000);
+        }
+    })();
+
     install();
 
     if (!document.getElementById("fkMobileSettingsScript")) {
