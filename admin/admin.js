@@ -13,6 +13,9 @@
     let currentEditingPortfolioId = null;
     let selectedPortfolioImage = null;
     let currentPortfolioImageUrl = "";
+    let portfolioItems = [];
+    let portfolioPage = 1;
+    const PORTFOLIO_PAGE_SIZE = 50;
 
     document.addEventListener("DOMContentLoaded", initializeAdmin);
 
@@ -240,15 +243,17 @@
                     ? result.data
                     : [];
 
+            portfolioItems = portfolios;
+            portfolioPage = 1;
+
             updatePortfolioStatistics(portfolios);
 
-            list.innerHTML = "";
-
             if (!portfolios.length) {
+                list.innerHTML = "";
                 if (emptyState) {
                     emptyState.style.display = "block";
                 }
-
+                renderPortfolioPager();
                 return;
             }
 
@@ -256,11 +261,7 @@
                 emptyState.style.display = "none";
             }
 
-            portfolios.forEach(function (portfolio) {
-                list.appendChild(
-                    createPortfolioItem(portfolio)
-                );
-            });
+            renderPortfolioPage();
 
         } catch (error) {
             console.error(error);
@@ -279,6 +280,61 @@
                 "error"
             );
         }
+    }
+
+    function renderPortfolioPage() {
+        const list = document.getElementById("portfolioList");
+        if (!list) return;
+
+        const totalPages = Math.max(1, Math.ceil(portfolioItems.length / PORTFOLIO_PAGE_SIZE));
+        if (portfolioPage > totalPages) portfolioPage = totalPages;
+
+        const start = (portfolioPage - 1) * PORTFOLIO_PAGE_SIZE;
+        const visibleItems = portfolioItems.slice(start, start + PORTFOLIO_PAGE_SIZE);
+
+        list.innerHTML = "";
+        visibleItems.forEach(function (portfolio) {
+            list.appendChild(createPortfolioItem(portfolio));
+        });
+
+        renderPortfolioPager();
+    }
+
+    function renderPortfolioPager() {
+        const list = document.getElementById("portfolioList");
+        if (!list) return;
+
+        let pager = document.getElementById("portfolioPager");
+        if (!pager) {
+            pager = document.createElement("div");
+            pager.id = "portfolioPager";
+            pager.className = "admin-list-pager";
+            list.parentNode.insertBefore(pager, list.nextSibling);
+        }
+
+        const totalPages = Math.max(1, Math.ceil(portfolioItems.length / PORTFOLIO_PAGE_SIZE));
+
+        if (portfolioItems.length <= PORTFOLIO_PAGE_SIZE) {
+            pager.innerHTML = "";
+            pager.style.display = "none";
+            return;
+        }
+
+        pager.style.display = "flex";
+        pager.innerHTML = `
+            <button type="button" class="admin-secondary-button" data-page="prev" ${portfolioPage <= 1 ? "disabled" : ""}>← Önceki 50</button>
+            <span>Sayfa ${portfolioPage} / ${totalPages} · ${portfolioItems.length} portföy</span>
+            <button type="button" class="admin-secondary-button" data-page="next" ${portfolioPage >= totalPages ? "disabled" : ""}>Sonraki 50 →</button>
+        `;
+
+        pager.onclick = function (event) {
+            const button = event.target.closest("button[data-page]");
+            if (!button || button.disabled) return;
+            if (button.dataset.page === "prev" && portfolioPage > 1) portfolioPage--;
+            if (button.dataset.page === "next" && portfolioPage < totalPages) portfolioPage++;
+            renderPortfolioPage();
+            list.scrollIntoView({ behavior: "smooth", block: "start" });
+        };
     }
 
     function updatePortfolioStatistics(portfolios) {
