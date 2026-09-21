@@ -221,12 +221,30 @@
     }
 
     .hero-brand-main {
-        width: 100% !important;
-        max-width: 100% !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        width: max-content !important;
+        max-width: none !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        justify-content: center !important;
+        align-items: center !important;
+        white-space: nowrap !important;
         font-size: ${px(s.mobile_brand_size)} !important;
         letter-spacing: ${px(s.mobile_brand_spacing)} !important;
         line-height: .75 !important;
         overflow: visible !important;
+    }
+
+    .hero-brand-main .brand-f,
+    .hero-brand-main .brand-k {
+        flex: 0 0 auto !important;
+        display: block !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        overflow: visible !important;
+        white-space: nowrap !important;
     }
 
     .hero-brand-name {
@@ -407,14 +425,20 @@
 
     .service-card > div:last-child {
         flex: 1 1 auto !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
         width: auto !important;
         max-width: none !important;
         min-width: 0 !important;
-        overflow: hidden !important;
+        overflow: visible !important;
     }
 
     .service-card h3,
     .service-card p {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
         max-width: 100% !important;
         overflow-wrap: break-word !important;
         word-break: normal !important;
