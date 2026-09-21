@@ -660,6 +660,45 @@
             }
         `;
 
+
+        /* FK MOBILE PRICE FIX */
+        style.textContent += `
+            @media (max-width: 700px) {
+                .online-product-top {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: flex-start !important;
+                    justify-content: flex-start !important;
+                    gap: 8px !important;
+                }
+
+                .online-product-top h3 {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    margin: 0 !important;
+                    overflow-wrap: break-word !important;
+                    word-break: normal !important;
+                }
+
+                .online-product-price {
+                    display: block !important;
+                    width: auto !important;
+                    max-width: 100% !important;
+                    white-space: nowrap !important;
+                    font-size: 19px !important;
+                    line-height: 1.2 !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                }
+
+                .online-product-content {
+                    min-width: 0 !important;
+                    width: 100% !important;
+                    overflow: visible !important;
+                }
+            }
+        `;
+
         document.head.appendChild(style);
     }
 
