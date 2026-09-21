@@ -86,15 +86,12 @@
 
             return parsed
                 .filter(function (product) {
-                    return product &&
-                        product.active !== false &&
-                        product.title &&
-                        product.shopier_url;
+                    return product;
                 })
                 .map(function (product, index) {
                     return {
                         id: product.id || String(index + 1),
-                        title: String(product.title || ""),
+                        title: String(product.title || "Ürün"),
                         description: String(product.description || ""),
                         price: String(product.price || ""),
                         image_url: String(product.image_url || ""),
