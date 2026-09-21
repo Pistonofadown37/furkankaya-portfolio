@@ -84,6 +84,9 @@
     function apply(s) {
         current = { ...D, ...s };
 
+        // Desktop portfolio slider: three cards per view.
+        current.portfolio_columns = 3;
+
         const doc = document;
         const root = doc.documentElement;
         const q = selector => doc.querySelector(selector);
