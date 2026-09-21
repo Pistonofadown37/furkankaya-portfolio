@@ -245,6 +245,21 @@
         max-width: none !important;
         overflow: visible !important;
         white-space: nowrap !important;
+        font-family: "Montserrat", sans-serif !important;
+        font-weight: 900 !important;
+        line-height: .8 !important;
+    }
+
+    /* The second mark must remain a real G on mobile.
+       Do not let background clipping/legacy styles turn it into C. */
+    .hero-brand-main .brand-k {
+        color: var(--gold) !important;
+        background: none !important;
+        background-image: none !important;
+        -webkit-background-clip: initial !important;
+        background-clip: initial !important;
+        -webkit-text-fill-color: var(--gold) !important;
+        text-fill-color: var(--gold) !important;
     }
 
     .hero-brand-name {
