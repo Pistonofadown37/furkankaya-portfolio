@@ -974,3 +974,216 @@ select:focus {
 
 }
 
+
+
+/* =========================================
+   ADMIN USER MANAGEMENT
+========================================= */
+
+.admin-subtitle {
+    margin: 0 0 22px;
+    font-size: 20px;
+}
+
+.admin-help-text {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.admin-check-row {
+    min-height: 52px;
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: #d7d7da !important;
+    background: #15171c;
+    cursor: pointer;
+}
+
+.admin-check-row input,
+.admin-permission-item input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--gold);
+}
+
+.admin-permission-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.admin-permission-item {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    min-height: 54px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: #d7d7da !important;
+    background: rgba(255,255,255,.02);
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.admin-permission-item:hover {
+    border-color: var(--border-gold);
+    background: rgba(212,168,83,.06);
+}
+
+.admin-users-message {
+    display: none;
+    margin-bottom: 20px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.admin-users-message.show {
+    display: block;
+}
+
+.admin-users-message.success {
+    color: #b7e9be;
+    border: 1px solid rgba(68,170,90,.35);
+    background: rgba(68,170,90,.10);
+}
+
+.admin-users-message.error {
+    color: #ffb0ad;
+    border: 1px solid rgba(217,83,79,.35);
+    background: rgba(217,83,79,.10);
+}
+
+.admin-users-list {
+    display: grid;
+    gap: 12px;
+}
+
+.admin-user-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: rgba(255,255,255,.02);
+}
+
+.admin-user-main {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 0;
+}
+
+.admin-user-avatar {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #17120a;
+    background: linear-gradient(135deg,var(--gold-light),var(--gold));
+    font-weight: 900;
+}
+
+.admin-user-main h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+}
+
+.admin-user-main p {
+    margin: 0 0 7px;
+    color: var(--muted);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.admin-user-main small {
+    display: block;
+    margin-top: 7px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.admin-user-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+    color: #d8d8dc;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.admin-user-status {
+    display: inline-flex;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.admin-user-status.active {
+    color: #b8e9be;
+    background: rgba(68,170,90,.12);
+}
+
+.admin-user-status.inactive {
+    color: #ffb5b1;
+    background: rgba(217,83,79,.12);
+}
+
+.admin-user-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 0 0 auto;
+}
+
+.admin-user-actions button {
+    min-height: 42px;
+    padding: 0 14px;
+}
+
+@media (max-width: 800px) {
+    .admin-permission-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-user-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-user-actions {
+        width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+    .admin-permission-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-user-main {
+        align-items: flex-start;
+    }
+
+    .admin-user-actions {
+        flex-direction: column;
+    }
+
+    .admin-user-actions button {
+        width: 100%;
+    }
+}
