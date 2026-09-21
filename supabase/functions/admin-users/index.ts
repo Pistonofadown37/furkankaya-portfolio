@@ -48,23 +48,7 @@ function getBearerToken(req: Request) {
 }
 
 function getServiceKey() {
-    const legacy = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    if (legacy) {
-        return legacy;
-    }
-
-    const secrets = Deno.env.get("SUPABASE_SECRET_KEYS");
-
-    if (secrets) {
-        try {
-            const parsed = JSON.parse(secrets);
-            return parsed.default || Object.values(parsed)[0] || "";
-        } catch (_) {
-            return "";
-        }
-    }
-
-    return "";
+    return Deno.env.get("ADMIN_SERVICE_ROLE_KEY") || "";
 }
 
 Deno.serve(async function (req) {
